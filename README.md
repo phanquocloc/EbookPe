@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # EbookPe — Nền Tảng Ebook Thực Chiến & Bản Quyền Số #1 Việt Nam
 
 Chào mừng bạn đến với mã nguồn hoàn chỉnh của **EbookPe**. Hệ thống đã được thiết kế tinh tế, hiện đại, tối ưu trải nghiệm khách hàng và tích hợp bảng điều khiển Quản trị viên (Admin) chuyên nghiệp.
@@ -68,3 +69,6 @@ Server nội bộ đang chạy tại cổng `8080`:
 - **Trang quản trị cho chủ shop**: [http://localhost:8080/admin.html](http://localhost:8080/admin.html)
 
 Khi bạn thêm hoặc chỉnh sửa sách ở trang Admin, trang bán hàng sẽ **tự động đồng bộ ngay lập tức**!
+=======
+# EbookPe
+>>>>>>> ef385f2a83345670f150d28fc8a0d43594df0f46
