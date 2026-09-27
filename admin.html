@@ -1,0 +1,667 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- [OWASP A05] Security Meta Headers -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <title>EbookPe — Trung Tâm Quản Trị Cửa Hàng & Ebook</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,700&display=swap" rel="stylesheet">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+
+  <!-- [OWASP A01] Auth Guard - Must load BEFORE body renders -->
+  <script src="js/security.js"></script>
+  <script>
+    (function() {
+      'use strict';
+      if (typeof AdminAuth === 'undefined' || !AdminAuth.isAuthenticated()) {
+        document.documentElement.style.visibility = 'hidden';
+        window.location.replace('admin-login.html');
+      }
+    })();
+  </script></head>
+<body>
+
+  <!-- ==========================================
+       SIDEBAR
+       ========================================== -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <a href="admin.html" class="sidebar-logo">
+        <span>📚</span> Ebook<span>Pe</span>
+      </a>
+      <span class="sidebar-badge">Admin</span>
+    </div>
+
+    <ul class="sidebar-menu">
+      <li>
+        <button class="sidebar-link active" data-tab="dashboard">
+          <span class="menu-icon">📊</span>
+          <span>Tổng Quan</span>
+        </button>
+      </li>
+      <li>
+        <button class="sidebar-link" data-tab="books">
+          <span class="menu-icon">📚</span>
+          <span>Kho Ebook</span>
+        </button>
+      </li>
+      <li>
+        <button class="sidebar-link" data-tab="orders">
+          <span class="menu-icon">🛒</span>
+          <span>Đơn Hàng</span>
+        </button>
+      </li>
+      <li>
+        <button class="sidebar-link" data-tab="settings">
+          <span class="menu-icon">⚙️</span>
+          <span>Cài Đặt VietQR</span>
+        </button>
+      </li>
+      <li>
+        <button class="sidebar-link" data-tab="security">
+          <span class="menu-icon">🛡️</span>
+          <span>Bảo Mật</span>
+        </button>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <a href="index.html" class="btn-back-store" target="_blank" title="Xem giao diện khách hàng">
+        <span>🏪</span>
+        <span>Xem Cửa Hàng</span>
+      </a>
+      <div id="admin-session-info" style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:10px;text-align:center;padding:0 8px;"></div>
+      <button id="btn-admin-logout" style="margin-top:10px;width:100%;padding:10px;background:rgba(214,48,49,0.15);border:1px solid rgba(214,48,49,0.3);border-radius:10px;color:#ff7675;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(214,48,49,0.3)'" onmouseout="this.style.background='rgba(214,48,49,0.15)'">
+        🚪 Đăng Xuất
+      </button>
+    </div>
+  </aside>
+
+  <!-- ==========================================
+       MAIN CONTENT
+       ========================================== -->
+  <main class="admin-main">
+    <!-- Topbar -->
+    <header class="admin-topbar">
+      <h1 class="topbar-title" id="topbar-title">Tổng Quan & Thống Kê</h1>
+
+      <div class="topbar-actions">
+        <button class="btn-admin-primary" id="btn-top-add-book">
+          <span>➕</span>
+          <span>Thêm Ebook Mới</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-body">
+      
+      <!-- ==========================================
+           TAB 1: DASHBOARD OVERVIEW
+           ========================================== -->
+      <section class="admin-tab-content active" id="tab-content-dashboard">
+        <!-- 4 Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Tổng Doanh Thu Thực</div>
+              <div class="stat-value" id="stat-revenue" style="color:var(--primary);">0đ</div>
+            </div>
+            <div class="stat-icon green">💰</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Tổng Đơn Hàng</div>
+              <div class="stat-value" id="stat-orders">0</div>
+            </div>
+            <div class="stat-icon blue">📦</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Ebook Đang Bán</div>
+              <div class="stat-value" id="stat-books">0</div>
+            </div>
+            <div class="stat-icon gold">📚</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Lượt Tải Toàn Sàn</div>
+              <div class="stat-value" id="stat-downloads">0</div>
+            </div>
+            <div class="stat-icon purple">🚀</div>
+          </div>
+        </div>
+
+        <!-- Dashboard Charts & Recent Orders -->
+        <div class="dashboard-grid">
+          <!-- Biểu đồ doanh thu 7 ngày -->
+          <div class="admin-panel">
+            <div class="panel-head">
+              <h3 class="panel-title">📈 Xu Hướng Doanh Số Gần Đây (Nghìn đồng)</h3>
+            </div>
+            <canvas id="sales-chart-canvas" style="width:100%; height:200px;"></canvas>
+          </div>
+
+          <!-- Đơn hàng gần nhất -->
+          <div class="admin-panel">
+            <div class="panel-head">
+              <h3 class="panel-title">🛒 5 Đơn Hàng Mới Nhất</h3>
+              <button class="sidebar-link" data-tab="orders" style="font-size:0.78rem; padding:4px 8px; color:var(--primary); background:var(--primary-pale); border-radius:4px; width:auto;">
+                Xem tất cả →
+              </button>
+            </div>
+            
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Mã Đơn</th>
+                    <th>Khách Hàng</th>
+                    <th>Số Tiền</th>
+                    <th>Trạng Thái</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-orders-list">
+                  <!-- Render từ JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           TAB 2: EBOOKS MANAGEMENT (CRUD)
+           ========================================== -->
+      <section class="admin-tab-content" id="tab-content-books">
+        <div class="admin-panel">
+          <div class="table-toolbar">
+            <input type="text" id="admin-search-book-input" class="search-admin-input" placeholder="🔍 Tìm kiếm theo tên ebook, tác giả, danh mục...">
+            <button class="btn-admin-primary" onclick="document.getElementById('btn-top-add-book').click()">
+              ➕ Đăng Bán Cuốn Mới
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th style="width:60px;">Bìa</th>
+                  <th>Tên Ebook & Tác Giả</th>
+                  <th>Danh Mục</th>
+                  <th>Giá Bán</th>
+                  <th>Lượt Mua</th>
+                  <th>Trạng Thái</th>
+                  <th style="text-align:right;">Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody id="admin-books-table-body">
+                <!-- Render từ JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           TAB 3: ORDERS MANAGEMENT
+           ========================================== -->
+      <section class="admin-tab-content" id="tab-content-orders">
+        <div class="admin-panel">
+          <div class="table-toolbar">
+            <input type="text" id="admin-search-order-input" class="search-admin-input" placeholder="🔍 Tìm theo mã đơn (#EBPE...), email, tên khách, SĐT...">
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Mã Đơn</th>
+                  <th>Khách Hàng & Liên Hệ</th>
+                  <th>Sản Phẩm Đã Mua</th>
+                  <th>Tổng Tiền</th>
+                  <th>Phương Thức</th>
+                  <th>Trạng Thái</th>
+                  <th>Thời Gian Đặt</th>
+                </tr>
+              </thead>
+              <tbody id="admin-orders-table-body">
+                <!-- Render từ JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           TAB 4: SETTINGS & VIETQR
+           ========================================== -->
+      <section class="admin-tab-content" id="tab-content-settings">
+        <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:24px;">
+          <!-- Cấu hình tài khoản ngân hàng -->
+          <div class="admin-panel">
+            <div class="panel-head">
+              <h3 class="panel-title">🏦 Cấu Hình Thanh Toán Quét Mã VietQR</h3>
+            </div>
+            <p style="font-size:0.84rem; color:var(--text-sub); margin-bottom:20px;">
+              Hệ thống sẽ dùng thông tin bên dưới để tự động tạo mã QR VietQR khi khách hàng bấm mua sách. Khi khách quét mã, tiền sẽ về thẳng tài khoản của bạn.
+            </p>
+
+            <form id="admin-settings-form">
+              <div class="form-grid-2">
+                <div class="admin-form-group">
+                  <label for="setting-bank-name">Tên Ngân Hàng:</label>
+                  <input type="text" id="setting-bank-name" placeholder="MBBank (Quân Đội)" required>
+                </div>
+
+                <div class="admin-form-group">
+                  <label for="setting-bank-code">Mã Ngân Hàng (VietQR Code):</label>
+                  <select id="setting-bank-code" required>
+                    <option value="MB">MBBank (MB)</option>
+                    <option value="VCB">Vietcombank (VCB)</option>
+                    <option value="TCB">Techcombank (TCB)</option>
+                    <option value="VPB">VPBank (VPB)</option>
+                    <option value="TPB">TPBank (TPB)</option>
+                    <option value="BIDV">BIDV (BIDV)</option>
+                    <option value="VBA">Agribank (VBA)</option>
+                    <option value="ACB">ACB (ACB)</option>
+                    <option value="STB">Sacombank (STB)</option>
+                    <option value="MSB">MSB (MSB)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="admin-form-group">
+                  <label for="setting-account-num">Số Tài Khoản Ngân Hàng: *</label>
+                  <input type="text" id="setting-account-num" placeholder="2456987654" required>
+                </div>
+
+                <div class="admin-form-group">
+                  <label for="setting-account-name">Tên Chủ Tài Khoản (Không dấu): *</label>
+                  <input type="text" id="setting-account-name" placeholder="PHAN QUOC LOC" required>
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="setting-prefix">Tiền Tố Nội Dung Chuyển Khoản:</label>
+                <input type="text" id="setting-prefix" placeholder="EBPE" required>
+                <span style="font-size:0.75rem; color:var(--text-muted);">Khách sẽ chuyển khoản với nội dung: <strong>EBPE + Mã đơn</strong></span>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="admin-form-group">
+                  <label for="setting-hotline">Số Hotline / Zalo Hỗ Trợ:</label>
+                  <input type="text" id="setting-hotline" placeholder="0333.399.956">
+                </div>
+
+                <div class="admin-form-group">
+                  <label for="setting-email">Email Hỗ Trợ Shop:</label>
+                  <input type="email" id="setting-email" placeholder="thinhloclinh@gmail.com">
+                </div>
+              </div>
+
+              <!-- Tự động hóa SePay & EmailJS -->
+              <div style="margin-top: 24px; padding-top: 20px; border-top: 1.5px dashed var(--admin-border);">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                  <span style="font-size:1.3rem;">🤖</span>
+                  <h4 style="font-size:0.95rem; font-weight:700; color:var(--text-main);">Tự Động Hóa 100% (Bắt Tiền MBBank & Gửi Gmail)</h4>
+                </div>
+
+                <!-- 1. SePay API Token -->
+                <div class="admin-form-group">
+                  <label for="setting-sepay-token">
+                    1. Mã API Token SePay.vn (Tự động nhận diện tiền vào MBBank 2456987654):
+                  </label>
+                  <input type="password" id="setting-sepay-token" placeholder="Dán API Token từ my.sepay.vn (để trống nếu chưa kích hoạt)">
+                  <span style="font-size:0.75rem; color:var(--text-muted);">
+                    Khi điền Token, khi khách chuyển tiền thành công vào MBBank, web sẽ <strong>tự động nhận diện trong 2 giây</strong> mà không cần khách bấm xác nhận thủ công.
+                  </span>
+                </div>
+
+                <!-- 2. EmailJS Config -->
+                <div style="background:#F9FAFB; padding:16px; border-radius:8px; border:1px solid var(--admin-border); margin-top:14px;">
+                  <div style="font-weight:700; font-size:0.86rem; margin-bottom:10px; color:var(--primary);">
+                    2. Tự Động Gửi Ebook Vào Gmail Của Khách (EmailJS.com):
+                  </div>
+
+                  <div class="form-grid-2">
+                    <div class="admin-form-group">
+                      <label for="setting-emailjs-service">Service ID (EmailJS):</label>
+                      <input type="text" id="setting-emailjs-service" placeholder="Ví dụ: service_ebookpe">
+                    </div>
+                    <div class="admin-form-group">
+                      <label for="setting-emailjs-template">Template ID (EmailJS):</label>
+                      <input type="text" id="setting-emailjs-template" placeholder="Ví dụ: template_ebookpe">
+                    </div>
+                  </div>
+
+                  <div class="admin-form-group">
+                    <label for="setting-emailjs-public">Public Key (EmailJS User ID):</label>
+                    <input type="text" id="setting-emailjs-public" placeholder="Ví dụ: user_xxxxxxxx">
+                  </div>
+
+                  <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-top:10px;">
+                    <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; cursor:pointer;">
+                      <input type="checkbox" id="setting-auto-email" style="width:16px; height:16px;">
+                      <span>Kích hoạt tự động gửi Gmail khi đơn hàng thanh toán thành công</span>
+                    </label>
+
+                    <button type="button" id="btn-test-email" class="btn-admin-primary" style="background:#4B5563; font-size:0.78rem; padding:6px 12px;">
+                      🧪 Gửi Thử 1 Email Tới thinhloclinh@gmail.com
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn-admin-primary" style="padding:12px 24px; margin-top:16px;">
+                💾 Lưu Thay Đổi Cài Đặt
+              </button>
+            </form>
+          </div>
+
+          <!-- Xem trước mã QR & Sao lưu dữ liệu -->
+          <div style="display:flex; flex-direction:column; gap:24px;">
+            <div class="admin-panel" style="text-align:center;">
+              <h3 class="panel-title" style="margin-bottom:12px;">📱 Xem Trước Mã VietQR</h3>
+              <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:12px;">
+                Mã QR thực tế khách hàng sẽ nhìn thấy khi thanh toán
+              </div>
+              <img id="admin-qr-preview-img" src="" alt="VietQR Preview" style="width:180px; height:180px; border:1px solid var(--admin-border); border-radius:8px; margin: 0 auto 12px; display:block;">
+              <div style="font-size:0.8rem; font-weight:700; color:var(--primary);">Hệ thống VietQR tự động</div>
+            </div>
+
+            <!-- Quản trị sao lưu dữ liệu -->
+            <div class="admin-panel">
+              <h3 class="panel-title" style="margin-bottom:12px;">💾 Sao Lưu & Dữ Liệu</h3>
+              <p style="font-size:0.8rem; color:var(--text-sub); margin-bottom:16px;">
+                Xuất toàn bộ kho ebook và danh sách đơn hàng về máy tính để sao lưu dự phòng.
+              </p>
+
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <button class="btn-admin-primary" id="btn-export-backup" style="background:#1E293B; justify-content:center;">
+                  📥 Tải Về File Sao Lưu (Export JSON)
+                </button>
+
+                <button class="btn-admin-primary" id="btn-import-backup" style="background:#3B82F6; justify-content:center;">
+                  📤 Phục Hồi Dữ Liệu (Import JSON)
+                </button>
+                <input type="file" id="input-import-backup" accept=".json" style="display:none;">
+
+                <button class="btn-admin-primary" id="btn-reset-default" style="background:#EF4444; justify-content:center; margin-top:8px;">
+                  ⚠️ Khôi Phục Dữ Liệu Gốc EbookPe
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ==========================================================================
+       MODAL: THÊM / CHỈNH SỬA EBOOK
+       ========================================================================== -->
+  <div class="admin-modal-overlay" id="admin-book-modal">
+    <div class="admin-modal-box">
+      <div class="admin-modal-head">
+        <h3 class="panel-title" id="admin-book-modal-title">Thêm Ebook Mới</h3>
+        <button class="admin-modal-close" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+      </div>
+
+      <div class="admin-modal-body">
+        <form id="admin-book-form">
+          <div class="form-grid-2">
+            <!-- Cột trái: Thông tin cơ bản -->
+            <div>
+              <div class="admin-form-group">
+                <label for="book-title">Tên Cuốn Ebook: *</label>
+                <input type="text" id="book-title" placeholder="Ví dụ: Khởi Nghiệp Không Lối Mòn" required>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="book-subtitle">Phụ Đề / Slogan Ngắn:</label>
+                <input type="text" id="book-subtitle" placeholder="Ví dụ: Solo Business 100 Triệu/Tháng">
+              </div>
+
+              <div class="admin-form-group">
+                <label for="book-author">Tác Giả / Đội Ngũ Biên Soạn:</label>
+                <input type="text" id="book-author" placeholder="Ví dụ: Hoàng Nam & EbookPe">
+              </div>
+
+              <div class="form-grid-2">
+                <div class="admin-form-group">
+                  <label for="book-category">Danh Mục: *</label>
+                  <select id="book-category">
+                    <option value="khoi-nghiep">🚀 Khởi nghiệp</option>
+                    <option value="kinh-doanh">💼 Kinh doanh</option>
+                    <option value="mindset">🧠 Mindset</option>
+                    <option value="cong-nghe">💻 Công nghệ & AI</option>
+                    <option value="tai-chinh">💰 Tài chính</option>
+                    <option value="marketing">📈 Marketing & Sales</option>
+                    <option value="freelance">⚡ Solo Business</option>
+                  </select>
+                </div>
+
+                <div class="admin-form-group">
+                  <label for="book-badge">Nhãn Nổi Bật (Badge):</label>
+                  <input type="text" id="book-badge" placeholder="Bestseller / Hot / Mới">
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="admin-form-group">
+                  <label for="book-price">Giá Bán (VNĐ): *</label>
+                  <input type="number" id="book-price" placeholder="199000" required>
+                </div>
+
+                <div class="admin-form-group">
+                  <label for="book-price-old">Giá Gốc Chưa Giảm (VNĐ):</label>
+                  <input type="number" id="book-price-old" placeholder="499000">
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="admin-form-group">
+                  <label for="book-pages">Số Trang:</label>
+                  <input type="number" id="book-pages" value="180">
+                </div>
+
+                <div class="admin-form-group">
+                  <label for="book-format">Định Dạng:</label>
+                  <select id="book-format">
+                    <option value="PDF">PDF Bản Quyền</option>
+                    <option value="PDF + EPUB">PDF + EPUB</option>
+                    <option value="PDF + Template">PDF + Template Kèm Theo</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="book-status">Trạng Thái Hiển Thị:</label>
+                <select id="book-status">
+                  <option value="active">Đang Bán Trên Web</option>
+                  <option value="hidden">Tạm Ẩn (Nháp)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Cột phải: Bìa sách & Live Preview -->
+            <div>
+              <div class="admin-form-group">
+                <label>🎨 Thiết Kế Bìa Sách:</label>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:6px;">
+                  Chọn mẫu màu sắc có sẵn HOẶC tải ảnh bìa riêng từ máy:
+                </div>
+                
+                <!-- Bìa Preset -->
+                <div class="cover-options-wrap">
+                  <button type="button" class="cover-preset-btn cover-1 selected" data-cover="cover-1" title="Xanh rừng"></button>
+                  <button type="button" class="cover-preset-btn cover-2" data-cover="cover-2" title="Xanh navy"></button>
+                  <button type="button" class="cover-preset-btn cover-3" data-cover="cover-3" title="Nâu đất"></button>
+                  <button type="button" class="cover-preset-btn cover-4" data-cover="cover-4" title="Tím huyền bí"></button>
+                  <button type="button" class="cover-preset-btn cover-5" data-cover="cover-5" title="Hổ phách"></button>
+                  <button type="button" class="cover-preset-btn cover-6" data-cover="cover-6" title="Xanh ngọc"></button>
+                  <button type="button" class="cover-preset-btn cover-7" data-cover="cover-7" title="Đỏ ruby"></button>
+                  <button type="button" class="cover-preset-btn cover-8" data-cover="cover-8" title="Xanh dương"></button>
+                </div>
+
+                <!-- Upload ảnh bìa riêng -->
+                <div style="margin-top:12px;">
+                  <label for="book-cover-file" style="font-size:0.8rem; font-weight:600; cursor:pointer; color:var(--primary); display:inline-flex; align-items:center; gap:6px;">
+                    📁 Hoặc tải ảnh bìa từ máy tính (JPG/PNG)
+                  </label>
+                  <input type="file" id="book-cover-file" accept="image/*" style="display:block; font-size:0.8rem; margin-top:4px;">
+                </div>
+              </div>
+
+              <!-- Khung xem trước bìa -->
+              <div style="text-align:center; margin-top:10px;">
+                <div style="font-size:0.75rem; font-weight:600; color:var(--text-muted); margin-bottom:4px;">Xem trước bìa hiển thị:</div>
+                <div id="admin-cover-preview" class="cover-preview-card cover-1">
+                  <!-- Live Preview Content -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mô tả và Nội dung -->
+          <div class="admin-form-group">
+            <label for="book-short-desc">Tóm Tắt Ngắn (1-2 câu hiển thị trên thẻ sách): *</label>
+            <input type="text" id="book-short-desc" placeholder="Ví dụ: Từ ý tưởng thô sơ đến 100 khách hàng đầu tiên trong 30 ngày..." required>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="book-full-desc">Giới Thiệu Chi Tiết & Những Gì Sẽ Học Được:</label>
+            <textarea id="book-full-desc" rows="4" placeholder="Viết chi tiết các lợi ích, case study, nội dung người đọc sẽ nhận được..."></textarea>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="book-toc">Mục Lục Các Chương (Mỗi chương ghi trên một dòng):</label>
+            <textarea id="book-toc" rows="4" placeholder="Chương 1: Phá bỏ ảo tưởng về khởi nghiệp tiền tỷ&#10;Chương 2: Framework tìm kiếm 10 vấn đề nhức nhối...&#10;Chương 3: Tạo giải pháp không thể chối từ trong 48 giờ"></textarea>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="book-sample">Trích Đoạn Đọc Thử Chương 1 (Hiển thị cho khách đọc trước khi mua):</label>
+            <textarea id="book-sample" rows="4" placeholder="Nhập một đoạn nội dung hay nhất ở chương 1 để thuyết phục khách hàng..."></textarea>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="book-download-url">Link File Tải Ebook (Google Drive / Direct URL):</label>
+            <input type="text" id="book-download-url" placeholder="https://drive.google.com/file/d/.../view?usp=sharing">
+          </div>
+
+          <div class="admin-modal-foot">
+            <button type="button" class="btn-back-store" style="background:#E5E7EB; color:#374151;" data-close-admin-modal>
+              Hủy Bỏ
+            </button>
+            <button type="submit" class="btn-admin-primary">
+              💾 Lưu Ebook Ngay
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+      <!-- ==========================================
+           TAB: SECURITY (OWASP)
+           ========================================== -->
+      <section class="admin-tab-content" id="tab-content-security">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:900px;">
+          
+          <!-- Change Password Card -->
+          <div class="stat-card" style="flex-direction:column;align-items:stretch;padding:28px;gap:0;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+              <span style="font-size:28px;">ðŸ”</span>
+              <div>
+                <div style="font-weight:700;font-size:17px;color:var(--text-dark);">Äá»•i Máº­t Kháº©u Admin</div>
+                <div style="font-size:13px;color:var(--text-muted);">Báº£o máº­t OWASP A07 Â· Tá»‘i thiá»ƒu 8 kÃ½ tá»±</div>
+              </div>
+            </div>
+            <form id="form-change-password" novalidate autocomplete="off">
+              <div class="admin-form-group">
+                <label>Máº­t kháº©u hiá»‡n táº¡i:</label>
+                <input type="password" id="pw-current" placeholder="Nháº­p máº­t kháº©u hiá»‡n táº¡i" maxlength="128">
+              </div>
+              <div class="admin-form-group">
+                <label>Máº­t kháº©u má»›i:</label>
+                <input type="password" id="pw-new" placeholder="Tá»‘i thiá»ƒu 8 kÃ½ tá»±, cÃ³ chá»¯ hoa, sá»‘" maxlength="128">
+              </div>
+              <div class="admin-form-group">
+                <label>XÃ¡c nháº­n máº­t kháº©u má»›i:</label>
+                <input type="password" id="pw-confirm" placeholder="Nháº­p láº¡i máº­t kháº©u má»›i" maxlength="128">
+              </div>
+              <div id="pw-msg" style="font-size:13px;padding:10px 12px;border-radius:8px;display:none;margin-bottom:12px;"></div>
+              <button type="submit" class="btn-admin-primary" style="width:100%;">ðŸ”‘ Cáº­p Nháº­t Máº­t Kháº©u</button>
+            </form>
+          </div>
+
+          <!-- Session Info + Security Status -->
+          <div style="display:flex;flex-direction:column;gap:20px;">
+            <!-- Session Card -->
+            <div class="stat-card" style="flex-direction:column;align-items:stretch;padding:24px;gap:0;">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                <span style="font-size:24px;">ðŸ›¡ï¸</span>
+                <div style="font-weight:700;font-size:16px;">PhiÃªn ÄÄƒng Nháº­p</div>
+              </div>
+              <div id="session-detail" style="font-size:13px;color:var(--text-muted);line-height:2;"></div>
+              <button id="btn-logout-security" class="btn-admin-primary" style="margin-top:16px;background:linear-gradient(135deg,#d63031,#e17055);box-shadow:0 4px 16px rgba(214,48,49,0.3);">
+                ðŸšª ÄÄƒng Xuáº¥t An ToÃ n
+              </button>
+            </div>
+
+            <!-- OWASP Status -->
+            <div class="stat-card" style="flex-direction:column;align-items:stretch;padding:24px;gap:0;">
+              <div style="font-weight:700;font-size:15px;margin-bottom:14px;">âœ… OWASP Top 10 Status</div>
+              <div id="owasp-status" style="font-size:12px;line-height:2.2;color:var(--text-muted);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audit Log Table -->
+        <div style="margin-top:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <h2 style="font-size:17px;font-weight:700;color:var(--text-dark);">ðŸ“‹ Nháº­t KÃ½ Báº£o Máº­t (Audit Log)</h2>
+            <button id="btn-clear-logs" style="padding:8px 16px;background:#fee2e2;border:none;border-radius:8px;color:#dc2626;font-size:13px;font-weight:600;cursor:pointer;">ðŸ—‘ XÃ³a Logs</button>
+          </div>
+          <div style="overflow-x:auto;border-radius:12px;border:1px solid var(--border);">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+              <thead>
+                <tr style="background:var(--sidebar-bg);color:var(--text-muted);">
+                  <th style="padding:12px 16px;text-align:left;font-weight:600;">Thá»i Gian</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:600;">HÃ nh Äá»™ng</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:600;">Má»©c Äá»™</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:600;">Chi Tiáº¿t</th>
+                </tr>
+              </thead>
+              <tbody id="audit-log-tbody" style="background:#fff;">
+                <tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted);">ChÆ°a cÃ³ nháº­t kÃ½ báº£o máº­t nÃ o.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

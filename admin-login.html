@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- [A05] Security Meta Headers -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <title>Đăng Nhập Quản Trị — EbookPe</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #6C5CE7;
+      --primary-light: #a29bfe;
+      --accent: #fd79a8;
+      --gold: #fdcb6e;
+      --green: #00b894;
+      --red: #d63031;
+      --bg-dark: #0d0d1a;
+      --card-bg: rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.1);
+      --text-main: #f1f1f8;
+      --text-muted: rgba(241,241,248,0.6);
+    }
+
+    body {
+      font-family: 'Be Vietnam Pro', sans-serif;
+      min-height: 100vh;
+      background: var(--bg-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bg-animated {
+      position: fixed; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse at 20% 20%, rgba(108,92,231,0.4) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 80%, rgba(253,121,168,0.3) 0%, transparent 60%),
+                  #0d0d1a;
+    }
+
+    .particles {
+      position: fixed; inset: 0; z-index: 0; overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--primary-light);
+      opacity: 0.12;
+      animation: floatUp linear infinite;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      20%  { opacity: 0.12; }
+      80%  { opacity: 0.08; }
+      100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
+
+    .login-wrapper {
+      position: relative; z-index: 10;
+      width: 100%; max-width: 460px;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: rgba(17,17,40,0.85);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px 40px 40px;
+      backdrop-filter: blur(30px) saturate(180%);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(108,92,231,0.2) inset;
+      animation: cardIn 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .logo-icon {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin-bottom: 16px;
+      box-shadow: 0 12px 40px rgba(108,92,231,0.5);
+      animation: logoGlow 3s ease-in-out infinite alternate;
+    }
+    @keyframes logoGlow {
+      from { box-shadow: 0 12px 40px rgba(108,92,231,0.4); }
+      to   { box-shadow: 0 12px 60px rgba(253,121,168,0.6); }
+    }
+    .logo-name { font-size: 26px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
+    .logo-name span { color: var(--primary-light); }
+    .logo-sub { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 28px;
+    }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .divider-text { font-size: 12px; font-weight: 600; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+
+    .form-group { margin-bottom: 20px; position: relative; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+    .input-wrapper { position: relative; }
+    .input-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 17px; pointer-events: none; z-index: 1; }
+    .form-input {
+      width: 100%;
+      padding: 14px 48px 14px 48px;
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--text-main);
+      font-family: 'Be Vietnam Pro', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.25s;
+      outline: none;
+    }
+    .form-input::placeholder { color: rgba(255,255,255,0.3); }
+    .form-input:focus { border-color: var(--primary-light); background: rgba(108,92,231,0.1); box-shadow: 0 0 0 4px rgba(108,92,231,0.15); }
+
+    .toggle-pw {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--text-muted); font-size: 17px; padding: 4px;
+      transition: color 0.2s; z-index: 1;
+    }
+    .toggle-pw:hover { color: var(--text-main); }
+
+    .form-alert {
+      padding: 12px 14px; border-radius: 10px; font-size: 13px; font-weight: 500;
+      display: none; margin-bottom: 20px; align-items: center; gap: 10px;
+    }
+    .form-alert.visible { display: flex; }
+    .form-alert.error-alert { background: rgba(214,48,49,0.12); border: 1px solid rgba(214,48,49,0.3); color: #ff7675; }
+    .form-alert.lock-alert  { background: rgba(253,203,110,0.12); border: 1px solid rgba(253,203,110,0.3); color: var(--gold); }
+    .form-alert.info-alert  { background: rgba(0,184,148,0.12); border: 1px solid rgba(0,184,148,0.3); color: #55efc4; }
+
+    .btn-login {
+      width: 100%; padding: 15px;
+      background: linear-gradient(135deg, var(--primary) 0%, #8e44ad 100%);
+      border: none; border-radius: 12px; color: #fff;
+      font-family: 'Be Vietnam Pro', sans-serif; font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
+      box-shadow: 0 8px 30px rgba(108,92,231,0.4); margin-top: 8px;
+    }
+    .btn-login:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(108,92,231,0.55); }
+    .btn-login:active { transform: translateY(0); }
+    .btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-login .spinner {
+      display: none; width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.4); border-top-color: white;
+      border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto;
+    }
+    .btn-login.loading .btn-text { display: none; }
+    .btn-login.loading .spinner { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #lockout-timer {
+      display: none; text-align: center; font-size: 13px;
+      color: var(--gold); margin-top: 12px; font-weight: 600;
+    }
+
+    .login-footer { text-align: center; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .login-footer a { color: var(--primary-light); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; }
+    .login-footer a:hover { color: var(--accent); }
+    .copyright { font-size: 12px; color: var(--text-muted); margin-top: 10px; }
+    .security-badge {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      font-size: 12px; color: var(--green); opacity: 0.75; margin-top: 16px;
+    }
+    .security-dot {
+      width: 7px; height: 7px; background: var(--green);
+      border-radius: 50%; animation: dot-pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes dot-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    @media (max-width: 480px) {
+      .login-card { padding: 36px 24px 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animated"></div>
+  <div class="particles" id="particles"></div>
+
+  <div class="login-wrapper">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="logo-icon">📚</div>
+        <div class="logo-name">Ebook<span>Pe</span></div>
+        <div class="logo-sub">Khu vực dành riêng cho Quản trị viên</div>
+      </div>
+
+      <div class="divider"><span class="divider-text">Đăng nhập tài khoản</span></div>
+
+      <!-- Alerts -->
+      <div class="form-alert error-alert" id="alert-error">
+        <span>🔒</span><span id="alert-error-msg"></span>
+      </div>
+      <div class="form-alert lock-alert" id="alert-lock">
+        <span>⏳</span><span id="alert-lock-msg"></span>
+      </div>
+      <div class="form-alert info-alert" id="alert-info">
+        <span>✅</span><span id="alert-info-msg"></span>
+      </div>
+
+      <!-- Form -->
+      <form id="login-form" autocomplete="off" novalidate>
+        <input type="hidden" id="csrf-token" name="csrf_token">
+
+        <div class="form-group">
+          <label for="inp-username" class="form-label">Tên đăng nhập hoặc Email</label>
+          <div class="input-wrapper">
+            <span class="input-icon">👤</span>
+            <input type="text" id="inp-username" class="form-input"
+              placeholder="admin hoặc email@domain.com"
+              autocomplete="username" maxlength="100" spellcheck="false" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="inp-password" class="form-label">Mật khẩu</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔑</span>
+            <input type="password" id="inp-password" class="form-input"
+              placeholder="Nhập mật khẩu của bạn"
+              autocomplete="current-password" maxlength="128" required>
+            <button type="button" class="toggle-pw" id="toggle-pw" aria-label="Hiển thị mật khẩu">👁</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-login" id="btn-login">
+          <span class="btn-text">🔐 &nbsp;Đăng Nhập Ngay</span>
+          <div class="spinner"></div>
+        </button>
+      </form>
+
+      <div id="lockout-timer"></div>
+
+      <div class="login-footer">
+        <a href="index.html">← Quay lại Trang Chủ</a>
+        <div class="copyright">© 2026 EbookPe</div>
+        <div class="security-badge">
+          <div class="security-dot"></div>
+          SHA-256 Encrypted · Phiên hoạt động 2 giờ
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/security.js"></script>
+  <script>
+    'use strict';
+
+    // Generate particles
+    (function() {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 18; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 6 + 3;
+        p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;` +
+          `animation-duration:${Math.random()*15+10}s;animation-delay:${Math.random()*10}s;` +
+          `background:${Math.random()>0.5?'#a29bfe':'#fd79a8'};`;
+        container.appendChild(p);
+      }
+    })();
+
+    const $ = id => document.getElementById(id);
+    let lockoutInterval = null;
+
+    function showAlert(type, msg) {
+      ['error','lock','info'].forEach(t => $('alert-'+t).classList.remove('visible'));
+      if (!type || !msg) return;
+      $('alert-'+type+'-msg') && ($('alert-'+type+'-msg').textContent = msg);
+      $('alert-'+type).classList.add('visible');
+    }
+
+    function setLoading(v) {
+      const btn = $('btn-login');
+      btn.classList.toggle('loading', v);
+      btn.disabled = v;
+    }
+
+    function startLockoutCountdown(seconds) {
+      clearInterval(lockoutInterval);
+      const timer = $('lockout-timer');
+      timer.style.display = 'block';
+      $('btn-login').disabled = true;
+      let rem = seconds;
+      const tick = () => {
+        if (rem <= 0) {
+          clearInterval(lockoutInterval);
+          timer.style.display = 'none';
+          $('btn-login').disabled = false;
+          showAlert(null);
+          return;
+        }
+        timer.textContent = 'Hệ thống khóa tạm thời. Thử lại sau ' + rem + 's';
+        rem--;
+      };
+      tick();
+      lockoutInterval = setInterval(tick, 1000);
+    }
+
+    // Redirect if already logged in
+    if (typeof AdminAuth !== 'undefined' && AdminAuth.isAuthenticated()) {
+      window.location.replace('admin.html');
+    }
+
+    // Generate CSRF token [A01]
+    const csrfToken = Security.generateSecureToken(16);
+    $('csrf-token').value = csrfToken;
+    sessionStorage.setItem('ebookpe_csrf_v1', csrfToken);
+
+    // Toggle password visibility
+    $('toggle-pw').addEventListener('click', function() {
+      const inp = $('inp-password');
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      this.textContent = inp.type === 'password' ? '👁' : '🙈';
+    });
+
+    // Form submit
+    $('login-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      // CSRF validation [A01]
+      if ($('csrf-token').value !== sessionStorage.getItem('ebookpe_csrf_v1')) {
+        showAlert('error', 'Yêu cầu không hợp lệ. Vui lòng tải lại trang!');
+        return;
+      }
+
+      const username = $('inp-username').value.trim();
+      const password = $('inp-password').value;
+
+      if (!username || !password) {
+        showAlert('error', 'Vui lòng nhập đầy đủ Tên đăng nhập và Mật khẩu!');
+        return;
+      }
+
+      // Rate limit check [A04]
+      const rateCheck = Security.checkRateLimit('admin_login', 5, 60000);
+      if (!rateCheck.allowed) {
+        showAlert('lock', rateCheck.message);
+        startLockoutCountdown(rateCheck.remainingSeconds);
+        return;
+      }
+
+      setLoading(true);
+      showAlert(null);
+
+      // Anti-timing attack delay
+      await new Promise(r => setTimeout(r, 400 + Math.random() * 300));
+
+      const result = await AdminAuth.login(username, password);
+      setLoading(false);
+
+      if (result.success) {
+        showAlert('info', 'Đăng nhập thành công! Đang chuyển hướng...');
+        $('btn-login').style.background = 'linear-gradient(135deg,#00b894 0%,#00cec9 100%)';
+        setTimeout(() => window.location.replace('admin.html'), 800);
+      } else {
+        const check2 = Security.checkRateLimit('admin_login', 5, 60000);
+        if (!check2.allowed) {
+          showAlert('lock', check2.message);
+          startLockoutCountdown(check2.remainingSeconds);
+        } else {
+          showAlert('error', result.message);
+          const card = document.querySelector('.login-card');
+          card.style.transition = 'transform 0.4s cubic-bezier(0.36,0.07,0.19,0.97)';
+          card.style.transform = 'translateX(-8px)';
+          setTimeout(() => { card.style.transform = 'translateX(0)'; }, 200);
+          $('inp-password').value = '';
+          $('inp-password').focus();
+        }
+      }
+    });
+
+    // Idle timeout: 10 phút không đăng nhập thì về trang chủ [A05]
+    let idleTimer = setTimeout(() => window.location.replace('index.html'), 600000);
+    ['click','keydown','mousemove'].forEach(ev => {
+      document.addEventListener(ev, () => {
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => window.location.replace('index.html'), 600000);
+      }, { passive: true });
+    });
+  </script>
+</body>
+</html>
