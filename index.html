@@ -6,10 +6,10 @@
   <title>EbookPe — Nền Tảng Ebook Thực Chiến & Bản Quyền Số #1 Việt Nam</title>
   <meta name="description" content="EbookPe cung cấp kho ebook thực chiến về Kinh doanh, Khởi nghiệp, Mindset, AI và Tài chính cá nhân. Giá chỉ từ 69k, nhận link tải PDF tự động ngay sau thanh toán.">
   
-  <!-- Google Fonts -->
+  <!-- Google Fonts (Inter & Plus Jakarta Sans - Dễ nhìn, phổ thông, hiện đại) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
@@ -55,49 +55,74 @@
   <!-- ==========================================
        HERO SECTION
        ========================================== -->
-  <section class="hero">
-    <div class="hero-inner">
-      <div>
-        <div class="hero-badge">✦ Nền tảng Ebook thực chiến #1 Việt Nam</div>
-        <h1>Kiến thức <em>thực chiến</em> thay đổi con đường bạn đi</h1>
-        <p class="hero-sub">
-          Hàng trăm Ebook đúc kết từ kinh nghiệm thương trường thực tế: Kinh doanh, Khởi nghiệp, Mindset và Đòn bẩy AI. Tải PDF về máy, đọc offline mãi mãi.
-        </p>
-        
-        <div class="hero-actions">
-          <a href="#ebooks" class="btn-primary">
-            🚀 Khám phá kho Ebook
-          </a>
-          <a href="#combo" class="btn-ghost">
-            ⚡ Xem Combo giảm đến 65%
-          </a>
-        </div>
+  <!-- ==========================================
+       HERO SECTION (CLEAN & CENTERED)
+       ========================================== -->
+  <section class="hero hero-centered">
+    <!-- Floating Subtle Decorative Badges -->
+    <div class="hero-float-elem float-1" title="Kiếm tiền">💰</div>
+    <div class="hero-float-elem float-2" title="Tăng trưởng">🚀</div>
+    <div class="hero-float-elem float-3" title="Giá trị thực">💎</div>
+    <div class="hero-float-elem float-4" title="Ý tưởng">💡</div>
 
-        <div class="hero-highlights">
-          <span>✓ <strong>Nhận sách 60s</strong> qua Email</span>
-          <span>✓ <strong>Hoàn tiền 30 ngày</strong></span>
-          <span>✓ <strong>Đọc mọi thiết bị</strong></span>
+    <div class="hero-inner-centered">
+      <!-- Eyebrow Pill -->
+      <div class="hero-pill-badge">
+        <span class="sparkle-icon">✨</span>
+        <span>Kiến thức thực chiến · Giao sách tức thì trong 3 giây</span>
+      </div>
+
+      <!-- Main Title with Gradient -->
+      <h1 class="hero-title-main">
+        Ebook<span class="gradient-text">Pe</span>
+      </h1>
+
+      <p class="hero-sub-text">
+        Đầu tư cho kiến thức mỗi ngày với hàng trăm Ebook chất lượng cao về <strong>Kinh doanh</strong>, <strong>Khởi nghiệp</strong>, <strong>Kiếm tiền Online</strong>, <strong>Phát triển bản thân</strong> và <strong>Công nghệ AI</strong>...
+      </p>
+
+      <!-- Clean Highlight Feature Badge -->
+      <div class="hero-sub-feature">
+        <span>✨ Kiến thức chất lượng, Chi phí phù hợp · Tự động gửi link Google Drive & Gmail</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="hero-actions-centered">
+        <a href="#ebooks" class="btn-hero-primary">
+          🚀 Khám phá Ebook ngay <span class="arrow">→</span>
+        </a>
+        <a href="#combo" class="btn-hero-secondary">
+          ⚡ Xem Combo Tiết Kiệm
+        </a>
+      </div>
+
+      <!-- Live Buyer Social Proof Ticker (Kept and styled clean!) -->
+      <div class="hero-live-buyer-bar" id="showcase-live-toast">
+        <span class="live-buyer-pulse"></span>
+        <span class="live-buyer-icon">🔔</span>
+        <div class="live-buyer-text">
+          <span id="live-toast-user"><strong>Quốc Bảo (Hà Nội)</strong> vừa sở hữu Ebook Khởi Nghiệp Không Lối Mòn</span>
+          <span class="live-buyer-time">• Vừa xong</span>
         </div>
       </div>
 
-      <!-- 3D Book Stack Visual -->
-      <div class="book-stack-wrap">
-        <div class="book-stack">
-          <div class="book-item-3d" onclick="window.viewBookDetail('ebk-01')">
-            <div class="book-tag">Khởi Nghiệp</div>
-            <div class="book-name">Khởi Nghiệp Không Lối Mòn</div>
-            <div class="book-price-tag">199.000đ</div>
-          </div>
-          <div class="book-item-3d" onclick="window.viewBookDetail('ebk-02')">
-            <div class="book-tag">Solo Business</div>
-            <div class="book-name">20 Ngách Freelance Ít Cạnh Tranh</div>
-            <div class="book-price-tag">269.000đ</div>
-          </div>
-          <div class="book-item-3d" onclick="window.viewBookDetail('ebk-03')">
-            <div class="book-tag">Công Nghệ AI</div>
-            <div class="book-name">Kiếm Tiền Với AI 30 Ngày</div>
-            <div class="book-price-tag">199.000đ</div>
-          </div>
+      <!-- 4 Minimalist Trust Points -->
+      <div class="hero-trust-row">
+        <div class="trust-item">
+          <span class="check-icon">✓</span>
+          <span><strong>Mọi thiết bị</strong> (PDF / EPUB)</span>
+        </div>
+        <div class="trust-item">
+          <span class="check-icon">✓</span>
+          <span><strong>Cập nhật trọn đời</strong></span>
+        </div>
+        <div class="trust-item">
+          <span class="check-icon">✓</span>
+          <span><strong>Thực chiến 100%</strong></span>
+        </div>
+        <div class="trust-item">
+          <span class="check-icon">✓</span>
+          <span><strong>Bảo hành 30 ngày</strong></span>
         </div>
       </div>
     </div>
@@ -200,8 +225,8 @@
        ========================================== -->
   <div class="how-bg" id="how-it-works">
     <div class="how-inner">
-      <div class="section-eye" style="background:rgba(64,145,108,0.25); color:#74C69D;">Quy trình tự động 100%</div>
-      <h2 class="section-title" style="color:#FFF; margin-top:14px;">Chỉ 3 bước đơn giản để có Ebook trong tay</h2>
+      <div class="section-eye">Quy trình tự động 100%</div>
+      <h2 class="section-title" style="margin-top:14px;">Chỉ 3 bước đơn giản để có Ebook trong tay</h2>
       
       <div class="steps-row">
         <div class="step">
@@ -424,7 +449,6 @@
         <div class="footer-contact-info">
           <div>📞 Hotline/Zalo: <strong>0333.399.956</strong></div>
           <div>✉️ Email: <strong>thinhloclinh@gmail.com</strong></div>
-          <div>📍 Văn phòng: Tầng 6, Tòa nhà Tri Thức, Hà Nội</div>
         </div>
       </div>
 
@@ -671,8 +695,8 @@
                 </div>
               </div>
 
-              <button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:14px; font-size:1rem; margin-top:8px;">
-                ✅ Tôi đã quét mã chuyển khoản thành công
+              <button type="submit" id="btn-submit-checkout" class="btn-primary" style="width:100%; justify-content:center; padding:14px; font-size:0.95rem; margin-top:8px;">
+                🔄 Tôi đã quét mã — Kiểm tra thanh toán ngay
               </button>
             </form>
           </div>

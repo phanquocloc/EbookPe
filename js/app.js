@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSettingsSync();
     initFaqAccordion();
     setupHeaderScroll();
+    startLiveToastTicker();
   }
 
   // Lắng nghe thay đổi từ trang Admin (Real-time BroadcastChannel)
@@ -78,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   function renderCategories() {
     if (!catStrip) return;
-    const books = EbookDB.getBooks().filter(b => b.status === 'active');
+    const books = EbookDB.getBooks().filter(b => !b.status || b.status === 'active');
     
     // Đếm số lượng sách theo từng danh mục
     const counts = { all: books.length };
@@ -97,9 +98,9 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     }).join('');
 
-    catStrip.querySelectorAll('.cat-btn').forEach(btn => {
+    catStrip?.querySelectorAll?.('.cat-btn')?.forEach(btn => {
       btn.addEventListener('click', () => {
-        catStrip.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        catStrip?.querySelectorAll?.('.cat-btn')?.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         state.selectedCategory = btn.dataset.category;
         renderBooks();
@@ -107,31 +108,105 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Cho phép filter danh mục từ các link ngoài hoặc từ Hero showcase
+  window.filterByCategory = function(catId) {
+    state.selectedCategory = catId;
+    const catStrip = document.getElementById('category-strip');
+    if (catStrip) {
+      catStrip.querySelectorAll('.cat-btn').forEach(b => {
+        if (b.dataset.category === catId) {
+          b.classList.add('active');
+        } else {
+          b.classList.remove('active');
+        }
+      });
+    }
+    renderBooks();
+    const ebooksSection = document.getElementById('ebooks');
+    if (ebooksSection) {
+      ebooksSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  function startLiveToastTicker() {
+    const toastEl = document.getElementById('showcase-live-toast');
+    const userEl = document.getElementById('live-toast-user');
+    if (!toastEl || !userEl) return;
+
+    const fakePurchases = [
+      'Quốc Bảo (Hà Nội) vừa sở hữu Ebook Khởi Nghiệp Không Lối Mòn',
+      'Thanh Mai (TP.HCM) vừa mua Combo Siêu Tiết Kiệm',
+      'Hoàng Nam (Đà Nẵng) vừa tải Ebook 20 Ngách Freelance',
+      'Đức Anh (Hải Phòng) vừa sở hữu Trọn Bộ Kinh Doanh Thực Chiến',
+      'Thu Thảo (Cần Thơ) vừa mua Ebook Đòn Bẩy AI',
+      'Văn Hùng (Bình Dương) vừa nhận link tải Ebook Mindset Solo'
+    ];
+    let idx = 0;
+
+    setInterval(() => {
+      idx = (idx + 1) % fakePurchases.length;
+      toastEl.style.opacity = '0';
+      toastEl.style.transform = 'translateY(4px)';
+      setTimeout(() => {
+        const item = fakePurchases[idx];
+        const parts = item.split(' vừa ');
+        userEl.innerHTML = `<strong>${parts[0]}</strong> vừa ${parts[1]}`;
+        toastEl.style.opacity = '1';
+        toastEl.style.transform = 'translateY(0)';
+      }, 300);
+    }, 5500);
+  }
+
   // ==========================================
   // RENDER COMBOS (#combo)
   // ==========================================
   function renderCombos() {
     if (!comboContainer) return;
-    const combos = EbookDB.getCombos();
+    const allCombos = EbookDB.getCombos();
+    const combos = allCombos.filter(c => !c.status || c.status === 'active');
+
+    if (combos.length === 0) {
+      comboContainer.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align:center; padding: 40px 20px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 16px;">
+          <div style="font-size: 2.5rem; margin-bottom: 12px;">⚡</div>
+          <h3 style="font-size: 1.2rem; color: #fff; margin-bottom: 8px;">Chưa có gói Combo nào</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Các gói combo siêu tiết kiệm sẽ được cập nhật sớm nhất.</p>
+        </div>
+      `;
+      return;
+    }
 
     comboContainer.innerHTML = combos.map(combo => {
-      const isVip = combo.id === 'combo-vip';
+      const isVip = combo.id === 'combo-vip' || combo.popular;
+      
+      // Lấy danh sách tên sách thực tế từ bookIds hoặc bookNames
+      let bookListNames = [];
+      if (combo.bookIds && Array.isArray(combo.bookIds) && combo.bookIds.length > 0) {
+        const booksInCombo = combo.bookIds.map(id => EbookDB.getBookById(id)).filter(Boolean);
+        if (booksInCombo.length > 0) {
+          bookListNames = booksInCombo.map(b => b.title);
+        }
+      }
+      if (bookListNames.length === 0 && combo.bookNames && Array.isArray(combo.bookNames)) {
+        bookListNames = combo.bookNames;
+      }
+
       return `
         <div class="combo-card ${combo.popular ? 'popular' : ''}">
           <span class="combo-badge-top ${isVip ? 'vip' : ''}">${combo.tag || 'Ưu đãi'}</span>
           <h3 class="combo-title">${combo.title}</h3>
-          <div class="combo-sub">${combo.subTitle}</div>
-          <p class="combo-desc">${combo.desc}</p>
+          <div class="combo-sub">${combo.subTitle || ''}</div>
+          <p class="combo-desc">${combo.desc || ''}</p>
           
           <ul class="combo-books-list">
-            ${combo.bookNames.map(name => `<li><span>${name}</span></li>`).join('')}
+            ${bookListNames.map(name => `<li><span>${name}</span></li>`).join('')}
           </ul>
 
           <div class="combo-pricing">
             <span class="combo-price-now">${EbookDB.formatVND(combo.price)}</span>
-            <span class="combo-price-old">${EbookDB.formatVND(combo.originalPrice)}</span>
+            ${combo.originalPrice ? `<span class="combo-price-old">${EbookDB.formatVND(combo.originalPrice)}</span>` : ''}
             <br>
-            <span class="combo-savings-tag">${combo.discountBadge}</span>
+            ${combo.discountBadge ? `<span class="combo-savings-tag">${combo.discountBadge}</span>` : ''}
           </div>
 
           <button class="btn-combo-buy" data-combo-id="${combo.id}">
@@ -164,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderBooks() {
     if (!booksContainer) return;
 
-    let books = EbookDB.getBooks().filter(b => b.status === 'active');
+    let books = EbookDB.getBooks().filter(b => !b.status || b.status === 'active');
 
     // Lọc theo Category
     if (state.selectedCategory !== 'all') {
@@ -739,6 +814,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Quản lý kiểm tra tiền vào ngân hàng tự động (SePay.vn)
   let sepayPollTimer = null;
+
+  async function fetchSepayTransactionsList(apiKey, limit = 20) {
+    // 1. Thử gọi qua proxy nội bộ
+    try {
+      const proxyRes = await fetch(`/api/sepay-proxy?limit=${limit}`, {
+        headers: { 'Authorization': `Bearer ${apiKey}` }
+      });
+      if (proxyRes.ok) {
+        return await proxyRes.json();
+      }
+    } catch (e) {}
+
+    // 2. Thử gọi trực tiếp SePay API
+    const directRes = await fetch(`https://my.sepay.vn/userapi/transactions/list?limit=${limit}`, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!directRes.ok) {
+      throw new Error(`Mã phản hồi từ SePay: ${directRes.status}`);
+    }
+    return await directRes.json();
+  }
+
   function startSePayPolling(orderId, expectedAmount) {
     stopSePayPolling();
     const settings = EbookDB.getSettings();
@@ -746,7 +846,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!settings.sepayApiKey) {
       if (statusDiv) {
-        statusDiv.innerHTML = '⚡ Quét mã xong, bấm nút bên phải để nhận link tải sách ngay';
+        statusDiv.innerHTML = '<span style="color:var(--text-muted);">⚡ Quét mã QR bằng App ngân hàng để chuyển khoản</span>';
       }
       return;
     }
@@ -755,40 +855,34 @@ document.addEventListener('DOMContentLoaded', () => {
       statusDiv.innerHTML = '<span style="color:#2563EB;">🟢 <strong>Auto-Banking:</strong> Đang chờ nhận diện chuyển khoản từ MBBank...</span>';
     }
 
-    // Polling kiểm tra danh sách giao dịch SePay mỗi 3.5 giây
+    // Polling kiểm tra danh sách giao dịch SePay mỗi 3 giây
     sepayPollTimer = setInterval(async () => {
       try {
-        const response = await fetch('https://my.sepay.vn/userapi/transactions/list', {
-          headers: {
-            'Authorization': `Bearer ${settings.sepayApiKey}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        if (response.ok) {
-          const resData = await response.json();
-          if (resData && resData.transactions && Array.isArray(resData.transactions)) {
-            const matched = resData.transactions.find(tx => {
-              const content = (tx.transaction_content || '').toUpperCase();
-              const amountIn = parseFloat(tx.amount_in || 0);
-              return content.includes(orderId.toUpperCase()) && amountIn >= expectedAmount;
-            });
+        const resData = await fetchSepayTransactionsList(settings.sepayApiKey, 20);
+        if (resData && resData.transactions && Array.isArray(resData.transactions)) {
+          const cleanOrderId = orderId.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+          const matched = resData.transactions.find(tx => {
+            const content = (tx.transaction_content || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            const code = (tx.code || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            const amountIn = parseFloat(tx.amount_in || 0);
+            return (content.includes(cleanOrderId) || code.includes(cleanOrderId)) && amountIn >= expectedAmount;
+          });
 
-            if (matched) {
-              stopSePayPolling();
-              if (statusDiv) {
-                statusDiv.innerHTML = '✅ <strong>Đã nhận được tiền vào MBBank!</strong> Đang mở link tải sách...';
-              }
-              showToast('✅ MBBank nhận được tiền thành công! Đang chuyển hướng...', 'success');
-              setTimeout(() => {
-                handleCheckoutSubmit(true);
-              }, 1200);
+          if (matched) {
+            stopSePayPolling();
+            if (statusDiv) {
+              statusDiv.innerHTML = '✅ <strong>Đã nhận được tiền vào MBBank!</strong> Đang mở link tải sách...';
             }
+            showToast('✅ MBBank nhận được tiền thành công! Đang chuyển hướng...', 'success');
+            setTimeout(() => {
+              handleCheckoutSubmit(true);
+            }, 1200);
           }
         }
       } catch (err) {
         // Tiếp tục kiểm tra
       }
-    }, 3500);
+    }, 3000);
   }
 
   function stopSePayPolling() {
@@ -808,19 +902,55 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       if (typeof emailjs !== 'undefined') {
         emailjs.init(settings.emailjsPublicKey);
-        const bookList = order.items.map(i => i.title).join(', ');
+        const bookList = order.items.map(i => {
+          if (i.isCombo) {
+            const combo = EbookDB.getComboById(i.id);
+            if (combo && combo.bookIds && combo.bookIds.length > 0) {
+              const booksInCombo = combo.bookIds.map(bId => EbookDB.getBookById(bId)).filter(Boolean);
+              return `[Gói Combo] ${i.title} (${booksInCombo.map(b => b.title).join(' + ')})`;
+            }
+          }
+          return i.title;
+        }).join(', ');
+
         const downloadList = order.items.map(i => {
+          if (i.isCombo) {
+            const combo = EbookDB.getComboById(i.id);
+            if (combo) {
+              const lines = [`📦 [GÓI COMBO] ${combo.title}:`];
+              if (combo.downloadUrl && combo.downloadUrl.trim() !== '' && combo.downloadUrl !== '#') {
+                lines.push(`  🔗 Link trọn bộ: ${combo.downloadUrl}`);
+              }
+              if (combo.bookIds && Array.isArray(combo.bookIds)) {
+                combo.bookIds.forEach(bId => {
+                  const b = EbookDB.getBookById(bId);
+                  if (b) {
+                    lines.push(`  • ${b.title}: ${b.downloadUrl || 'Đã đính kèm trên hệ thống'}`);
+                  }
+                });
+              }
+              return lines.join('\n');
+            }
+          }
           const book = EbookDB.getBookById(i.id);
           return `• ${i.title}: ${book?.downloadUrl || 'Đã đính kèm trên hệ thống EbookPe'}`;
-        }).join('\n');
+        }).join('\n\n');
 
         await emailjs.send(settings.emailjsServiceId, settings.emailjsTemplateId, {
           to_name: order.customerName,
+          user_name: order.customerName,
+          name: order.customerName,
           to_email: order.customerEmail,
+          user_email: order.customerEmail,
+          email: order.customerEmail,
+          recipient: order.customerEmail,
+          recipient_email: order.customerEmail,
+          reply_to: order.customerEmail,
           order_id: order.orderId,
           total_amount: EbookDB.formatVND(order.totalAmount),
           book_titles: bookList,
           download_links: downloadList,
+          message: downloadList,
           support_hotline: settings.hotline || '0333.399.956'
         });
         showToast(`Đã tự động gửi email chứa link Ebook tới ${order.customerEmail}!`, 'success');
@@ -832,10 +962,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function handleCheckoutSubmit(isAutoTriggered = false) {
+  async function handleCheckoutSubmit(isAutoTriggered = false) {
     const nameInput = document.getElementById('checkout-name');
     const emailInput = document.getElementById('checkout-email');
     const phoneInput = document.getElementById('checkout-phone');
+    const submitBtn = document.querySelector('#checkout-form button[type="submit"]');
 
     let customerName = nameInput?.value.trim();
     let customerEmail = emailInput?.value.trim();
@@ -856,6 +987,65 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!emailRegex.test(customerEmail)) {
       showToast('Địa chỉ email không hợp lệ, vui lòng kiểm tra lại!', 'error');
       return;
+    }
+
+    const settings = EbookDB.getSettings();
+    const orderId = state.currentTempOrderId;
+    const expectedAmount = state.currentTotalAmount;
+
+    // BẮT BUỘC: CHỐNG GIAN LẬN THANH TOÁN
+    // 1. Nếu chưa cấu hình SePay API Token trong Admin -> Báo lỗi, không cho tải sách bừa bãi!
+    if (!isAutoTriggered && !settings.sepayApiKey) {
+      showToast(`⚠️ Chưa cấu hình SePay API Token trong Admin. Vui lòng vào trang Quản trị -> Cài đặt VietQR -> Dán SePay Token để hệ thống tự động nhận diện tiền MBBank!`, 'error');
+      return;
+    }
+
+    // 2. Nếu đã có SePay API Token và khách bấm tay: Bắt buộc đối soát thực tế với MBBank
+    if (!isAutoTriggered && settings.sepayApiKey) {
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '⏳ Đang kiểm tra tiền vào MBBank...';
+      }
+
+      try {
+        const resData = await fetchSepayTransactionsList(settings.sepayApiKey, 30);
+        let isPaymentReceived = false;
+
+        if (resData && resData.transactions && Array.isArray(resData.transactions)) {
+          const cleanOrderId = orderId.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+          const matched = resData.transactions.find(tx => {
+            const content = (tx.transaction_content || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            const code = (tx.code || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            const amountIn = parseFloat(tx.amount_in || 0);
+            return (content.includes(cleanOrderId) || code.includes(cleanOrderId)) && amountIn >= expectedAmount;
+          });
+
+          if (matched) {
+            isPaymentReceived = true;
+          }
+        }
+
+        if (!isPaymentReceived) {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '🔄 Tôi đã quét mã — Kiểm tra thanh toán ngay';
+          }
+          showToast(`⚠️ Hệ thống chưa nhận được tiền cho mã đơn "${orderId}" trong tài khoản MBBank. Vui lòng quét mã QR chuyển khoản và đợi 3-10 giây để ngân hàng xử lý!`, 'error');
+          return;
+        }
+      } catch (err) {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '🔄 Tôi đã quét mã — Kiểm tra thanh toán ngay';
+        }
+        showToast(`⚠️ Lỗi đối soát SePay (${err.message}). Vui lòng kiểm tra lại Token SePay trong Cài Đặt Admin!`, 'error');
+        return;
+      }
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '🔄 Tôi đã quét mã — Kiểm tra thanh toán ngay';
     }
 
     // Dừng polling SePay nếu đang chạy
@@ -883,7 +1073,6 @@ document.addEventListener('DOMContentLoaded', () => {
     closeAllModals();
     openSuccessModal(order);
   }
-  }
 
   // ==========================================
   // PAYMENT SUCCESS & DIRECT DOWNLOAD MODAL
@@ -898,7 +1087,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (downloadList) {
       downloadList.innerHTML = order.items.map(item => {
-        // Tìm link tải sách từ DB
+        if (item.isCombo) {
+          const combo = EbookDB.getComboById(item.id);
+          if (combo) {
+            let booksInCombo = [];
+            if (combo.bookIds && Array.isArray(combo.bookIds)) {
+              booksInCombo = combo.bookIds.map(bId => EbookDB.getBookById(bId)).filter(Boolean);
+            }
+            
+            return `
+              <div style="padding:14px; background:#f0fdf4; border-radius:10px; border:1.5px solid #86efac; margin-bottom:12px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; border-bottom:1px dashed #bbf7d0; padding-bottom:8px;">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:1.4rem;">📦</span>
+                    <div>
+                      <strong style="font-size:0.95rem; color:#166534;">${combo.title} (Trọn Gói Combo)</strong>
+                      <div style="font-size:0.75rem; color:#15803d;">Gói gồm ${booksInCombo.length} cuốn Ebook bản quyền</div>
+                    </div>
+                  </div>
+                  ${combo.downloadUrl && combo.downloadUrl.trim() !== '' && combo.downloadUrl !== '#' ? `
+                    <button class="btn-primary" style="padding:6px 14px; font-size:0.8rem; background:#16a34a;" onclick="window.downloadBookFile('${combo.title} - Trọn Bộ', '${combo.downloadUrl}')">
+                      ⬇️ Tải Trọn Bộ File
+                    </button>
+                  ` : ''}
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+                  ${booksInCombo.map(b => `
+                    <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:#fff; border-radius:6px; border:1px solid #e2e8f0;">
+                      <span style="font-size:0.85rem; font-weight:600; color:#334155;">📖 ${b.title}</span>
+                      <button class="btn-primary" style="padding:5px 12px; font-size:0.78rem;" onclick="window.downloadBookFile('${b.title}', '${b.downloadUrl || '#'}')">
+                        ⬇️ Tải PDF
+                      </button>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+          }
+        }
+
+        // Single book
         const book = EbookDB.getBookById(item.id);
         const downloadUrl = book?.downloadUrl || '#';
         return `
@@ -1069,6 +1297,51 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
       if (!isOpen) item.classList.add('open');
     };
+  }
+
+  // ==========================================
+  // LIVE BUYER TICKER (SOCIAL PROOF)
+  // ==========================================
+  function startLiveToastTicker() {
+    const toastUserEl = document.getElementById('live-toast-user');
+    const toastWrap = document.getElementById('showcase-live-toast');
+    if (!toastUserEl || !toastWrap) return;
+
+    const defaultBuyers = [
+      { name: 'Quốc Bảo (Hà Nội)', book: 'Khởi Nghiệp Không Lối Mòn' },
+      { name: 'Minh Thư (TP.HCM)', book: 'Bí Mật Tư Duy Triệu Phú' },
+      { name: 'Hoàng Long (Đà Nẵng)', book: 'Combo Vua Bán Hàng Thực Chiến' },
+      { name: 'Thanh Nga (Cần Thơ)', book: 'Nghệ Thuật Đàm Phán Giá Trị Cao' },
+      { name: 'Đức Trí (Hải Phòng)', book: 'Ứng Dụng AI Tự Động Hóa Doanh Nghiệp' },
+      { name: 'Khánh Linh (Nha Trang)', book: 'Quản Trị Tài Chính Cá Nhân 4.0' }
+    ];
+
+    let currentIndex = 0;
+
+    setInterval(() => {
+      // Lấy danh sách đơn hàng thực tế nếu có trong DB, hoặc dùng defaultBuyers
+      const realOrders = typeof EbookDB !== 'undefined' ? EbookDB.getOrders().filter(o => o.status === 'completed') : [];
+      let buyerText = '';
+
+      if (realOrders.length > 0 && Math.random() > 0.4) {
+        const randomOrder = realOrders[Math.floor(Math.random() * realOrders.length)];
+        const bookName = randomOrder.items?.[0]?.title || 'Ebook Bản Quyền';
+        const safeName = randomOrder.customerName || 'Độc giả';
+        buyerText = `<strong>${safeName}</strong> vừa sở hữu <em>${bookName}</em>`;
+      } else {
+        currentIndex = (currentIndex + 1) % defaultBuyers.length;
+        const buyer = defaultBuyers[currentIndex];
+        buyerText = `<strong>${buyer.name}</strong> vừa sở hữu <em>${buyer.book}</em>`;
+      }
+
+      toastWrap.style.opacity = '0';
+      toastWrap.style.transform = 'translateY(4px)';
+      setTimeout(() => {
+        toastUserEl.innerHTML = buyerText;
+        toastWrap.style.opacity = '1';
+        toastWrap.style.transform = 'translateY(0)';
+      }, 300);
+    }, 4500);
   }
 
   window.showToast = showToast;

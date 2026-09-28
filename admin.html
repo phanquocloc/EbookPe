@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
@@ -9,13 +9,12 @@
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
   <title>EbookPe — Trung Tâm Quản Trị Cửa Hàng & Ebook</title>
   
-  <!-- Fonts -->
+  <!-- Fonts (Inter & Plus Jakarta Sans) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- CSS -->
-  <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/admin.css">
 
   <!-- [OWASP A01] Auth Guard - Must load BEFORE body renders -->
@@ -53,6 +52,12 @@
         <button class="sidebar-link" data-tab="books">
           <span class="menu-icon">📚</span>
           <span>Kho Ebook</span>
+        </button>
+      </li>
+      <li>
+        <button class="sidebar-link" data-tab="combos">
+          <span class="menu-icon">⚡</span>
+          <span>Gói Combo</span>
         </button>
       </li>
       <li>
@@ -189,9 +194,14 @@
         <div class="admin-panel">
           <div class="table-toolbar">
             <input type="text" id="admin-search-book-input" class="search-admin-input" placeholder="🔍 Tìm kiếm theo tên ebook, tác giả, danh mục...">
-            <button class="btn-admin-primary" onclick="document.getElementById('btn-top-add-book').click()">
-              ➕ Đăng Bán Cuốn Mới
-            </button>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-admin-primary" style="background:#EF4444;" id="btn-clear-all-books">
+                🗑️ Xóa Tất Cả Ebook
+              </button>
+              <button class="btn-admin-primary" onclick="document.getElementById('btn-top-add-book').click()">
+                ➕ Đăng Bán Cuốn Mới
+              </button>
+            </div>
           </div>
 
           <div class="table-responsive">
@@ -216,12 +226,53 @@
       </section>
 
       <!-- ==========================================
+           TAB: COMBOS MANAGEMENT
+           ========================================== -->
+      <section class="admin-tab-content" id="tab-content-combos">
+        <div class="admin-panel">
+          <div class="table-toolbar">
+            <input type="text" id="admin-search-combo-input" class="search-admin-input" placeholder="🔍 Tìm kiếm gói combo theo tên...">
+            <div style="display:flex; gap:10px;">
+              <button class="btn-admin-primary" id="btn-add-combo-modal" style="background:#10B981;">
+                ➕ Tạo Gói Combo Mới
+              </button>
+              <button class="btn-admin-primary" style="background:#EF4444; font-size:0.82rem;" id="btn-clear-all-combos">
+                🗑️ Xóa Tất Cả Combo
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Tên Gói Combo & Nhãn</th>
+                  <th>Danh Sách Ebook Trong Combo</th>
+                  <th>Giá Bán Combo</th>
+                  <th>Giá Gốc (Tổng lẻ)</th>
+                  <th>Tiết Kiệm</th>
+                  <th>Trạng Thái</th>
+                  <th style="text-align:right;">Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody id="admin-combos-table-body">
+                <!-- Render từ JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
            TAB 3: ORDERS MANAGEMENT
            ========================================== -->
       <section class="admin-tab-content" id="tab-content-orders">
         <div class="admin-panel">
           <div class="table-toolbar">
             <input type="text" id="admin-search-order-input" class="search-admin-input" placeholder="🔍 Tìm theo mã đơn (#EBPE...), email, tên khách, SĐT...">
+            <button class="btn-admin-primary" style="background:#EF4444; font-size:0.82rem;" id="btn-clear-all-orders">
+              🗑️ Xóa Hết Đơn Hàng (Reset Doanh Thu 0đ)
+            </button>
           </div>
 
           <div class="table-responsive">
@@ -325,9 +376,14 @@
                   <label for="setting-sepay-token">
                     1. Mã API Token SePay.vn (Tự động nhận diện tiền vào MBBank 2456987654):
                   </label>
-                  <input type="password" id="setting-sepay-token" placeholder="Dán API Token từ my.sepay.vn (để trống nếu chưa kích hoạt)">
-                  <span style="font-size:0.75rem; color:var(--text-muted);">
-                    Khi điền Token, khi khách chuyển tiền thành công vào MBBank, web sẽ <strong>tự động nhận diện trong 2 giây</strong> mà không cần khách bấm xác nhận thủ công.
+                  <div style="display:flex; gap:10px; align-items:center;">
+                    <input type="password" id="setting-sepay-token" placeholder="Dán API Token từ my.sepay.vn (để trống nếu chưa kích hoạt)" style="flex:1;">
+                    <button type="button" id="btn-test-sepay" class="btn-admin-primary" style="background:#2563EB; font-size:0.78rem; padding:8px 14px; white-space:nowrap;">
+                      🧪 Test Kết Nối SePay
+                    </button>
+                  </div>
+                  <span style="font-size:0.75rem; color:var(--text-muted); display:block; margin-top:4px;">
+                    ⚡ <strong>Bảo vệ chống gian lận:</strong> Khi điền Token, hệ thống sẽ <strong>bắt buộc kiểm tra tiền thực tế</strong> trong MBBank. Khách hàng không thể bấm nhận sách nếu chưa chuyển tiền thực tế!
                   </span>
                 </div>
 
@@ -405,6 +461,85 @@
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           TAB: SECURITY (OWASP)
+           ========================================== -->
+      <section class="admin-tab-content" id="tab-content-security">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:900px;">
+          
+          <!-- Change Password Card -->
+          <div class="stat-card" style="flex-direction:column;align-items:stretch;padding:28px;gap:0;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+              <span style="font-size:28px;">🔑</span>
+              <div>
+                <div style="font-weight:700;font-size:17px;color:var(--text-dark);">Đổi Mật Khẩu Admin</div>
+                <div style="font-size:13px;color:var(--text-muted);">Bảo mật OWASP A07 · Tối thiểu 8 ký tự</div>
+              </div>
+            </div>
+            <form id="form-change-password" novalidate autocomplete="off">
+              <div class="admin-form-group">
+                <label>Mật khẩu hiện tại:</label>
+                <input type="password" id="pw-current" placeholder="Nhập mật khẩu hiện tại" maxlength="128">
+              </div>
+              <div class="admin-form-group">
+                <label>Mật khẩu mới:</label>
+                <input type="password" id="pw-new" placeholder="Tối thiểu 8 ký tự, có chữ hoa, số" maxlength="128">
+              </div>
+              <div class="admin-form-group">
+                <label>Xác nhận mật khẩu mới:</label>
+                <input type="password" id="pw-confirm" placeholder="Nhập lại mật khẩu mới" maxlength="128">
+              </div>
+              <div id="pw-msg" style="font-size:13px;padding:10px 12px;border-radius:8px;display:none;margin-bottom:12px;"></div>
+              <button type="submit" class="btn-admin-primary" style="width:100%;">🔑 Cập Nhật Mật Khẩu</button>
+            </form>
+          </div>
+
+          <!-- Session Info + Security Status -->
+          <div style="display:flex;flex-direction:column;gap:20px;">
+            <!-- Session Card -->
+            <div class="stat-card" style="flex-direction:column;align-items:stretch;padding:24px;gap:0;">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                <span style="font-size:24px;">🛡️</span>
+                <div style="font-weight:700;font-size:16px;">Phiên Đăng Nhập</div>
+              </div>
+              <div id="session-detail" style="font-size:13px;color:var(--text-muted);line-height:2;"></div>
+              <button id="btn-logout-security" class="btn-admin-primary" style="margin-top:16px;background:linear-gradient(135deg,#d63031,#e17055);box-shadow:0 4px 16px rgba(214,48,49,0.3);">
+                🚪 Đăng Xuất An Toàn
+              </button>
+            </div>
+
+            <!-- OWASP Status -->
+            <div class="stat-card" style="flex-direction:column;align-items:stretch;padding:24px;gap:0;">
+              <div style="font-weight:700;font-size:15px;margin-bottom:14px;">✅ OWASP Top 10 Status</div>
+              <div id="owasp-status" style="font-size:12px;line-height:2.2;color:var(--text-muted);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audit Log Table -->
+        <div style="margin-top:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <h2 style="font-size:17px;font-weight:700;color:var(--text-dark);">📋 Nhật Ký Bảo Mật (Audit Log)</h2>
+            <button id="btn-clear-logs" style="padding:8px 16px;background:#fee2e2;border:none;border-radius:8px;color:#dc2626;font-size:13px;font-weight:600;cursor:pointer;">🗑️ Xóa Logs</button>
+          </div>
+          <div style="overflow-x:auto;border-radius:12px;border:1px solid var(--border);">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+              <thead>
+                <tr style="background:var(--sidebar-bg);color:var(--text-muted);">
+                  <th style="padding:12px 16px;text-align:left;font-weight:600;">Thời Gian</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:600;">Hành Động</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:600;">Mức Độ</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:600;">Chi Tiết</th>
+                </tr>
+              </thead>
+              <tbody id="audit-log-tbody" style="background:#fff;">
+                <tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted);">Chưa có nhật ký bảo mật nào.</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
@@ -576,85 +711,114 @@
       </div>
     </div>
   </div>
-      <!-- ==========================================
-           TAB: SECURITY (OWASP)
-           ========================================== -->
-      <section class="admin-tab-content" id="tab-content-security">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:900px;">
-          
-          <!-- Change Password Card -->
-          <div class="stat-card" style="flex-direction:column;align-items:stretch;padding:28px;gap:0;">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
-              <span style="font-size:28px;">ðŸ”</span>
-              <div>
-                <div style="font-weight:700;font-size:17px;color:var(--text-dark);">Äá»•i Máº­t Kháº©u Admin</div>
-                <div style="font-size:13px;color:var(--text-muted);">Báº£o máº­t OWASP A07 Â· Tá»‘i thiá»ƒu 8 kÃ½ tá»±</div>
-              </div>
-            </div>
-            <form id="form-change-password" novalidate autocomplete="off">
-              <div class="admin-form-group">
-                <label>Máº­t kháº©u hiá»‡n táº¡i:</label>
-                <input type="password" id="pw-current" placeholder="Nháº­p máº­t kháº©u hiá»‡n táº¡i" maxlength="128">
-              </div>
-              <div class="admin-form-group">
-                <label>Máº­t kháº©u má»›i:</label>
-                <input type="password" id="pw-new" placeholder="Tá»‘i thiá»ƒu 8 kÃ½ tá»±, cÃ³ chá»¯ hoa, sá»‘" maxlength="128">
-              </div>
-              <div class="admin-form-group">
-                <label>XÃ¡c nháº­n máº­t kháº©u má»›i:</label>
-                <input type="password" id="pw-confirm" placeholder="Nháº­p láº¡i máº­t kháº©u má»›i" maxlength="128">
-              </div>
-              <div id="pw-msg" style="font-size:13px;padding:10px 12px;border-radius:8px;display:none;margin-bottom:12px;"></div>
-              <button type="submit" class="btn-admin-primary" style="width:100%;">ðŸ”‘ Cáº­p Nháº­t Máº­t Kháº©u</button>
-            </form>
-          </div>
 
-          <!-- Session Info + Security Status -->
-          <div style="display:flex;flex-direction:column;gap:20px;">
-            <!-- Session Card -->
-            <div class="stat-card" style="flex-direction:column;align-items:stretch;padding:24px;gap:0;">
-              <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-                <span style="font-size:24px;">ðŸ›¡ï¸</span>
-                <div style="font-weight:700;font-size:16px;">PhiÃªn ÄÄƒng Nháº­p</div>
-              </div>
-              <div id="session-detail" style="font-size:13px;color:var(--text-muted);line-height:2;"></div>
-              <button id="btn-logout-security" class="btn-admin-primary" style="margin-top:16px;background:linear-gradient(135deg,#d63031,#e17055);box-shadow:0 4px 16px rgba(214,48,49,0.3);">
-                ðŸšª ÄÄƒng Xuáº¥t An ToÃ n
-              </button>
+  <!-- ==========================================
+       MODAL: CREATE / EDIT COMBO
+       ========================================== -->
+  <div class="admin-modal-overlay" id="admin-combo-modal">
+    <div class="admin-modal-box" style="max-width: 800px;">
+      <div class="admin-modal-head">
+        <h3 class="panel-title" id="admin-combo-modal-title">⚡ Tạo Gói Combo Ebook Mới</h3>
+        <button type="button" class="admin-modal-close" data-close-admin-combo-modal style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+      </div>
+
+      <div class="admin-modal-body">
+        <form id="admin-combo-form">
+          <input type="hidden" id="combo-id">
+
+          <div class="form-grid-2">
+            <div class="admin-form-group">
+              <label for="combo-title">Tên Gói Combo: *</label>
+              <input type="text" id="combo-title" placeholder="Ví dụ: Combo Khởi Nghiệp Bứt Phá" required>
             </div>
 
-            <!-- OWASP Status -->
-            <div class="stat-card" style="flex-direction:column;align-items:stretch;padding:24px;gap:0;">
-              <div style="font-weight:700;font-size:15px;margin-bottom:14px;">âœ… OWASP Top 10 Status</div>
-              <div id="owasp-status" style="font-size:12px;line-height:2.2;color:var(--text-muted);"></div>
+            <div class="admin-form-group">
+              <label for="combo-tag">Nhãn Nổi Bật (Badge):</label>
+              <input type="text" id="combo-tag" placeholder="Ví dụ: 🔥 SIÊU TIẾT KIỆM hoặc ⚡ BÁN CHẠY NHẤT">
             </div>
           </div>
-        </div>
 
-        <!-- Audit Log Table -->
-        <div style="margin-top:24px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-            <h2 style="font-size:17px;font-weight:700;color:var(--text-dark);">ðŸ“‹ Nháº­t KÃ½ Báº£o Máº­t (Audit Log)</h2>
-            <button id="btn-clear-logs" style="padding:8px 16px;background:#fee2e2;border:none;border-radius:8px;color:#dc2626;font-size:13px;font-weight:600;cursor:pointer;">ðŸ—‘ XÃ³a Logs</button>
+          <div class="admin-form-group">
+            <label for="combo-subtitle">Lời Dẫn Ngắn / Phụ Đề:</label>
+            <input type="text" id="combo-subtitle" placeholder="Ví dụ: Trọn bộ 3 cuốn thực chiến từ con số 0">
           </div>
-          <div style="overflow-x:auto;border-radius:12px;border:1px solid var(--border);">
-            <table style="width:100%;border-collapse:collapse;font-size:13px;">
-              <thead>
-                <tr style="background:var(--sidebar-bg);color:var(--text-muted);">
-                  <th style="padding:12px 16px;text-align:left;font-weight:600;">Thá»i Gian</th>
-                  <th style="padding:12px 16px;text-align:left;font-weight:600;">HÃ nh Äá»™ng</th>
-                  <th style="padding:12px 16px;text-align:left;font-weight:600;">Má»©c Äá»™</th>
-                  <th style="padding:12px 16px;text-align:left;font-weight:600;">Chi Tiáº¿t</th>
-                </tr>
-              </thead>
-              <tbody id="audit-log-tbody" style="background:#fff;">
-                <tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted);">ChÆ°a cÃ³ nháº­t kÃ½ báº£o máº­t nÃ o.</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
 
+          <div class="admin-form-group">
+            <label for="combo-desc">Mô Tả Lợi Ích Của Gói Combo:</label>
+            <textarea id="combo-desc" rows="2" placeholder="Ví dụ: Tiết kiệm tối đa chi phí, trang bị toàn diện tư duy và kỹ năng để tự tin xây dựng kinh doanh..."></textarea>
+          </div>
+
+          <!-- PHẦN QUAN TRỌNG: CHỌN CÁC EBOOK CÓ TRONG COMBO -->
+          <div class="admin-form-group" style="background:#F3F4F6; padding:16px; border-radius:10px; border:1.5px solid var(--admin-border);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <label style="font-weight:700; color:var(--text-main); font-size:0.92rem; margin:0;">
+                📚 Chọn Các Cuốn Ebook Thuộc Gói Combo Này: *
+              </label>
+              <div id="combo-selection-summary" style="font-size:0.82rem; font-weight:700; color:var(--primary); background:#D8F3DC; padding:4px 10px; border-radius:20px;">
+                Đã chọn: 0 cuốn | Tổng lẻ: 0đ
+              </div>
+            </div>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:12px;">
+              💡 Tích chọn các cuốn sách bạn muốn gộp vào combo. Giá gốc sẽ tự động cộng dồn theo các cuốn được chọn.
+            </p>
+
+            <!-- Container danh sách sách để tích chọn -->
+            <div id="combo-books-checkbox-list" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
+              <!-- Render tự động từ JS -->
+            </div>
+          </div>
+
+          <div class="form-grid-3" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:16px; margin-top:16px;">
+            <div class="admin-form-group">
+              <label for="combo-price">Giá Bán Combo (VNĐ): *</label>
+              <input type="number" id="combo-price" placeholder="299000" required>
+            </div>
+
+            <div class="admin-form-group">
+              <label for="combo-original-price">Giá Gốc Hiển Thị (VNĐ):</label>
+              <input type="number" id="combo-original-price" placeholder="598000">
+            </div>
+
+            <div class="admin-form-group">
+              <label for="combo-discount-badge">Nhãn Giảm Giá:</label>
+              <input type="text" id="combo-discount-badge" placeholder="Tiết kiệm 50%">
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="admin-form-group">
+              <label for="combo-download-url">Link Tải Trọn Gói (Google Drive ZIP/Folder - Tùy chọn):</label>
+              <input type="text" id="combo-download-url" placeholder="Để trống nếu muốn hệ thống tự cung cấp link của từng cuốn sách">
+            </div>
+
+            <div class="admin-form-group">
+              <label for="combo-status">Trạng Thái Hiển Thị:</label>
+              <select id="combo-status">
+                <option value="active">Đang Bán Trên Web</option>
+                <option value="hidden">Tạm Ẩn</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="admin-form-group" style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+            <input type="checkbox" id="combo-popular" style="width:18px; height:18px; cursor:pointer;">
+            <label for="combo-popular" style="margin:0; cursor:pointer; font-weight:600; font-size:0.88rem; color:#1e40af;">
+              ⭐ Đánh dấu gói Combo Nổi Bật Nhất (Hiển thị viền highlight & huy hiệu Best Choice)
+            </label>
+          </div>
+
+          <div class="admin-modal-foot" style="margin-top:20px;">
+            <button type="button" class="btn-back-store" style="background:#E5E7EB; color:#374151;" data-close-admin-combo-modal>
+              Hủy Bỏ
+            </button>
+            <button type="submit" class="btn-admin-primary">
+              💾 Lưu Gói Combo
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <!-- Toast Container -->
   <div class="toast-container" id="toast-container"></div>
