@@ -934,7 +934,7 @@
           window.EbookSupabase.fetchBooks(),
           window.EbookSupabase.fetchCombos()
         ]).then(([books, combos]) => {
-          if (books || combos) {
+          if (books !== null || combos !== null) {
             renderCategoryPills();
             renderEbooks();
             renderCombos();

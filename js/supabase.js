@@ -228,6 +228,20 @@
     }
 
     /**
+     * Xóa toàn bộ Sách khỏi Supabase Cloud
+     */
+    static async clearAllBooks() {
+      try {
+        await this.request('books?id=neq.null', {
+          method: 'DELETE'
+        });
+        console.log('[Supabase] Đã xóa sạch toàn bộ sách trên Cloud');
+      } catch (e) {
+        console.warn('[Supabase] Xóa tất cả sách khỏi Cloud:', e.message);
+      }
+    }
+
+    /**
      * Lưu/Cập nhật Combo lên Supabase Cloud
      */
     static async saveCombo(c) {
@@ -269,6 +283,34 @@
         });
       } catch (e) {
         console.warn('[Supabase] Xóa combo khỏi Cloud:', e.message);
+      }
+    }
+
+    /**
+     * Xóa toàn bộ Combo khỏi Supabase Cloud
+     */
+    static async clearAllCombos() {
+      try {
+        await this.request('combos?id=neq.null', {
+          method: 'DELETE'
+        });
+        console.log('[Supabase] Đã xóa sạch toàn bộ combo trên Cloud');
+      } catch (e) {
+        console.warn('[Supabase] Xóa tất cả combo khỏi Cloud:', e.message);
+      }
+    }
+
+    /**
+     * Xóa toàn bộ Đơn hàng khỏi Supabase Cloud
+     */
+    static async clearAllOrders() {
+      try {
+        await this.request('orders?id=neq.null', {
+          method: 'DELETE'
+        });
+        console.log('[Supabase] Đã xóa sạch toàn bộ đơn hàng trên Cloud');
+      } catch (e) {
+        console.warn('[Supabase] Xóa tất cả đơn hàng khỏi Cloud:', e.message);
       }
     }
 

@@ -1579,7 +1579,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-clear-all-books')?.addEventListener('click', async () => {
       const confirmed = await showAdminConfirm({
         title: 'Xóa Toàn Bộ Ebook',
-        message: 'Bạn có chắc chắn muốn xóa toàn bộ sách trong kho không? Trang bán hàng sẽ được làm trống để bạn thêm sách mới.',
+        message: 'Bạn có chắc chắn muốn xóa toàn bộ sách trong kho không? Trang bán hàng và Supabase Cloud sẽ được làm trống để bạn thêm sách mới.',
         confirmText: 'Xóa Sạch Ebook',
         cancelText: 'Hủy bỏ',
         type: 'danger'
@@ -1588,7 +1588,24 @@ document.addEventListener('DOMContentLoaded', () => {
         EbookDB.clearAllBooks();
         renderBooksTable();
         renderDashboard();
-        showAdminToast('Đã xóa toàn bộ ebook khỏi cửa hàng!', 'success');
+        showAdminToast('Đã xóa toàn bộ ebook khỏi cửa hàng & Supabase Cloud!', 'success');
+      }
+    });
+
+    // Xóa tất cả Combo
+    document.getElementById('btn-clear-all-combos')?.addEventListener('click', async () => {
+      const confirmed = await showAdminConfirm({
+        title: 'Xóa Toàn Bộ Gói Combo',
+        message: 'Bạn có chắc chắn muốn xóa toàn bộ gói combo không? Trang bán hàng và Supabase Cloud sẽ được làm trống.',
+        confirmText: 'Xóa Sạch Combo',
+        cancelText: 'Hủy bỏ',
+        type: 'danger'
+      });
+      if (confirmed) {
+        EbookDB.clearAllCombos();
+        renderCombosTable();
+        renderDashboard();
+        showAdminToast('Đã xóa toàn bộ combo khỏi cửa hàng & Supabase Cloud!', 'success');
       }
     });
 

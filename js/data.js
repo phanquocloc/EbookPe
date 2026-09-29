@@ -340,15 +340,11 @@ class EbookDB {
     const REAL_DRIVE_URL = 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing';
     try {
       const data = localStorage.getItem(STORAGE_KEYS.BOOKS);
-      if (!data) {
+      if (data === null) {
         localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(DEFAULT_BOOKS));
         return DEFAULT_BOOKS;
       }
       let parsed = JSON.parse(data);
-      if (Array.isArray(parsed) && parsed.length === 0 && DEFAULT_BOOKS.length > 0) {
-        localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(DEFAULT_BOOKS));
-        return DEFAULT_BOOKS;
-      }
       if (Array.isArray(parsed)) {
         let changed = false;
         parsed = parsed.map(b => {
@@ -422,6 +418,11 @@ class EbookDB {
   static clearAllBooks() {
     localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify([]));
     this.notifyChange('BOOKS_UPDATED', { books: [] });
+
+    // Tự động xóa sạch trên Supabase Cloud
+    if (typeof window !== 'undefined' && window.EbookSupabase && typeof window.EbookSupabase.clearAllBooks === 'function') {
+      window.EbookSupabase.clearAllBooks();
+    }
   }
 
   // --- COMBOS ---
@@ -429,15 +430,11 @@ class EbookDB {
     const REAL_DRIVE_URL = 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing';
     try {
       const data = localStorage.getItem(STORAGE_KEYS.COMBOS);
-      if (!data) {
+      if (data === null) {
         localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(DEFAULT_COMBOS));
         return DEFAULT_COMBOS;
       }
       let parsed = JSON.parse(data);
-      if (Array.isArray(parsed) && parsed.length === 0 && DEFAULT_COMBOS.length > 0) {
-        localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(DEFAULT_COMBOS));
-        return DEFAULT_COMBOS;
-      }
       if (Array.isArray(parsed)) {
         let changed = false;
         parsed = parsed.map(c => {
@@ -508,6 +505,11 @@ class EbookDB {
   static clearAllCombos() {
     localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify([]));
     this.notifyChange('COMBOS_UPDATED', { combos: [] });
+
+    // Tự động xóa sạch trên Supabase Cloud
+    if (typeof window !== 'undefined' && window.EbookSupabase && typeof window.EbookSupabase.clearAllCombos === 'function') {
+      window.EbookSupabase.clearAllCombos();
+    }
   }
 
   // --- ĐƠN HÀNG ---
@@ -577,6 +579,11 @@ class EbookDB {
   static clearAllOrders() {
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify([]));
     this.notifyChange('ORDERS_UPDATED', { orders: [] });
+
+    // Tự động xóa sạch trên Supabase Cloud
+    if (typeof window !== 'undefined' && window.EbookSupabase && typeof window.EbookSupabase.clearAllOrders === 'function') {
+      window.EbookSupabase.clearAllOrders();
+    }
   }
 
   // --- GIỎ HÀNG (CART) ---
