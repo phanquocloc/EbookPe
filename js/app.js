@@ -446,9 +446,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Lối vào quản trị bí mật cho chủ shop (không hiển thị cho khách)
-    // 1. Phím tắt Ctrl + Shift + A
+    // 1. Phím tắt Ctrl + Shift + L (hoặc Ctrl + Shift + A)
     window.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+      const isCmdOrCtrl = e.ctrlKey || e.metaKey;
+      if (isCmdOrCtrl && e.shiftKey && (e.key === 'L' || e.key === 'l' || e.code === 'KeyL' || e.key === 'A' || e.key === 'a' || e.code === 'KeyA')) {
         e.preventDefault();
         window.location.href = 'admin.html';
       }
@@ -897,33 +898,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const combo = EbookDB.getComboById(i.id);
             if (combo) {
               bookTitlesList.push(`[Combo] ${combo.title}`);
-              let comboDlUrl = (combo.downloadUrl || '').trim();
-              if (comboDlUrl.startsWith('drive.google.com')) comboDlUrl = 'https://' + comboDlUrl;
 
-              if (comboDlUrl && comboDlUrl !== '#') {
-                if (!primaryFirstUrl) primaryFirstUrl = comboDlUrl;
-                downloadLines.push(`📦 [Gói Combo] ${combo.title}:\n👉 Link tải trọn bộ Google Drive: ${comboDlUrl}`);
-                htmlLinks.push(`<div><b>📦 ${combo.title} (Trọn bộ):</b><br><a href="${comboDlUrl}" target="_blank" style="display:inline-block;padding:8px 16px;background:#16a34a;color:#fff;text-decoration:none;border-radius:6px;margin:6px 0;font-weight:bold;">⬇️ Mở Google Drive Tải Combo</a></div>`);
-              } else {
-                downloadLines.push(`📦 [Gói Combo] ${combo.title}:`);
-              }
-
+              let booksInCombo = [];
               if (combo.bookIds && Array.isArray(combo.bookIds)) {
-                combo.bookIds.forEach(bId => {
-                  const b = EbookDB.getBookById(bId);
-                  if (b) {
-                    let bUrl = (b.downloadUrl || '').trim();
-                    if (bUrl.startsWith('drive.google.com')) bUrl = 'https://' + bUrl;
-                    if (bUrl && bUrl !== '#') {
-                      if (!primaryFirstUrl) primaryFirstUrl = bUrl;
-                      downloadLines.push(`  • ${b.title}: ${bUrl}`);
-                      htmlLinks.push(`<div style="margin-left:14px;">• ${b.title}: <a href="${bUrl}" target="_blank" style="color:#2563eb;font-weight:bold;">Tải file PDF (${bUrl})</a></div>`);
-                    } else {
-                      downloadLines.push(`  • ${b.title}: (Đã kích hoạt trên hệ thống EbookPe)`);
-                    }
-                  }
-                });
+                booksInCombo = combo.bookIds.map(bId => EbookDB.getBookById(bId)).filter(Boolean);
               }
+              if (booksInCombo.length === 0) {
+                booksInCombo = EbookDB.getBooks().slice(0, 3);
+              }
+
+              const DEFAULT_DRIVE_URL = 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing';
+
+              booksInCombo.forEach(b => {
+                let bUrl = (b.downloadUrl || '').trim();
+                if (bUrl.startsWith('drive.google.com')) bUrl = 'https://' + bUrl;
+                if (!bUrl || bUrl === '#' || bUrl === 'https://drive.google.com') bUrl = DEFAULT_DRIVE_URL;
+                if (!primaryFirstUrl) primaryFirstUrl = bUrl;
+
+                downloadLines.push(`📄 ${b.title}:\n👉 Link tải PDF: ${bUrl}`);
+                htmlLinks.push(`<div><b>📖 ${b.title}:</b><br><a href="${bUrl}" target="_blank" style="display:inline-block;padding:8px 16px;background:#1a73e8;color:#fff;text-decoration:none;border-radius:6px;margin:4px 0;font-weight:bold;">⬇️ Tải Ebook PDF</a><br><small style="color:#64748b;">Link: ${bUrl}</small></div>`);
+              });
             }
           } else {
             const book = EbookDB.getBookById(i.id);
@@ -947,7 +941,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const bookTitlesStr = bookTitlesList.join(', ');
         const downloadLinksStr = downloadLines.join('\n\n');
         const htmlDownloadStr = htmlLinks.join('<br>');
-        const finalPrimaryUrl = primaryFirstUrl || 'https://ebookpe.vn';
+        const finalPrimaryUrl = primaryFirstUrl || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing';
 
         await emailjs.send(settings.emailjsServiceId, settings.emailjsTemplateId, {
           to_name: order.customerName || 'Khách hàng',
@@ -1146,26 +1140,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return `
               <div style="padding:14px; background:#f0fdf4; border-radius:10px; border:1.5px solid #86efac; margin-bottom:14px;">
-                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; border-bottom:1px dashed #bbf7d0; padding-bottom:8px; flex-wrap:wrap; gap:8px;">
-                  <div style="display:flex; align-items:center; gap:8px;">
-                    <span style="font-size:1.4rem;">📦</span>
-                    <div>
-                      <strong style="font-size:0.95rem; color:#166534;">${combo.title} (Trọn Gói Combo)</strong>
-                      <div style="font-size:0.75rem; color:#15803d;">Gói gồm ${booksInCombo.length} cuốn Ebook bản quyền</div>
-                    </div>
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px; border-bottom:1px dashed #bbf7d0; padding-bottom:8px;">
+                  <span style="font-size:1.4rem;">📦</span>
+                  <div>
+                    <strong style="font-size:0.95rem; color:#166534;">${combo.title}</strong>
+                    <div style="font-size:0.75rem; color:#15803d;">Gói gồm ${booksInCombo.length} cuốn Ebook bản quyền (tải riêng từng cuốn bên dưới):</div>
                   </div>
-                  ${comboDl && comboDl !== '#' ? `
-                    <button class="btn-primary" style="padding:7px 16px; font-size:0.82rem; background:#16a34a;" onclick="window.downloadBookFile('${combo.title} - Trọn Bộ', '${comboDl}')">
-                      ⬇️ Mở Google Drive Tải Trọn Bộ
-                    </button>
-                  ` : ''}
                 </div>
-                ${comboDl && comboDl !== '#' ? `
-                  <div style="margin-bottom:8px; font-size:0.78rem;">
-                    👉 <b>Link Google Drive:</b> <a href="${comboDl}" target="_blank" rel="noopener noreferrer" style="color:#15803d; text-decoration:underline; word-break:break-all;">${comboDl}</a>
-                  </div>
-                ` : ''}
-                <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+                <div style="display:flex; flex-direction:column; gap:6px;">
                   ${booksInCombo.map(b => {
                     let bDl = (b.downloadUrl || '').trim();
                     if (bDl.startsWith('drive.google.com')) bDl = 'https://' + bDl;

@@ -45,13 +45,246 @@ const DEFAULT_CATEGORIES = [
   { id: 'freelance', name: '⚡ Solo Business', icon: '⚡' }
 ];
 
-// Danh sách Ebook mặc định (Đã reset sạch để sẵn sàng nhập sách thực tế)
-const DEFAULT_BOOKS = [];
+// Danh sách Ebook mặc định chất lượng cao
+const DEFAULT_BOOKS = [
+  {
+    id: 'ebk-khoi-nghiep-0',
+    title: 'Khởi Nghiệp Tinh Gọn Từ Số 0',
+    subTitle: 'Lộ trình thẩm định ý tưởng & 100 khách hàng đầu tiên',
+    author: 'Trần Minh Tuấn',
+    category: 'khoi-nghiep',
+    categoryName: 'Khởi nghiệp',
+    price: 79000,
+    originalPrice: 189000,
+    badge: 'Khởi nghiệp',
+    pages: 218,
+    format: 'PDF + EPUB',
+    status: 'active',
+    rating: 4.9,
+    reviewsCount: 142,
+    salesCount: 380,
+    shortDesc: 'Lộ trình thẩm định ý tưởng, tìm 100 khách hàng đầu tiên không cần vốn lớn.',
+    fullDesc: 'Cuốn sách hướng dẫn từng bước từ việc xác thực nhu cầu thị trường, xây dựng sản phẩm tối thiểu khả thi (MVP) đến cách tìm kiếm khách hàng trả phí đầu tiên mà không lãng phí tiền bạc.',
+    toc: [
+      'Chương 1: Tư duy xác thực thị trường trước khi bỏ vốn',
+      'Chương 2: Xây dựng sản phẩm tối thiểu khả thi (MVP) trong 7 ngày',
+      'Chương 3: Phễu hút 100 khách hàng đầu tiên qua Organic Content',
+      'Chương 4: Tự động hóa quy trình chốt đơn và bảo toàn dòng tiền'
+    ],
+    sampleExcerpt: 'Đừng hỏi khách hàng họ muốn gì, hãy tạo một giải pháp nhỏ và xem họ có sẵn sàng trả tiền trước không. Đa số mọi người thất bại không phải vì không làm được sản phẩm, mà vì làm ra thứ không ai cần trả tiền để mua.',
+    downloadUrl: 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
+    coverStyle: 'cover-1',
+    coverImage: ''
+  },
+  {
+    id: 'ebk-ai-automation',
+    title: 'Cẩm Nang Ứng Dụng AI & ChatGPT Vào Kinh Doanh Tự Động',
+    subTitle: 'Bộ công thức 500+ Prompt độc quyền',
+    author: 'TechLead VN',
+    category: 'cong-nghe',
+    categoryName: 'Công nghệ & AI',
+    price: 99000,
+    originalPrice: 250000,
+    badge: 'HOT SELLER',
+    pages: 185,
+    format: 'PDF + Prompt Template',
+    status: 'active',
+    rating: 5.0,
+    reviewsCount: 215,
+    salesCount: 650,
+    shortDesc: 'Tạo phễu bán lẻ, kịch bản chốt đơn tự động hóa từ AI với hơn 500+ prompt thực chiến.',
+    fullDesc: 'Hướng dẫn ứng dụng các công cụ AI thế hệ mới (ChatGPT, Claude, Midjourney, Make/Zapier) vào quy trình vận hành kinh doanh tinh gọn, marketing tự động và chăm sóc khách hàng 24/7.',
+    toc: [
+      'Chương 1: Giải mã Prompt Engineering chuẩn cho chủ shop & freelancer',
+      'Chương 2: Tự động hóa quy trình sản xuất content đa kênh bằng AI',
+      'Chương 3: Xây dựng Chatbot tư vấn & chốt đơn thông minh',
+      'Chương 4: Kết nối Make.com + AI để tự động hóa xử lý đơn hàng'
+    ],
+    sampleExcerpt: 'AI sẽ không thay thế bạn, nhưng người biết dùng AI để giải phóng 80% thời gian lặp đi lặp lại chắc chắn sẽ vượt lên dẫn đầu thị trường. Điểm cốt lõi là biết cách ra lệnh (Prompt) chính xác.',
+    downloadUrl: 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
+    coverStyle: 'cover-2',
+    coverImage: ''
+  },
+  {
+    id: 'ebk-solo-business',
+    title: 'Xây Dựng Cỗ Máy Solo Business Triệu View & Doanh Thu Đều Đặn',
+    subTitle: 'Mô hình kinh doanh 1 người với đòn bẩy số',
+    author: 'Hoàng Nam',
+    category: 'freelance',
+    categoryName: 'Solo Business',
+    price: 89000,
+    originalPrice: 210000,
+    badge: 'Solo Business',
+    pages: 240,
+    format: 'PDF + EPUB',
+    status: 'active',
+    rating: 4.9,
+    reviewsCount: 168,
+    salesCount: 420,
+    shortDesc: 'Xây dựng thương hiệu cá nhân, bán sản phẩm số và đóng gói tri thức cá nhân.',
+    fullDesc: 'Bộ khung hoàn chỉnh giúp một cá nhân có thể xây dựng doanh nghiệp 1 người (Solopreneur), tự tạo ra sản phẩm số (Ebook, Khóa học, Template) và bán hàng tự động 24/7.',
+    toc: [
+      'Chương 1: Tìm kiếm thị trường ngách phù hợp với thế mạnh cá nhân',
+      'Chương 2: Chiến lược đóng gói tri thức thành sản phẩm số có thể scale',
+      'Chương 3: Xây dựng hệ thống phễu email marketing tự động hóa',
+      'Chương 4: Quản trị thời gian và năng lượng cho Solopreneur'
+    ],
+    sampleExcerpt: 'Mô hình Solo Business không yêu cầu văn phòng sang trọng hay đội ngũ nhân sự cồng kềnh. Tài sản lớn nhất của bạn là kiến thức được đóng gói chuẩn chỉnh và hệ thống phân phối tự động.',
+    downloadUrl: 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
+    coverStyle: 'cover-3',
+    coverImage: ''
+  },
+  {
+    id: 'ebk-quan-tri-tai-chinh',
+    title: 'Quản Trị Tài Chính Cá Nhân & Chiến Lược Dòng Tiền Tự Do',
+    subTitle: 'Quy tắc 6 chiếc lọ cải tiến & đầu tư an toàn',
+    author: 'Đặng Thu Trang',
+    category: 'tai-chinh',
+    categoryName: 'Tài chính',
+    price: 69000,
+    originalPrice: 159000,
+    badge: 'Tài chính',
+    pages: 196,
+    format: 'PDF + Sheet Tính Toán',
+    status: 'active',
+    rating: 4.8,
+    reviewsCount: 95,
+    salesCount: 310,
+    shortDesc: 'Quy tắc 6 chiếc lọ cải tiến, chiến lược đầu tư chỉ số an toàn và thoát bẫy chi tiêu.',
+    fullDesc: 'Cuốn sách hướng dẫn quản lý tài chính cá nhân thực tế, phương pháp tích lũy quỹ khẩn cấp, phân bổ danh mục đầu tư an toàn và kế hoạch đạt được tự do tài chính bền vững.',
+    toc: [
+      'Chương 1: Tái cấu trúc tư duy về tiền bạc và thói quen chi tiêu',
+      'Chương 2: Hệ thống 6 chiếc lọ tự động hóa qua ứng dụng ngân hàng',
+      'Chương 3: Thiết lập quỹ dự phòng khẩn cấp và bảo vệ dòng tiền',
+      'Chương 4: Nguyên tắc đầu tư tích sản dài hạn cho người bận rộn'
+    ],
+    sampleExcerpt: 'Tự do tài chính không phụ thuộc vào việc bạn kiếm được bao nhiêu tiền mỗi tháng, mà phụ thuộc vào số tiền bạn giữ lại được và cách bạn khiến tiền làm việc thay mình.',
+    downloadUrl: 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
+    coverStyle: 'cover-4',
+    coverImage: ''
+  },
+  {
+    id: 'ebk-content-marketing',
+    title: 'Content Khác Biệt: Nghệ Thuật Thu Hút Triệu Khách Hàng Tự Nhiên',
+    subTitle: 'Bí quyết viết bài chạm đúng cảm xúc và chuyển đổi cao',
+    author: 'Lê Bảo Châu',
+    category: 'marketing',
+    categoryName: 'Marketing & Sales',
+    price: 79000,
+    originalPrice: 179000,
+    badge: 'Bán chạy',
+    pages: 208,
+    format: 'PDF + EPUB',
+    status: 'active',
+    rating: 4.9,
+    reviewsCount: 110,
+    salesCount: 290,
+    shortDesc: 'Phương pháp sáng tạo nội dung thu hút người xem tự nhiên trên Facebook, TikTok và LinkedIn.',
+    fullDesc: 'Cung cấp 30 công thức viết tiêu đề giật tít không phản cảm, kịch bản video ngắn giữ chân người xem và nghệ thuật kể chuyện (Storytelling) biến độc giả thành người mua hàng trung thành.',
+    toc: [
+      'Chương 1: Giải mã thuật toán tâm lý độc giả thời đại chú ý ngắn',
+      'Chương 2: 12 Công thức Headline thôi miên khiến người đọc dừng lướt',
+      'Chương 3: Kỹ thuật Storytelling lồng ghép sản phẩm khéo léo',
+      'Chương 4: Xây dựng lịch nội dung 30 ngày chỉ trong 2 giờ'
+    ],
+    sampleExcerpt: 'Nội dung hay không phải là nội dung dùng từ hoa mỹ, mà là nội dung nói đúng nỗi đau mà khách hàng chưa thể tự gọi tên thành lời.',
+    downloadUrl: 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
+    coverStyle: 'cover-5',
+    coverImage: ''
+  },
+  {
+    id: 'ebk-tam-ly-hoc-ve-tien',
+    title: 'Tâm Lý Học Về Tiền & Quyết Định Đầu Tư Thực Chiến',
+    subTitle: 'Làm chủ cảm xúc, loại bỏ cạm bẫy FOMO tài chính',
+    author: 'Phạm Minh Đức',
+    category: 'mindset',
+    categoryName: 'Mindset',
+    price: 75000,
+    originalPrice: 169000,
+    badge: 'Mindset',
+    pages: 224,
+    format: 'PDF + EPUB',
+    status: 'active',
+    rating: 4.9,
+    reviewsCount: 88,
+    salesCount: 245,
+    shortDesc: 'Hiểu rõ các cạm bẫy tâm lý trong quản lý tài chính và ra quyết định đầu tư thông minh.',
+    fullDesc: 'Khám phá cách não bộ con người phản ứng trước lòng tham và nỗi sợ hãi trong tiền bạc, giúp bạn đưa ra những quyết định tài chính sáng suốt và kiên định.',
+    toc: [
+      'Chương 1: Nguồn gốc các sai lầm kinh điển khi xử lý tiền bạc',
+      'Chương 2: Hiệu ứng FOMO và cách xây dựng kỷ luật đầu tư thép',
+      'Chương 3: Nghệ thuật kiên nhẫn: Đòn bẩy lãi suất kép vô hình',
+      'Chương 4: Định nghĩa lại sự giàu có thực sự'
+    ],
+    sampleExcerpt: 'Kiểm soát tiền bạc tốt ít liên quan đến việc bạn thông minh ra sao, mà liên quan nhiều hơn đến cách bạn hành xử và quản trị cảm xúc khi thị trường biến động.',
+    downloadUrl: 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
+    coverStyle: 'cover-6',
+    coverImage: ''
+  }
+];
 
-// Danh sách Combo tiết kiệm mặc định (Đã reset sạch)
-const DEFAULT_COMBOS = [];
+// Danh sách Combo tiết kiệm mặc định
+const DEFAULT_COMBOS = [
+  {
+    id: 'combo-khoi-nghiep-tinh-gon',
+    title: 'Combo Khởi Nghiệp Tinh Gọn',
+    subTitle: 'Dành cho người mới bắt đầu từ con số 0 cần lộ trình an toàn',
+    tag: 'TIẾT KIỆM 60%',
+    discountBadge: '-60%',
+    price: 179000,
+    originalPrice: 450000,
+    popular: false,
+    status: 'active',
+    bookIds: ['ebk-khoi-nghiep-0', 'ebk-content-marketing', 'ebk-quan-tri-tai-chinh'],
+    bonusList: [
+      'Ebook: Khởi Nghiệp Tinh Gọn Từ Số 0',
+      'Ebook: Content Khác Biệt Thu Hút Triệu View',
+      'Ebook: Quản Trị Tài Chính Cá Nhân & Dòng Tiền',
+      'Bonus Độc Quyền: Notion Business Roadmap Template'
+    ],
+    downloadUrl: 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing'
+  },
+  {
+    id: 'combo-solopreneur-ai-master',
+    title: 'Combo Solo Business & AI Master VIP',
+    subTitle: 'Trọn bộ cẩm nang & đòn bẩy tự động hóa tối tân cho Solopreneur',
+    tag: 'GIẢM 78%',
+    discountBadge: '-78%',
+    price: 249000,
+    originalPrice: 1150000,
+    popular: true,
+    status: 'active',
+    bookIds: ['ebk-ai-automation', 'ebk-solo-business', 'ebk-khoi-nghiep-0', 'ebk-content-marketing', 'ebk-tam-ly-hoc-ve-tien'],
+    bonusList: [
+      'Toàn bộ 5 Ebook chủ lực về AI, Solopreneur & Phễu Bán Hàng',
+      'Kho 500+ Prompt ChatGPT & Claude độc quyền kinh doanh',
+      'Bộ Swipe File Email Marketing 100+ mẫu chuyển đổi cao',
+      'Cập nhật trọn đời khi có phiên bản sách và template mới'
+    ],
+    downloadUrl: 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing'
+  },
+  {
+    id: 'combo-mindset-tai-chinh',
+    title: 'Combo Mindset & Đột Phá Tài Chính',
+    subTitle: 'Làm chủ dòng tiền cá nhân và tư duy đầu tư thực chiến',
+    tag: 'TIẾT KIỆM 58%',
+    discountBadge: '-58%',
+    price: 159000,
+    originalPrice: 380000,
+    popular: false,
+    status: 'active',
+    bookIds: ['ebk-quan-tri-tai-chinh', 'ebk-tam-ly-hoc-ve-tien', 'ebk-khoi-nghiep-0'],
+    bonusList: [
+      'Ebook: Quản Trị Tài Chính Cá Nhân & Chiến Lược Dòng Tiền',
+      'Ebook: Tâm Lý Học Về Tiền & Quyết Định Đầu Tư',
+      'Ebook: Khởi Nghiệp Tinh Gọn Từ Số 0',
+      'Bonus Độc Quyền: File Excel Tự Động Tính Quỹ Tự Do Tài Chính'
+    ],
+    downloadUrl: 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing'
+  }
+];
 
-// Danh sách đơn hàng mặc định (Đã reset sạch về 0đ doanh thu)
+// Danh sách đơn hàng mặc định
 const DEFAULT_ORDERS = [];
 
 /**
@@ -100,16 +333,35 @@ class EbookDB {
 
   // --- EBOOK ---
   static getBooks() {
+    const REAL_DRIVE_URL = 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing';
     try {
       const data = localStorage.getItem(STORAGE_KEYS.BOOKS);
       if (!data) {
-        localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify([]));
-        return [];
+        localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(DEFAULT_BOOKS));
+        return DEFAULT_BOOKS;
       }
-      const parsed = JSON.parse(data);
-      return Array.isArray(parsed) ? parsed : [];
+      let parsed = JSON.parse(data);
+      if (Array.isArray(parsed) && parsed.length === 0 && DEFAULT_BOOKS.length > 0) {
+        localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(DEFAULT_BOOKS));
+        return DEFAULT_BOOKS;
+      }
+      if (Array.isArray(parsed)) {
+        let changed = false;
+        parsed = parsed.map(b => {
+          if (!b.downloadUrl || b.downloadUrl === '#' || b.downloadUrl.includes('example')) {
+            b.downloadUrl = REAL_DRIVE_URL;
+            changed = true;
+          }
+          return b;
+        });
+        if (changed) {
+          localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(parsed));
+        }
+        return parsed;
+      }
+      return DEFAULT_BOOKS;
     } catch (e) {
-      return [];
+      return DEFAULT_BOOKS;
     }
   }
 
@@ -158,16 +410,35 @@ class EbookDB {
 
   // --- COMBOS ---
   static getCombos() {
+    const REAL_DRIVE_URL = 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing';
     try {
       const data = localStorage.getItem(STORAGE_KEYS.COMBOS);
       if (!data) {
-        localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify([]));
-        return [];
+        localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(DEFAULT_COMBOS));
+        return DEFAULT_COMBOS;
       }
-      const parsed = JSON.parse(data);
-      return Array.isArray(parsed) ? parsed : [];
+      let parsed = JSON.parse(data);
+      if (Array.isArray(parsed) && parsed.length === 0 && DEFAULT_COMBOS.length > 0) {
+        localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(DEFAULT_COMBOS));
+        return DEFAULT_COMBOS;
+      }
+      if (Array.isArray(parsed)) {
+        let changed = false;
+        parsed = parsed.map(c => {
+          if (!c.downloadUrl || c.downloadUrl === '#' || c.downloadUrl.includes('example')) {
+            c.downloadUrl = REAL_DRIVE_URL;
+            changed = true;
+          }
+          return c;
+        });
+        if (changed) {
+          localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(parsed));
+        }
+        return parsed;
+      }
+      return DEFAULT_COMBOS;
     } catch (e) {
-      return [];
+      return DEFAULT_COMBOS;
     }
   }
 

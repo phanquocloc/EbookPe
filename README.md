@@ -28,7 +28,7 @@ EbookPe/
 
 Chủ cửa hàng có thể truy cập trang Quản trị bằng **3 cách cực kỳ tiện lợi**:
 1. **Truy cập đường dẫn trực tiếp**: `http://localhost:8080/admin.html` (hoặc mở trực tiếp file `admin.html`).
-2. **Dùng phím tắt nhanh**: Khi đang ở trang chủ `index.html`, bạn bấm tổ hợp phím **`Ctrl + Shift + A`**.
+2. **Dùng phím tắt nhanh**: Khi đang ở trang chủ `index.html`, bạn bấm tổ hợp phím **`Ctrl + Shift + L`** (hoặc `Cmd + Shift + L` trên macOS).
 3. **Nhấp đúp chuột (Double click)**: Bấm đúp vào dòng chữ bản quyền `© 2026 EbookPe.vn` ở góc dưới cùng chân trang.
 
 ---

@@ -1,798 +1,1332 @@
 <!DOCTYPE html>
-
-<html class="light" lang="vi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><title>EbookPe - Nền Tảng Ebook Thực Chiến Hàng Đầu</title><link rel="icon" type="image/png" href="logo/screen.png"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"primary-container":"#007bb9","on-background":"#131b2e","inverse-on-surface":"#eef0ff","on-surface":"#131b2e","on-tertiary-fixed":"#001d32","on-secondary-fixed-variant":"#783200","on-primary":"#ffffff","tertiary-fixed-dim":"#94ccff","surface-dim":"#d2d9f4","tertiary-container":"#287ab3","outline-variant":"#bfc7d2","on-tertiary-fixed-variant":"#004b74","surface-variant":"#dae2fd","on-tertiary":"#ffffff","secondary-fixed":"#ffdbca","surface-container-lowest":"#ffffff","surface-bright":"#faf8ff","on-secondary":"#ffffff","surface-container-highest":"#dae2fd","inverse-primary":"#93ccff","error-container":"#ffdad6","on-tertiary-container":"#fdfcff","error":"#ba1a1a","surface":"#faf8ff","on-primary-fixed-variant":"#004b73","outline":"#707881","primary-fixed":"#cce5ff","surface-container-low":"#f2f3ff","secondary-container":"#fd761a","tertiary":"#006195","on-primary-fixed":"#001d31","surface-container":"#eaedff","primary":"#006194","on-surface-variant":"#3f4850","secondary":"#9d4300","secondary-fixed-dim":"#ffb690","surface-tint":"#006398","on-secondary-container":"#5c2400","surface-container-high":"#e2e7ff","background":"#faf8ff","primary-fixed-dim":"#93ccff","inverse-surface":"#283044","on-primary-container":"#fdfcff","on-secondary-fixed":"#341100","on-error":"#ffffff","on-error-container":"#93000a","tertiary-fixed":"#cde5ff"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"margin-mobile":"1rem",gutter:"1.5rem","space-md":"1rem","space-xs":"0.25rem","space-lg":"1.5rem",margin:"2rem","space-sm":"0.5rem","gutter-mobile":"1rem","space-xl":"2.5rem"},fontFamily:{"headline-xl-mobile":["Plus Jakarta Sans"],"label-badge":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"label-md":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"headline-sm":["Plus Jakarta Sans"],"label-lg":["Plus Jakarta Sans"],"headline-xl":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"],"body-sm":["Plus Jakarta Sans"],"display-hero-mobile":["Plus Jakarta Sans"],"headline-md":["Plus Jakarta Sans"],"display-hero":["Plus Jakarta Sans"]},fontSize:{"headline-xl-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.01em",fontWeight:"700"}],"label-badge":["11px",{lineHeight:"16px",letterSpacing:"0.06em",fontWeight:"700"}],"body-lg":["18px",{lineHeight:"28px",fontWeight:"400"}],"label-md":["13px",{lineHeight:"18px",letterSpacing:"0.01em",fontWeight:"600"}],"body-md":["15px",{lineHeight:"24px",fontWeight:"400"}],"headline-sm":["18px",{lineHeight:"26px",fontWeight:"700"}],"label-lg":["15px",{lineHeight:"20px",fontWeight:"600"}],"headline-xl":["36px",{lineHeight:"46px",letterSpacing:"-0.02em",fontWeight:"800"}],"headline-lg":["28px",{lineHeight:"38px",letterSpacing:"-0.015em",fontWeight:"700"}],"body-sm":["13px",{lineHeight:"20px",fontWeight:"400"}],"display-hero-mobile":["36px",{lineHeight:"44px",letterSpacing:"-0.02em",fontWeight:"800"}],"headline-md":["22px",{lineHeight:"30px",letterSpacing:"-0.01em",fontWeight:"700"}],"display-hero":["56px",{lineHeight:"68px",letterSpacing:"-0.03em",fontWeight:"800"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface antialiased"><header id="main-header" class="fixed top-0 left-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] transition-transform duration-300 ease-in-out"><div class="bg-secondary text-on-secondary text-center py-2 px-margin text-body-sm font-body-sm"><div class="max-w-[1200px] mx-auto flex items-center justify-center gap-space-sm"><span class="material-symbols-outlined text-[18px]">bolt</span><span>Ưu đãi Flash Sale: Giảm thêm 20% khi thanh toán qua VietQR - Nhận sách trong 60 giây!</span></div></div><div class="h-20 max-w-[1200px] mx-auto px-margin flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-lg flex-shrink-0"><a class="flex items-center gap-space-sm" data-path="trang-chu" href="#"><img alt="EbookPe Logo" class="h-8 w-auto object-contain" src="logo/screen.png"/><span class="font-headline-md text-headline-md text-primary tracking-tight">EbookPe</span></a><div class="relative hidden xl:block w-72"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><span class="material-symbols-outlined text-outline text-[20px]">search</span></div><input class="w-full pl-9 pr-12 py-2 bg-surface-container-low rounded-xl text-body-sm font-body-sm text-on-surface placeholder-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary shadow-sm" placeholder="Tìm kiếm tựa sách, tác giả..." type="text"/><div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none"><kbd class="px-1.5 py-0.5 text-label-badge font-label-badge bg-surface-container-highest text-on-surface-variant rounded">⌘K</kbd></div></div></div><nav class="hidden lg:flex items-center gap-space-md" data-active-classes="bg-primary-container text-on-primary-container font-bold rounded-lg px-3 py-1.5"><a class="text-body-sm font-body-sm text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="kho-ebook" href="#kho-ebook">Kho Ebook</a><a class="text-body-sm font-body-sm text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="combo-tiet-kiem" href="#combo-section">Combo Tiết Kiệm</a><a class="text-body-sm font-body-sm text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="quy-trinh-nhan-sach" href="#quy-trinh">Quy Trình Nhận Sách</a><a class="text-body-sm font-body-sm text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="loi-ich" href="#loi-ich">Lợi Ích</a><a class="text-body-sm font-body-sm text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="doc-gia-noi-gi" href="#doc-gia-noi-gi">Độc Giả Nói Gì</a><a class="text-body-sm font-body-sm text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="faq" href="#faq">FAQ</a></nav><div class="flex items-center gap-space-sm flex-shrink-0"><a class="hidden md:inline-flex items-center gap-1.5 px-3 py-2 text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="tra-cuu-don" href="#tra-cuu"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span>Tra cứu đơn</span></a><a class="relative p-2 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="gio-hang" href="#kho-ebook"><span class="material-symbols-outlined text-[22px]">shopping_bag</span><span class="absolute -top-1 -right-1 bg-secondary text-on-secondary font-label-badge text-label-badge rounded-full h-5 min-w-[20px] px-1 flex items-center justify-center font-bold">1</span></a><a class="inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-secondary-container text-on-primary font-label-lg text-label-lg shadow-[0_10px_20px_-5px_rgba(249,115,22,0.35)] hover:bg-secondary transition-all transform hover:-translate-y-0.5" data-path="combo-tiet-kiem" href="#combo-section"><span class="material-symbols-outlined text-[18px]">local_fire_department</span><span>Nhận Combo -78%</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-1"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-background"><div class="flex flex-col w-full">
-<!-- SECTION 1: HERO SECTION -->
-<section class="relative w-full overflow-hidden bg-surface py-space-xl lg:py-24">
-<!-- Subtle Ambient Gradient -->
-<div class="absolute -top-40 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none -z-10"></div>
-<div class="absolute -bottom-20 left-10 w-[420px] h-[420px] bg-secondary/5 rounded-full blur-3xl pointer-events-none -z-10"></div>
-<div class="max-w-[1200px] mx-auto px-margin">
-<!-- Live Purchase Ticker (Floating Top Badge) -->
-<div class="flex justify-center mb-space-md">
-<div class="inline-flex items-center gap-space-sm px-4 py-2 bg-surface-container-lowest rounded-full shadow-md text-on-surface">
-<span class="relative flex h-2.5 w-2.5">
-<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
-<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary-container"></span>
-</span>
-<span class="material-symbols-outlined text-[18px] text-secondary">notifications_active</span>
-<span class="font-body-sm text-body-sm text-on-surface-variant">
-<strong class="text-on-surface font-semibold">Nguyễn Thảo (Hà Nội)</strong> vừa mua <span class="text-primary font-medium">Combo Solo Business</span> 2 phút trước
-          </span>
-</div>
-</div>
-<!-- Hero Header & Core Copy -->
-<div class="text-center max-w-4xl mx-auto space-y-space-md">
-<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-fixed text-primary font-label-md text-label-md">
-<span class="material-symbols-outlined text-[16px]">verified</span>
-<span>Kiến thức thực chiến · Giao sách tức thì trong 60 giây</span>
-</div>
-<h1 class="font-display-hero text-headline-xl lg:text-display-hero text-on-surface tracking-tight leading-tight">
-          Nâng Tầm Kỹ Năng &amp; Tư Duy Với Kho Ebook <span class="text-primary underline decoration-secondary-container/40 underline-offset-8">Thực Chiến</span> Hàng Đầu
-        </h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
-          Hàng trăm đầu sách chất lượng cao về Kinh doanh, Khởi nghiệp tinh gọn, Tự động hóa AI, Solo Business và Tài chính cá nhân. Viết súc tích, áp dụng thực chiến ngay lập tức.
-        </p>
-<!-- Dual CTA -->
-<div class="flex flex-col sm:flex-row items-center justify-center gap-space-md pt-2">
-<a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-sm px-8 py-3.5 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg shadow-xl hover:bg-primary-container transition-all transform hover:-translate-y-0.5" href="#kho-ebook">
-<span>🚀 Khám phá Ebook ngay</span>
-<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
-</a>
-<a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-sm px-8 py-3.5 rounded-xl bg-secondary-container text-on-primary font-label-lg text-label-lg shadow-xl hover:bg-secondary transition-all transform hover:-translate-y-0.5" href="#combo-section">
-<span class="material-symbols-outlined text-[20px]">bolt</span>
-<span>Xem Combo Tiết Kiệm -78%</span>
-</a>
-</div>
-<!-- 4 Reassurance Pills -->
-<div class="pt-space-lg flex flex-wrap items-center justify-center gap-y-2 gap-x-space-md text-body-sm font-body-sm text-on-surface-variant">
-<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-low rounded-lg text-on-surface font-medium">
-<span class="material-symbols-outlined text-primary text-[18px]">devices</span> Mọi thiết bị (PDF / EPUB / Kindle)
-          </span>
-<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-low rounded-lg text-on-surface font-medium">
-<span class="material-symbols-outlined text-primary text-[18px]">update</span> Cập nhật trọn đời
-          </span>
-<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-low rounded-lg text-on-surface font-medium">
-<span class="material-symbols-outlined text-primary text-[18px]">task_alt</span> Thực chiến 100%
-          </span>
-<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-low rounded-lg text-on-surface font-medium">
-<span class="material-symbols-outlined text-secondary text-[18px]">verified_user</span> Bảo đảm hoàn tiền 30 ngày
-          </span>
-</div>
-</div>
-</div>
-</section>
-<!-- SECTION 2: TRUST METRICS BAR -->
-<section class="w-full bg-surface-container-lowest py-space-lg shadow-sm">
-<div class="max-w-[1200px] mx-auto px-margin">
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter text-center">
-<!-- Metric 1 -->
-<div class="p-space-md rounded-2xl bg-surface-container-low transition-all">
-<div class="font-headline-xl text-headline-xl text-primary font-extrabold">15,000+</div>
-<div class="font-label-lg text-label-lg text-on-surface mt-1">Độc Giả Tin Tưởng</div>
-<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Freelancer &amp; Doanh nhân toàn quốc</div>
-</div>
-<!-- Metric 2 -->
-<div class="p-space-md rounded-2xl bg-surface-container-low transition-all">
-<div class="font-headline-xl text-headline-xl text-primary font-extrabold">120+</div>
-<div class="font-label-lg text-label-lg text-on-surface mt-1">Ebook Bản Quyền</div>
-<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Súc tích, không lý thuyết suông</div>
-</div>
-<!-- Metric 3 -->
-<div class="p-space-md rounded-2xl bg-surface-container-low transition-all">
-<div class="font-headline-xl text-headline-xl text-secondary-container font-extrabold flex items-center justify-center gap-1">
-<span>4.9</span>
-<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-<div class="font-label-lg text-label-lg text-on-surface mt-1">Hài Lòng Tuyệt Đối</div>
-<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Hơn 3,400 lượt đánh giá 5 sao</div>
-</div>
-<!-- Metric 4 -->
-<div class="p-space-md rounded-2xl bg-surface-container-low transition-all">
-<div class="font-headline-xl text-headline-xl text-primary font-extrabold">30 Ngày</div>
-<div class="font-label-lg text-label-lg text-on-surface mt-1">Cam Kết Hoàn Tiền</div>
-<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">100% không yêu cầu lý do phức tạp</div>
-</div>
-</div>
-</div>
-</section>
-<!-- SECTION 3: KHO EBOOK TUYỂN CHỌN (POPULATED DATA & INTERACTIVE FILTERS) -->
-<section class="w-full py-space-xl bg-background" id="kho-ebook">
-<div class="max-w-[1200px] mx-auto px-margin">
-<!-- Section Header -->
-<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-lg">
-<div>
-<span class="px-3 py-1 rounded-full bg-primary-fixed text-primary font-label-badge text-label-badge uppercase tracking-wider">Thư viện tri thức chất lượng cao</span>
-<h2 class="font-headline-xl text-headline-xl text-on-surface mt-2 tracking-tight">Tuyển Tập Ebook Được Đánh Giá Cao Nhất</h2>
-<p class="font-body-md text-body-md text-on-surface-variant mt-1">Chọn lọc kỹ lưỡng, cập nhật thực tế theo thị trường kinh doanh số tại Việt Nam.</p>
-</div>
-<div class="relative w-full md:w-80">
-<input class="w-full pl-10 pr-4 py-2.5 bg-surface-container-lowest rounded-xl font-body-sm text-body-sm text-on-surface placeholder-outline focus:outline-none focus:ring-2 focus:ring-primary shadow-sm" id="ebook-search-input" placeholder="Tìm theo tên sách, tác giả..." type="text"/>
-<span class="material-symbols-outlined absolute left-3 top-3 text-[20px] text-outline pointer-events-none">search</span>
-</div>
-</div>
-<!-- Category Filter Chips -->
-<div class="flex items-center gap-2 overflow-x-auto pb-space-sm mb-space-lg scrollbar-none" id="category-pills">
-<button class="category-btn active px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap transition-all bg-primary text-on-primary shadow-md" onclick="filterCategory('all', this)">🔥 Tất cả (12)</button>
-<button class="category-btn px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap transition-all bg-surface-container-lowest text-on-surface-variant hover:text-on-surface shadow-sm" onclick="filterCategory('kinh-doanh', this)">💼 Kinh doanh (4)</button>
-<button class="category-btn px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap transition-all bg-surface-container-lowest text-on-surface-variant hover:text-on-surface shadow-sm" onclick="filterCategory('khoi-nghiep', this)">🚀 Khởi nghiệp (3)</button>
-<button class="category-btn px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap transition-all bg-surface-container-lowest text-on-surface-variant hover:text-on-surface shadow-sm" onclick="filterCategory('mindset', this)">🧠 Mindset (2)</button>
-<button class="category-btn px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap transition-all bg-surface-container-lowest text-on-surface-variant hover:text-on-surface shadow-sm" onclick="filterCategory('ai-cong-nghe', this)">💻 Công nghệ &amp; AI (3)</button>
-<button class="category-btn px-4 py-2 rounded-full font-label-md text-label-md whitespace-nowrap transition-all bg-surface-container-lowest text-on-surface-variant hover:text-on-surface shadow-sm" onclick="filterCategory('tai-chinh', this)">💰 Tài chính (2)</button>
-</div>
-<!-- 4 Rich Featured Ebook Cards -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter" id="ebook-cards-grid">
-<!-- Ebook 1 -->
-<div class="ebook-item bg-surface-container-lowest rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex flex-col group" data-category="khoi-nghiep kinh-doanh">
-<div class="relative bg-surface-container-high p-6 flex items-center justify-center overflow-hidden">
-<span class="absolute top-3 left-3 px-2 py-0.5 rounded bg-primary text-on-primary font-label-badge text-label-badge uppercase font-bold">Khởi nghiệp</span>
-<span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-surface-container-highest text-on-surface font-label-badge text-label-badge">218 trang</span>
-<!-- Book Cover Visual Mockup -->
-<div class="w-36 h-48 rounded-lg shadow-lg bg-gradient-to-tr from-primary to-primary-container p-3 text-on-primary flex flex-col justify-between transform group-hover:scale-105 transition-transform duration-300">
-<div class="font-label-badge text-label-badge uppercase tracking-widest text-primary-fixed">EbookPe Master</div>
-<div class="font-headline-sm text-headline-sm leading-tight font-extrabold">Khởi Nghiệp Tinh Gọn Từ Số 0</div>
-<div class="font-body-sm text-body-sm text-primary-fixed font-medium">Trần Minh Tuấn</div>
-</div>
-</div>
-<div class="p-space-md flex flex-col flex-1 justify-between">
-<div>
-<div class="flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant mb-1">
-<span class="flex items-center gap-1 text-secondary-container font-semibold">
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span> 4.9
-                </span>
-<span>380 đã bán</span>
-</div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-2">Khởi Nghiệp Tinh Gọn Từ Số 0</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">Lộ trình thẩm định ý tưởng, tìm 100 khách hàng đầu tiên không cần vốn lớn.</p>
-</div>
-<div class="pt-space-md mt-space-sm bg-surface-container-lowest">
-<div class="flex items-baseline gap-2 mb-3">
-<span class="font-headline-md text-headline-md text-secondary-container font-bold">79.000đ</span>
-<span class="font-body-sm text-body-sm text-outline line-through">189.000đ</span>
-<span class="font-label-badge text-label-badge text-secondary bg-secondary-fixed px-1.5 py-0.5 rounded">-58%</span>
-</div>
-<div class="grid grid-cols-2 gap-2">
-<button class="py-2 px-3 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors" onclick="openPreviewModal('Khởi Nghiệp Tinh Gọn Từ Số 0', 'Trần Minh Tuấn')">Đọc thử</button>
-<button class="py-2 px-3 rounded-xl bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-colors shadow-sm" onclick="handleQuickBuy('Khởi Nghiệp Tinh Gọn Từ Số 0', 79000)">Mua ngay</button>
-</div>
-</div>
-</div>
-</div>
-<!-- Ebook 2 -->
-<div class="ebook-item bg-surface-container-lowest rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex flex-col group" data-category="ai-cong-nghe kinh-doanh">
-<div class="relative bg-surface-container-high p-6 flex items-center justify-center overflow-hidden">
-<span class="absolute top-3 left-3 px-2 py-0.5 rounded bg-secondary-container text-on-primary font-label-badge text-label-badge uppercase font-bold">HOT SELLER</span>
-<span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-surface-container-highest text-on-surface font-label-badge text-label-badge">185 trang</span>
-<!-- Book Cover Visual Mockup -->
-<div class="w-36 h-48 rounded-lg shadow-lg bg-gradient-to-tr from-inverse-surface to-on-surface-variant p-3 text-on-primary flex flex-col justify-between transform group-hover:scale-105 transition-transform duration-300">
-<div class="font-label-badge text-label-badge uppercase tracking-widest text-secondary-container">Automation AI</div>
-<div class="font-headline-sm text-headline-sm leading-tight font-extrabold text-surface-bright">AI &amp; ChatGPT Tự Động Hóa</div>
-<div class="font-body-sm text-body-sm text-surface-variant font-medium">TechLead VN</div>
-</div>
-</div>
-<div class="p-space-md flex flex-col flex-1 justify-between">
-<div>
-<div class="flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant mb-1">
-<span class="flex items-center gap-1 text-secondary-container font-semibold">
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span> 5.0
-                </span>
-<span>650 đã bán</span>
-</div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-2">Cẩm Nang Ứng Dụng AI &amp; ChatGPT Vào Kinh Doanh Tự Động</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">Tạo phễu bán lẻ, kịch bản chốt đơn tự động hóa từ AI với hơn 500+ prompt.</p>
-</div>
-<div class="pt-space-md mt-space-sm bg-surface-container-lowest">
-<div class="flex items-baseline gap-2 mb-3">
-<span class="font-headline-md text-headline-md text-secondary-container font-bold">99.000đ</span>
-<span class="font-body-sm text-body-sm text-outline line-through">250.000đ</span>
-<span class="font-label-badge text-label-badge text-secondary bg-secondary-fixed px-1.5 py-0.5 rounded">-60%</span>
-</div>
-<div class="grid grid-cols-2 gap-2">
-<button class="py-2 px-3 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors" onclick="openPreviewModal('AI &amp; ChatGPT Tự Động Hóa', 'TechLead VN')">Đọc thử</button>
-<button class="py-2 px-3 rounded-xl bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-colors shadow-sm" onclick="handleQuickBuy('AI &amp; ChatGPT Tự Động Hóa', 99000)">Mua ngay</button>
-</div>
-</div>
-</div>
-</div>
-<!-- Ebook 3 -->
-<div class="ebook-item bg-surface-container-lowest rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex flex-col group" data-category="kinh-doanh khoi-nghiep">
-<div class="relative bg-surface-container-high p-6 flex items-center justify-center overflow-hidden">
-<span class="absolute top-3 left-3 px-2 py-0.5 rounded bg-primary text-on-primary font-label-badge text-label-badge uppercase font-bold">Solo Business</span>
-<span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-surface-container-highest text-on-surface font-label-badge text-label-badge">240 trang</span>
-<!-- Book Cover Visual Mockup -->
-<div class="w-36 h-48 rounded-lg shadow-lg bg-gradient-to-tr from-tertiary to-primary-container p-3 text-on-primary flex flex-col justify-between transform group-hover:scale-105 transition-transform duration-300">
-<div class="font-label-badge text-label-badge uppercase tracking-widest text-tertiary-fixed">Scale 1 Person</div>
-<div class="font-headline-sm text-headline-sm leading-tight font-extrabold">Cỗ Máy Solo Business Triệu View</div>
-<div class="font-body-sm text-body-sm text-tertiary-fixed font-medium">Hoàng Nam</div>
-</div>
-</div>
-<div class="p-space-md flex flex-col flex-1 justify-between">
-<div>
-<div class="flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant mb-1">
-<span class="flex items-center gap-1 text-secondary-container font-semibold">
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span> 4.9
-                </span>
-<span>420 đã bán</span>
-</div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-2">Xây Dựng Cỗ Máy Solo Business Triệu View &amp; Doanh Thu Đều Đặn</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">Xây dựng thương hiệu cá nhân, bán sản phẩm số và đóng gói tri thức cá nhân.</p>
-</div>
-<div class="pt-space-md mt-space-sm bg-surface-container-lowest">
-<div class="flex items-baseline gap-2 mb-3">
-<span class="font-headline-md text-headline-md text-secondary-container font-bold">89.000đ</span>
-<span class="font-body-sm text-body-sm text-outline line-through">210.000đ</span>
-<span class="font-label-badge text-label-badge text-secondary bg-secondary-fixed px-1.5 py-0.5 rounded">-57%</span>
-</div>
-<div class="grid grid-cols-2 gap-2">
-<button class="py-2 px-3 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors" onclick="openPreviewModal('Cỗ Máy Solo Business', 'Hoàng Nam')">Đọc thử</button>
-<button class="py-2 px-3 rounded-xl bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-colors shadow-sm" onclick="handleQuickBuy('Cỗ Máy Solo Business', 89000)">Mua ngay</button>
-</div>
-</div>
-</div>
-</div>
-<!-- Ebook 4 -->
-<div class="ebook-item bg-surface-container-lowest rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex flex-col group" data-category="tai-chinh mindset">
-<div class="relative bg-surface-container-high p-6 flex items-center justify-center overflow-hidden">
-<span class="absolute top-3 left-3 px-2 py-0.5 rounded bg-primary text-on-primary font-label-badge text-label-badge uppercase font-bold">Tài chính</span>
-<span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-surface-container-highest text-on-surface font-label-badge text-label-badge">196 trang</span>
-<!-- Book Cover Visual Mockup -->
-<div class="w-36 h-48 rounded-lg shadow-lg bg-gradient-to-tr from-secondary to-secondary-container p-3 text-on-primary flex flex-col justify-between transform group-hover:scale-105 transition-transform duration-300">
-<div class="font-label-badge text-label-badge uppercase tracking-widest text-secondary-fixed">Wealth Freedom</div>
-<div class="font-headline-sm text-headline-sm leading-tight font-extrabold">Quản Trị Tài Chính Cá Nhân</div>
-<div class="font-body-sm text-body-sm text-secondary-fixed font-medium">Đặng Thu Trang</div>
-</div>
-</div>
-<div class="p-space-md flex flex-col flex-1 justify-between">
-<div>
-<div class="flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant mb-1">
-<span class="flex items-center gap-1 text-secondary-container font-semibold">
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span> 4.8
-                </span>
-<span>310 đã bán</span>
-</div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors line-clamp-2">Quản Trị Tài Chính Cá Nhân &amp; Chiến Lược Dòng Tiền Tự Do</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">Quy tắc 6 chiếc lọ cải tiến, chiến lược đầu tư chỉ số an toàn và thoát bẫy chi tiêu.</p>
-</div>
-<div class="pt-space-md mt-space-sm bg-surface-container-lowest">
-<div class="flex items-baseline gap-2 mb-3">
-<span class="font-headline-md text-headline-md text-secondary-container font-bold">69.000đ</span>
-<span class="font-body-sm text-body-sm text-outline line-through">159.000đ</span>
-<span class="font-label-badge text-label-badge text-secondary bg-secondary-fixed px-1.5 py-0.5 rounded">-56%</span>
-</div>
-<div class="grid grid-cols-2 gap-2">
-<button class="py-2 px-3 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors" onclick="openPreviewModal('Quản Trị Tài Chính Cá Nhân', 'Đặng Thu Trang')">Đọc thử</button>
-<button class="py-2 px-3 rounded-xl bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-colors shadow-sm" onclick="handleQuickBuy('Quản Trị Tài Chính Cá Nhân', 69000)">Mua ngay</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- SECTION 4: GÓI COMBO THEO LỘ TRÌNH TOÀN DIỆN -->
-<section class="w-full py-space-xl bg-surface-container-low" id="combo-section">
-<div class="max-w-[1200px] mx-auto px-margin">
-<div class="text-center max-w-3xl mx-auto mb-space-xl">
-<span class="px-3.5 py-1.5 rounded-full bg-secondary-container text-on-primary font-label-badge text-label-badge uppercase tracking-wider font-bold">Gói Siêu Tiết Kiệm</span>
-<h2 class="font-headline-xl text-headline-xl text-on-surface mt-2 tracking-tight">Combo Ebook Theo Lộ Trình Toàn Diện</h2>
-<p class="font-body-md text-body-md text-on-surface-variant mt-2 leading-relaxed">
-          Mua theo combo để tiết kiệm từ 55% đến 78% so với giá lẻ. Bộ tài liệu hoàn chỉnh bao gồm template thực hành để áp dụng ngay hôm nay.
-        </p>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter items-stretch">
-<!-- Combo 1 -->
-<div class="bg-surface-container-lowest rounded-3xl p-space-lg shadow-md flex flex-col justify-between">
-<div>
-<div class="flex items-center justify-between">
-<span class="font-label-md text-label-md px-3 py-1 bg-surface-container text-primary rounded-full">3 Tựa Sách Tuyển Chọn</span>
-<span class="font-label-badge text-label-badge px-2 py-0.5 bg-secondary-fixed text-secondary font-bold rounded">TIẾT KIỆM 60%</span>
-</div>
-<h3 class="font-headline-md text-headline-md text-on-surface mt-4">Combo Khởi Nghiệp Tinh Gọn</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Dành cho người mới bắt đầu từ con số 0 cần lộ trình thực thi an toàn.</p>
-<div class="flex items-baseline gap-2 my-5">
-<span class="font-headline-xl text-headline-xl text-primary font-extrabold">179.000đ</span>
-<span class="font-body-md text-body-md text-outline line-through">450.000đ</span>
-</div>
-<ul class="space-y-3 font-body-sm text-body-sm text-on-surface-variant">
-<li class="flex items-start gap-2">
-<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">check_circle</span>
-<span>Ebook: Khởi Nghiệp Tinh Gọn Từ Số 0</span>
-</li>
-<li class="flex items-start gap-2">
-<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">check_circle</span>
-<span>Ebook: Định Vị Sản Phẩm Không Đối Thủ</span>
-</li>
-<li class="flex items-start gap-2">
-<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">check_circle</span>
-<span>Ebook: 100 Khách Hàng Đầu Tiên</span>
-</li>
-<li class="flex items-start gap-2 text-secondary-container font-medium">
-<span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">card_giftcard</span>
-<span>Bonus: Notion Business Roadmap Template</span>
-</li>
-</ul>
-</div>
-<button class="mt-space-lg w-full py-3 rounded-xl bg-surface-container text-primary font-label-lg text-label-lg hover:bg-primary-container hover:text-on-primary transition-colors" onclick="handleQuickBuy('Combo Khởi Nghiệp Tinh Gọn', 179000)">
-            Mua Combo Này
-          </button>
-</div>
-<!-- Combo 2 (BEST SELLER) -->
-<div class="relative bg-surface-container-lowest rounded-3xl p-space-lg shadow-2xl flex flex-col justify-between transform lg:-translate-y-4">
-<div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-secondary-container text-on-primary font-label-badge text-label-badge font-bold tracking-wider uppercase shadow-md flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]">local_fire_department</span> Khuyên Dùng - Best Seller
-          </div>
-<div>
-<div class="flex items-center justify-between mt-2">
-<span class="font-label-md text-label-md px-3 py-1 bg-primary-fixed text-primary rounded-full">Bộ 5 Ebook VIP</span>
-<span class="font-label-badge text-label-badge px-2 py-0.5 bg-secondary-fixed text-secondary font-bold rounded">GIẢM 78%</span>
-</div>
-<h3 class="font-headline-md text-headline-md text-on-surface mt-4">Solo Business &amp; AI Master</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Cẩm nang toàn diện để trở thành solopreneur với đòn bẩy tự động hóa tối tân.</p>
-<div class="flex items-baseline gap-2 my-5">
-<span class="font-headline-xl text-headline-xl text-secondary-container font-extrabold">249.000đ</span>
-<span class="font-body-md text-body-md text-outline line-through">1.150.000đ</span>
-</div>
-<ul class="space-y-3 font-body-sm text-body-sm text-on-surface-variant">
-<li class="flex items-start gap-2">
-<span class="material-symbols-outlined text-secondary-container text-[18px] mt-0.5">check_circle</span>
-<span>Toàn bộ 5 Ebook chủ lực về AI, Solopreneur &amp; Phễu Bán Hàng</span>
-</li>
-<li class="flex items-start gap-2">
-<span class="material-symbols-outlined text-secondary-container text-[18px] mt-0.5">check_circle</span>
-<span>Kho 500+ Prompt ChatGPT độc quyền kinh doanh</span>
-</li>
-<li class="flex items-start gap-2">
-<span class="material-symbols-outlined text-secondary-container text-[18px] mt-0.5">check_circle</span>
-<span>Cập nhật trọn đời khi có phiên bản mới</span>
-</li>
-<li class="flex items-start gap-2 text-secondary font-semibold">
-<span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">card_giftcard</span>
-<span>Bộ Swipe File Email Marketing 100+ mẫu chuyển đổi cao</span>
-</li>
-</ul>
-</div>
-<button class="mt-space-lg w-full py-3.5 rounded-xl bg-secondary-container text-on-primary font-label-lg text-label-lg hover:bg-secondary transition-all shadow-lg hover:shadow-xl" onclick="handleQuickBuy('Combo Solo Business &amp; AI Master', 249000)">
-            Sở Hữu Ngay Gói VIP (-78%)
-          </button>
-</div>
-<!-- Combo 3 -->
-<div class="bg-surface-container-lowest rounded-3xl p-space-lg shadow-md flex flex-col justify-between">
-<div>
-<div class="flex items-center justify-between">
-<span class="font-label-md text-label-md px-3 py-1 bg-surface-container text-primary rounded-full">3 Tựa Sách Cốt Lõi</span>
-<span class="font-label-badge text-label-badge px-2 py-0.5 bg-secondary-fixed text-secondary font-bold rounded">TIẾT KIỆM 58%</span>
-</div>
-<h3 class="font-headline-md text-headline-md text-on-surface mt-4">Mindset &amp; Đột Phá Tài Chính</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Làm chủ dòng tiền cá nhân, tư duy đầu tư thực chiến cho tương lai.</p>
-<div class="flex items-baseline gap-2 my-5">
-<span class="font-headline-xl text-headline-xl text-primary font-extrabold">159.000đ</span>
-<span class="font-body-md text-body-md text-outline line-through">380.000đ</span>
-</div>
-<ul class="space-y-3 font-body-sm text-body-sm text-on-surface-variant">
-<li class="flex items-start gap-2">
-<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">check_circle</span>
-<span>Ebook: Quản Trị Tài Chính Cá Nhân Tự Do</span>
-</li>
-<li class="flex items-start gap-2">
-<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">check_circle</span>
-<span>Ebook: Tâm Lý Học Về Tiền &amp; Quyết Định Đầu Tư</span>
-</li>
-<li class="flex items-start gap-2">
-<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">check_circle</span>
-<span>Ebook: Thiết Lập Quỹ Khẩn Cấp &amp; Tự Do Tài Chính</span>
-</li>
-<li class="flex items-start gap-2 text-secondary-container font-medium">
-<span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">card_giftcard</span>
-<span>Bonus: File Excel Tính Toán Dòng Tiền Hưu Trí</span>
-</li>
-</ul>
-</div>
-<button class="mt-space-lg w-full py-3 rounded-xl bg-surface-container text-primary font-label-lg text-label-lg hover:bg-primary-container hover:text-on-primary transition-colors" onclick="handleQuickBuy('Combo Mindset &amp; Tài Chính', 159000)">
-            Mua Combo Này
-          </button>
-</div>
-</div>
-</div>
-</section>
-<!-- SECTION 5: QUY TRÌNH NHẬN SÁCH TỰ ĐỘNG 100% TRONG 3 BƯỚC -->
-<section class="w-full py-space-xl bg-surface" id="quy-trinh">
-<div class="max-w-[1200px] mx-auto px-margin">
-<div class="text-center max-w-2xl mx-auto mb-space-xl">
-<span class="px-3.5 py-1.5 rounded-full bg-primary-fixed text-primary font-label-badge text-label-badge uppercase tracking-wider font-bold">Thao tác tối giản</span>
-<h2 class="font-headline-xl text-headline-xl text-on-surface mt-2 tracking-tight">Quy Trình Nhận Sách Tự Động Trong 3 Bước</h2>
-<p class="font-body-md text-body-md text-on-surface-variant mt-1">Không cần chờ đợi xác nhận thủ công. Hệ thống VietQR thông minh tự động hoàn tất trong 60 giây.</p>
-</div>
-<div class="relative grid grid-cols-1 md:grid-cols-3 gap-gutter">
-<!-- Connecting Line for Desktop -->
-<div class="hidden md:block absolute top-12 left-1/6 right-1/6 h-0.5 bg-surface-variant z-0"></div>
-<!-- Step 1 -->
-<div class="relative z-10 bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm text-center flex flex-col items-center">
-<div class="w-14 h-14 rounded-full bg-primary text-on-primary font-headline-md text-headline-md flex items-center justify-center shadow-lg mb-space-md">1</div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Chọn Ebook &amp; Đọc Thử</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Duyệt mục lục, trích đoạn chương 1 trực tiếp ngay trên website để đảm bảo sách đúng nhu cầu của bạn trước khi quyết định.</p>
-</div>
-<!-- Step 2 -->
-<div class="relative z-10 bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm text-center flex flex-col items-center">
-<div class="w-14 h-14 rounded-full bg-secondary-container text-on-primary font-headline-md text-headline-md flex items-center justify-center shadow-lg mb-space-md">2</div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Quét Mã VietQR Tự Động</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Mã QR hiển thị chính xác số tiền và cú pháp đơn hàng. Hệ thống Napas247 tự động kích hoạt giao dịch chỉ sau 3 giây.</p>
-</div>
-<!-- Step 3 -->
-<div class="relative z-10 bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm text-center flex flex-col items-center">
-<div class="w-14 h-14 rounded-full bg-primary text-on-primary font-headline-md text-headline-md flex items-center justify-center shadow-lg mb-space-md">3</div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Nhận Link Tải Tức Thì</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Nút tải Google Drive (PDF, EPUB) hiện ngay trên màn hình, đồng thời một email sao lưu vĩnh viễn được gửi thẳng vào hòm thư.</p>
-</div>
-</div>
-</div>
-</section>
-<!-- SECTION 6: TẠI SAO NÊN CHỌN EBOOKPE (6 GIÁ TRỊ CỐT LÕI) -->
-<section class="w-full py-space-xl bg-surface-container-low" id="loi-ich">
-<div class="max-w-[1200px] mx-auto px-margin">
-<div class="text-center max-w-2xl mx-auto mb-space-xl">
-<span class="px-3.5 py-1.5 rounded-full bg-primary-fixed text-primary font-label-badge text-label-badge uppercase tracking-wider font-bold">Lợi thế cạnh tranh</span>
-<h2 class="font-headline-xl text-headline-xl text-on-surface mt-2 tracking-tight">Tại Sao 15,000+ Độc Giả Chọn EbookPe?</h2>
-<p class="font-body-md text-body-md text-on-surface-variant mt-1">Chúng tôi giải quyết toàn bộ sự thất vọng về các loại sách dịch lý thuyết sáo rỗng trên thị trường.</p>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
-<!-- Value Card 1 -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm hover:shadow-md transition-all">
-<div class="w-12 h-12 rounded-xl bg-primary-fixed text-primary flex items-center justify-center mb-4">
-<span class="material-symbols-outlined text-[26px]">all_inclusive</span>
-</div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Sở Hữu Mãi Mãi</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Mua 1 lần duy nhất, tải file trọn đời về máy tính hoặc lưu Drive cá nhân mà không tốn phí duy trì thành viên hàng tháng.</p>
-</div>
-<!-- Value Card 2 -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm hover:shadow-md transition-all">
-<div class="w-12 h-12 rounded-xl bg-secondary-fixed text-secondary flex items-center justify-center mb-4">
-<span class="material-symbols-outlined text-[26px]">bolt</span>
-</div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Link Tải Trong 60 Giây</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Quy trình tự động hóa hoàn toàn 24/7. Kể cả nửa đêm hay ngày lễ, hệ thống vẫn cấp link đọc ngay lập tức.</p>
-</div>
-<!-- Value Card 3 -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm hover:shadow-md transition-all">
-<div class="w-12 h-12 rounded-xl bg-primary-fixed text-primary flex items-center justify-center mb-4">
-<span class="material-symbols-outlined text-[26px]">target</span>
-</div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Nội Dung Thực Chiến 100%</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Không lý thuyết suông. Mỗi chương sách đều đi kèm mẫu template, checklist hành động và ví dụ thị trường Việt Nam.</p>
-</div>
-<!-- Value Card 4 -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm hover:shadow-md transition-all">
-<div class="w-12 h-12 rounded-xl bg-secondary-fixed text-secondary flex items-center justify-center mb-4">
-<span class="material-symbols-outlined text-[26px]">coffee</span>
-</div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Giá Bằng Một Bữa Sáng</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Chỉ từ 69.000đ/cuốn. Khoản đầu tư nhỏ nhất cho kỹ năng cá nhân nhưng mang lại tỷ suất hoàn vốn (ROI) vô hạn.</p>
-</div>
-<!-- Value Card 5 -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm hover:shadow-md transition-all">
-<div class="w-12 h-12 rounded-xl bg-primary-fixed text-primary flex items-center justify-center mb-4">
-<span class="material-symbols-outlined text-[26px]">verified_user</span>
-</div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Bảo Đảm Hoàn Tiền 30 Ngày</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Nếu nội dung không mang lại giá trị thiết thực cho bạn, gửi email cho chúng tôi để nhận hoàn 100% tiền qua VietQR.</p>
-</div>
-<!-- Value Card 6 -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-sm hover:shadow-md transition-all">
-<div class="w-12 h-12 rounded-xl bg-secondary-fixed text-secondary flex items-center justify-center mb-4">
-<span class="material-symbols-outlined text-[26px]">devices_other</span>
-</div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Tương Thích Mọi Thiết Bị</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Được dàn trang tỉ mỉ chuẩn PDF độ nét cao cho Laptop, định dạng EPUB linh hoạt chữ to nhỏ trên iPhone, iPad, Kindle.</p>
-</div>
-</div>
-</div>
-</section>
-<!-- SECTION 7: ĐÁNH GIÁ THỰC TẾ TỪ ĐỘC GIẢ (TESTIMONIALS) -->
-<section class="w-full py-space-xl bg-surface" id="doc-gia-noi-gi">
-<div class="max-w-[1200px] mx-auto px-margin">
-<div class="text-center max-w-2xl mx-auto mb-space-xl">
-<span class="px-3.5 py-1.5 rounded-full bg-primary-fixed text-primary font-label-badge text-label-badge uppercase tracking-wider font-bold">Chứng thực độc giả</span>
-<h2 class="font-headline-xl text-headline-xl text-on-surface mt-2 tracking-tight">Độc Giả Nói Gì Về EbookPe?</h2>
-<p class="font-body-md text-body-md text-on-surface-variant mt-1">Hơn 3,400 phản hồi chân thực từ những người đã ứng dụng và tạo ra kết quả.</p>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-<!-- Testimonial 1 -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-md flex flex-col justify-between">
-<div class="space-y-3">
-<div class="flex text-secondary-container">
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-<p class="font-body-md text-body-md text-on-surface italic leading-relaxed">
-              "Tôi đã đọc nhiều sách kinh doanh dịch từ tiếng Anh. EbookPe khác biệt ở chỗ — viết cho thị trường Việt Nam, ví dụ thực tế và áp dụng được ngay vào việc bán lẻ."
-            </p>
-</div>
-<div class="flex items-center gap-3 pt-space-md mt-space-md border-t border-surface-container">
-<div class="w-11 h-11 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-headline-sm">T</div>
-<div>
-<div class="font-label-lg text-label-lg text-on-surface font-bold">Nguyễn Minh Tú</div>
-<div class="font-body-sm text-body-sm text-on-surface-variant">Founder Shop Online, Hà Nội</div>
-</div>
-</div>
-</div>
-<!-- Testimonial 2 -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-md flex flex-col justify-between">
-<div class="space-y-3">
-<div class="flex text-secondary-container">
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-<p class="font-body-md text-body-md text-on-surface italic leading-relaxed">
-              "Chương về khách hàng đầu tiên trong cuốn Khởi Nghiệp Không Lối Mòn giúp tôi có 3 hợp đồng freelance trong 2 tuần mà không tốn một đồng chạy quảng cáo."
-            </p>
-</div>
-<div class="flex items-center gap-3 pt-space-md mt-space-md border-t border-surface-container">
-<div class="w-11 h-11 rounded-full bg-secondary-container text-on-primary flex items-center justify-center font-bold text-headline-sm">A</div>
-<div>
-<div class="font-label-lg text-label-lg text-on-surface font-bold">Trần Lan Anh</div>
-<div class="font-body-sm text-body-sm text-on-surface-variant">Freelancer → Agency Owner</div>
-</div>
-</div>
-</div>
-<!-- Testimonial 3 -->
-<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-md flex flex-col justify-between">
-<div class="space-y-3">
-<div class="flex text-secondary-container">
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-<p class="font-body-md text-body-md text-on-surface italic leading-relaxed">
-              "Hệ thống quản lý tài chính cá nhân trong sách đã cứu tôi khỏi cảnh rỗng túi cuối tháng. Định dạng đọc trên Kindle rất mượt, hiển thị bảng biểu rõ nét."
-            </p>
-</div>
-<div class="flex items-center gap-3 pt-space-md mt-space-md border-t border-surface-container">
-<div class="w-11 h-11 rounded-full bg-tertiary text-on-primary flex items-center justify-center font-bold text-headline-sm">N</div>
-<div>
-<div class="font-label-lg text-label-lg text-on-surface font-bold">Lê Hoàng Nam</div>
-<div class="font-body-sm text-body-sm text-on-surface-variant">Kỹ sư phần mềm, TP.HCM</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- SECTION 8: CÂU HỎI THƯỜNG GẶP (FAQ ACCORDION) -->
-<section class="w-full py-space-xl bg-surface-container-low" id="faq">
-<div class="max-w-[800px] mx-auto px-margin">
-<div class="text-center mb-space-xl">
-<span class="px-3.5 py-1.5 rounded-full bg-primary-fixed text-primary font-label-badge text-label-badge uppercase tracking-wider font-bold">Giải đáp nhanh</span>
-<h2 class="font-headline-xl text-headline-xl text-on-surface mt-2 tracking-tight">Câu Hỏi Thường Gặp (FAQ)</h2>
-<p class="font-body-md text-body-md text-on-surface-variant mt-1">Mọi thắc mắc của bạn về sản phẩm và phương thức thanh toán đều được giải thích minh bạch.</p>
-</div>
-<div class="space-y-3" id="faq-accordion">
-<!-- FAQ 1 (Open by default) -->
-<div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm">
-<button class="w-full text-left p-space-md flex items-center justify-between font-headline-sm text-headline-sm text-on-surface focus:outline-none" onclick="toggleFaq(this)">
-<span>Tôi sẽ nhận được Ebook như thế nào sau khi thanh toán?</span>
-<span class="material-symbols-outlined transition-transform duration-200 text-primary">expand_more</span>
-</button>
-<div class="faq-content px-space-md pb-space-md pt-0 font-body-md text-body-md text-on-surface-variant">
-            Ngay khi bạn chuyển khoản qua mã VietQR, hệ thống sẽ tự động đối soát trong vòng 3 đến 60 giây. Màn hình thanh toán sẽ lập tức chuyển thành nút "Tải Ebook Ngay" dẫn đến thư mục Google Drive tốc độ cao. Đồng thời, một email tự động chứa link tải vĩnh viễn cũng sẽ được gửi tới hòm thư bạn đăng ký.
-          </div>
-</div>
-<!-- FAQ 2 -->
-<div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm">
-<button class="w-full text-left p-space-md flex items-center justify-between font-headline-sm text-headline-sm text-on-surface focus:outline-none" onclick="toggleFaq(this)">
-<span>Tôi có thể đọc trên thiết bị nào?</span>
-<span class="material-symbols-outlined transition-transform duration-200 text-outline">expand_more</span>
-</button>
-<div class="faq-content hidden px-space-md pb-space-md pt-0 font-body-md text-body-md text-on-surface-variant">
-            Mỗi tựa Ebook đều đi kèm 2 định dạng chuẩn: <strong>PDF</strong> chất lượng cao (thích hợp đọc trên Laptop, PC, máy tính bảng) và <strong>EPUB</strong> (tối ưu cho iPhone/iPad qua Apple Books, điện thoại Android qua Google Play Books hoặc gửi trực tiếp vào máy đọc sách Kindle).
-          </div>
-</div>
-<!-- FAQ 3 -->
-<div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm">
-<button class="w-full text-left p-space-md flex items-center justify-between font-headline-sm text-headline-sm text-on-surface focus:outline-none" onclick="toggleFaq(this)">
-<span>Chính sách hoàn tiền 30 ngày hoạt động ra sao?</span>
-<span class="material-symbols-outlined transition-transform duration-200 text-outline">expand_more</span>
-</button>
-<div class="faq-content hidden px-space-md pb-space-md pt-0 font-body-md text-body-md text-on-surface-variant">
-            Chúng tôi cam kết chất lượng nội dung 100%. Nếu sau khi đọc bạn cảm thấy cuốn sách không mang lại bất kỳ giá trị hay ý tưởng ứng dụng nào cho công việc, chỉ cần nhắn tin cho Hotline Zalo hoặc gửi email kèm mã đơn hàng. Chúng tôi sẽ hoàn trả 100% số tiền qua tài khoản ngân hàng của bạn trong 24 giờ mà không gây phiền hà.
-          </div>
-</div>
-<!-- FAQ 4 -->
-<div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm">
-<button class="w-full text-left p-space-md flex items-center justify-between font-headline-sm text-headline-sm text-on-surface focus:outline-none" onclick="toggleFaq(this)">
-<span>Link tải có thời hạn không? Nếu đổi máy tôi có tải lại được không?</span>
-<span class="material-symbols-outlined transition-transform duration-200 text-outline">expand_more</span>
-</button>
-<div class="faq-content hidden px-space-md pb-space-md pt-0 font-body-md text-body-md text-on-surface-variant">
-            Link tải không có thời hạn. Quyền sở hữu file là vĩnh viễn. Khi đổi thiết bị mới, bạn chỉ cần mở lại email biên nhận đơn hàng hoặc sử dụng tính năng "Tra cứu đơn" ở thanh menu trên cùng bằng số điện thoại để lấy lại toàn bộ link tải bất kỳ lúc nào.
-          </div>
-</div>
-</div>
-</div>
-</section>
-<!-- SECTION 9: FINAL CONVERSION CTA BANNER -->
-<section class="w-full py-space-xl bg-gradient-to-br from-primary via-primary-container to-tertiary text-on-primary">
-<div class="max-w-[1000px] mx-auto px-margin text-center space-y-space-md">
-<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-on-primary/10 backdrop-blur-md text-on-primary font-label-badge text-label-badge uppercase tracking-wider">
-<span class="material-symbols-outlined text-[16px]">local_fire_department</span>
-        Ưu đãi có giới hạn trong tuần này
-      </div>
-<h2 class="font-headline-xl text-headline-xl text-on-primary tracking-tight font-extrabold max-w-2xl mx-auto">
-        Sẵn Sàng Nâng Cấp Tư Duy Và Hành Động Ngay Hôm Nay?
-      </h2>
-<p class="font-body-lg text-body-lg text-primary-fixed max-w-xl mx-auto leading-relaxed">
-        Hàng trăm ebook thực chiến đang chờ bạn. Giá chỉ từ 69.000đ. Nhận link tải trực tiếp ngay trong 60 giây.
-      </p>
-<div class="pt-space-sm flex flex-col sm:flex-row items-center justify-center gap-space-md">
-<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-surface-container-lowest text-primary font-label-lg text-label-lg shadow-2xl hover:bg-surface-container transition-all transform hover:-translate-y-0.5" href="#kho-ebook">
-<span class="material-symbols-outlined text-secondary-container text-[22px]">bolt</span>
-<span>Khám phá và sở hữu Ebook ngay</span>
-</a>
-</div>
-</div>
-</section>
-<!-- INTERACTIVE MODAL FOR PREVIEW (Hidden by default) -->
-<div class="fixed inset-0 z-50 hidden bg-inverse-surface/60 backdrop-blur-sm flex items-center justify-center p-4" id="preview-modal">
-<div class="bg-surface-container-lowest rounded-3xl max-w-xl w-full p-space-lg shadow-2xl space-y-space-md relative animate-fadeIn">
-<button class="absolute top-4 right-4 p-2 rounded-full text-on-surface-variant hover:bg-surface-container transition-colors" onclick="closePreviewModal()">
-<span class="material-symbols-outlined text-[20px]">close</span>
-</button>
-<div class="flex items-center gap-3">
-<div class="w-12 h-12 rounded-xl bg-primary-fixed text-primary flex items-center justify-center">
-<span class="material-symbols-outlined text-[24px]">menu_book</span>
-</div>
-<div>
-<span class="font-label-badge text-label-badge text-primary uppercase font-bold">Đọc thử trích đoạn</span>
-<h3 class="font-headline-sm text-headline-sm text-on-surface" id="modal-book-title">Khởi Nghiệp Tinh Gọn Từ Số 0</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant" id="modal-book-author">Tác giả: Trần Minh Tuấn</p>
-</div>
-</div>
-<div class="p-space-md bg-surface-container-low rounded-xl text-body-sm font-body-sm text-on-surface-variant space-y-2 max-h-60 overflow-y-auto">
-<p class="font-semibold text-on-surface">Mục Lục Tinh Gọn:</p>
-<p>• Chương 1: Tư duy xác thực thị trường trước khi bỏ vốn</p>
-<p>• Chương 2: Xây dựng sản phẩm tối thiểu khả thi (MVP) trong 7 ngày</p>
-<p>• Chương 3: Phễu hút 100 khách hàng đầu tiên qua Organic Content</p>
-<p>• Chương 4: Tự động hóa quy trình chốt đơn và bảo toàn dòng tiền</p>
-<hr class="border-surface-variant my-2"/>
-<p class="italic text-on-surface">"Đừng hỏi khách hàng họ muốn gì, hãy tạo một giải pháp nhỏ và xem họ có sẵn sàng trả tiền trước không..."</p>
-</div>
-<div class="flex gap-2">
-<button class="flex-1 py-2.5 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md" onclick="closePreviewModal()">Đóng</button>
-<button class="flex-1 py-2.5 rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-md" onclick="closePreviewModal(); handleQuickBuy('Ebook Selected', 79000)">Mua bản quyền đầy đủ</button>
-</div>
-</div>
-</div>
-<!-- INTERACTIVE MODAL FOR QUICK BUY / VIETQR DEMO -->
-<div class="fixed inset-0 z-50 hidden bg-inverse-surface/60 backdrop-blur-sm flex items-center justify-center p-4" id="checkout-modal">
-<div class="bg-surface-container-lowest rounded-3xl max-w-md w-full p-space-lg shadow-2xl space-y-space-md relative">
-<button class="absolute top-4 right-4 p-2 rounded-full text-on-surface-variant hover:bg-surface-container transition-colors" onclick="closeCheckoutModal()">
-<span class="material-symbols-outlined text-[20px]">close</span>
-</button>
-<div class="text-center">
-<div class="inline-flex p-3 rounded-2xl bg-secondary-fixed text-secondary mb-2">
-<span class="material-symbols-outlined text-[28px]">qr_code_2</span>
-</div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Thanh Toán VietQR Tự Động</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Quét mã chuyển khoản - Nhận link tải tức thì</p>
-</div>
-<div class="bg-surface-container-low p-4 rounded-2xl text-center space-y-2">
-<div class="font-headline-sm text-headline-sm text-on-surface" id="checkout-item-name">Tên Sản Phẩm</div>
-<div class="font-headline-xl text-headline-xl text-secondary-container font-extrabold" id="checkout-item-price">0đ</div>
-<!-- Real QR -->
-<div class="w-48 h-48 mx-auto bg-surface-container-lowest p-2 rounded-xl shadow-inner flex flex-col items-center justify-center border border-surface-container">
-<img id="real-qr-img" src="" alt="Mã QR Thanh Toán" class="w-full h-full object-contain hidden" />
-<div id="qr-loading" class="text-on-surface-variant text-sm font-label-md">Đang tạo mã QR...</div>
-</div>
-<p class="text-label-badge font-label-badge text-on-surface-variant uppercase tracking-wider">Tự động nhận diện sau khi chuyển khoản</p>
-</div>
-<div class="text-center">
-<button class="w-full py-3 rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-md hover:bg-primary-container transition-colors" onclick="confirmPurchase()">
-          Tôi Đã Chuyển Khoản Xong
-        </button>
-</div>
-</div>
-</div>
-</div>
-<script src="js/data.js"></script>
-<script>
-  // Simple category filtering
-  function filterCategory(cat, element) {
-    const buttons = document.querySelectorAll('.category-btn');
-    buttons.forEach(btn => {
-      btn.classList.remove('bg-primary', 'text-on-primary', 'shadow-md');
-      btn.classList.add('bg-surface-container-lowest', 'text-on-surface-variant');
-    });
-    element.classList.remove('bg-surface-container-lowest', 'text-on-surface-variant');
-    element.classList.add('bg-primary', 'text-on-primary', 'shadow-md');
-
-    const cards = document.querySelectorAll('.ebook-item');
-    cards.forEach(card => {
-      const cardCats = card.getAttribute('data-category');
-      if (cat === 'all' || cardCats.includes(cat)) {
-        card.style.display = 'flex';
-      } else {
-        card.style.display = 'none';
-      }
-    });
-  }
-
-  // Search input live filtering
-  const searchInput = document.getElementById('ebook-search-input');
-  if (searchInput) {
-    searchInput.addEventListener('input', function(e) {
-      const term = e.target.value.toLowerCase();
-      const cards = document.querySelectorAll('.ebook-item');
-      cards.forEach(card => {
-        const text = card.innerText.toLowerCase();
-        if (text.includes(term)) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    });
-  }
-
-  // FAQ Accordion Toggle
-  function toggleFaq(button) {
-    const content = button.nextElementSibling;
-    const icon = button.querySelector('.material-symbols-outlined');
-    const isHidden = content.classList.contains('hidden');
-    
-    // Close other FAQs
-    document.querySelectorAll('.faq-content').forEach(el => el.classList.add('hidden'));
-    document.querySelectorAll('#faq-accordion .material-symbols-outlined').forEach(i => {
-      i.textContent = 'expand_more';
-      i.classList.remove('text-primary');
-      i.classList.add('text-outline');
-    });
-
-    if (isHidden) {
-      content.classList.remove('hidden');
-      icon.textContent = 'expand_less';
-      icon.classList.remove('text-outline');
-      icon.classList.add('text-primary');
+<html class="light" lang="vi">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="web_standard" name="shell-type"/>
+  <title>EbookPe - Nền Tảng Ebook Thực Chiến Hàng Đầu</title>
+  <link rel="icon" type="image/png" href="logo/screen.png"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  
+  <style>
+    @layer base {
+      html, body { margin: 0; padding: 0; scroll-behavior: smooth; }
+      body { overscroll-behavior: none; }
     }
-  }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-  // Preview Modal
-  function openPreviewModal(title, author) {
-    document.getElementById('modal-book-title').innerText = title;
-    document.getElementById('modal-book-author').innerText = 'Tác giả: ' + author;
-    document.getElementById('preview-modal').classList.remove('hidden');
-  }
+    /* Cover Gradients matching Admin Presets */
+    .cover-preset-1 { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
+    .cover-preset-2 { background: linear-gradient(135deg, #0f172a 0%, #334155 100%); }
+    .cover-preset-3 { background: linear-gradient(135deg, #78350f 0%, #d97706 100%); }
+    .cover-preset-4 { background: linear-gradient(135deg, #4c1d95 0%, #8b5cf6 100%); }
+    .cover-preset-5 { background: linear-gradient(135deg, #9a3412 0%, #ea580c 100%); }
+    .cover-preset-6 { background: linear-gradient(135deg, #064e3b 0%, #10b981 100%); }
+    .cover-preset-7 { background: linear-gradient(135deg, #881337 0%, #f43f5e 100%); }
+    .cover-preset-8 { background: linear-gradient(135deg, #0369a1 0%, #06b6d4 100%); }
 
-  function closePreviewModal() {
-    document.getElementById('preview-modal').classList.add('hidden');
-  }
+    /* Book 3D Mockup Styling */
+    .book-mockup-wrap {
+      perspective: 800px;
+    }
+    .book-mockup {
+      transform-style: preserve-3d;
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+      box-shadow: 4px 6px 20px -2px rgba(0, 0, 0, 0.25), 1px 1px 4px rgba(0,0,0,0.15);
+    }
+    .group:hover .book-mockup {
+      transform: translateY(-6px) rotateY(-8deg) scale(1.03);
+      box-shadow: 10px 14px 28px -2px rgba(0, 0, 0, 0.35);
+    }
+    .book-spine-line {
+      position: absolute;
+      left: 12px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: 1px 0 3px rgba(0,0,0,0.2);
+    }
 
-  // Real Quick Buy / VietQR Modal
-  let currentOrder = null;
+    @keyframes pulseSoft {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+    .pulse-soft {
+      animation: pulseSoft 2.5s infinite ease-in-out;
+    }
+  </style>
 
-  function handleQuickBuy(name, price) {
-    const settings = window.EbookDB ? window.EbookDB.getSettings() : null;
-    
-    document.getElementById('checkout-item-name').innerText = name;
-    document.getElementById('checkout-item-price').innerText = price.toLocaleString('vi-VN') + 'đ';
-    
-    const qrImg = document.getElementById('real-qr-img');
-    const qrLoading = document.getElementById('qr-loading');
-    
-    qrImg.classList.add('hidden');
-    qrLoading.classList.remove('hidden');
-    
-    if (settings) {
-      const orderId = Math.floor(100000 + Math.random() * 900000);
-      const transferPrefix = settings.transferPrefix || 'EBPE';
-      // Real VietQR logic pointing to Phan Quoc Loc
-      const qrUrl = `https://img.vietqr.io/image/${settings.bankCode}-${settings.accountNumber}-${settings.qrTemplate}.png?amount=${price}&addInfo=${transferPrefix}${orderId}&accountName=${encodeURIComponent(settings.accountName)}`;
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary-container": "#007bb9",
+            "on-background": "#131b2e",
+            "inverse-on-surface": "#eef0ff",
+            "on-surface": "#131b2e",
+            "on-primary": "#ffffff",
+            "surface-dim": "#d2d9f4",
+            "surface-variant": "#dae2fd",
+            "on-tertiary": "#ffffff",
+            "secondary-fixed": "#ffdbca",
+            "surface-container-lowest": "#ffffff",
+            "surface-bright": "#faf8ff",
+            "on-secondary": "#ffffff",
+            "surface-container-highest": "#dae2fd",
+            "error": "#ba1a1a",
+            "surface": "#faf8ff",
+            "outline": "#707881",
+            "primary-fixed": "#cce5ff",
+            "surface-container-low": "#f2f3ff",
+            "secondary-container": "#fd761a",
+            "tertiary": "#006195",
+            "surface-container": "#eaedff",
+            "primary": "#006194",
+            "on-surface-variant": "#3f4850",
+            "secondary": "#9d4300",
+            "surface-container-high": "#e2e7ff",
+            "background": "#faf8ff"
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+</head>
+
+<body class="bg-background font-sans text-on-surface antialiased selection:bg-primary/20 selection:text-primary">
+
+  <!-- ==========================================
+       HEADER & NAVIGATION (User Icon Removed)
+       ========================================== -->
+  <header id="main-header" class="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-xl shadow-[0_2px_12px_rgba(0,0,0,0.05)] transition-transform duration-300 ease-in-out">
+    <!-- Flash Sale Top Bar -->
+    <div class="bg-gradient-to-r from-secondary via-secondary-container to-secondary text-on-secondary text-center py-2 px-4 text-xs sm:text-sm font-semibold tracking-wide">
+      <div class="max-w-[1200px] mx-auto flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[18px] animate-bounce">bolt</span>
+        <span>Ưu đãi Flash Sale: Giảm đến 78% khi mua theo Combo - Nhận trọn bộ Ebook trong 60 giây!</span>
+      </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <div class="h-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+      <!-- Logo -->
+      <div class="flex items-center flex-shrink-0">
+        <a class="flex items-center gap-2.5 group" href="#">
+          <img alt="EbookPe Logo" class="h-9 w-auto object-contain transition-transform group-hover:scale-105" src="logo/screen.png"/>
+          <span class="text-2xl font-extrabold text-primary tracking-tight">Ebook<span class="text-secondary-container">Pe</span></span>
+        </a>
+      </div>
+
+      <!-- Navigation Links (Perfect Centering) -->
+      <nav class="hidden lg:flex items-center justify-center gap-4 xl:gap-7 text-sm font-semibold flex-1">
+        <a class="whitespace-nowrap text-on-surface-variant hover:text-primary transition-colors py-1" href="#combo-section">Combo Tiết Kiệm</a>
+        <a class="whitespace-nowrap text-on-surface-variant hover:text-primary transition-colors py-1" href="#kho-ebook">Kho Ebook</a>
+        <a class="whitespace-nowrap text-on-surface-variant hover:text-primary transition-colors py-1" href="#quy-trinh">Quy Trình Nhận Sách</a>
+        <a class="whitespace-nowrap text-on-surface-variant hover:text-primary transition-colors py-1" href="#loi-ich">Lợi Ích</a>
+        <a class="whitespace-nowrap text-on-surface-variant hover:text-primary transition-colors py-1" href="#doc-gia-noi-gi">Độc Giả Nói Gì</a>
+        <a class="whitespace-nowrap text-on-surface-variant hover:text-primary transition-colors py-1" href="#faq">FAQ</a>
+      </nav>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+        <!-- Nút Tra Cứu Đơn -->
+        <button onclick="openLookupModal()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-bold text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-xl transition-all whitespace-nowrap" title="Tra cứu lại đơn hàng & link tải sách">
+          <span class="material-symbols-outlined text-[19px]">receipt_long</span>
+          <span class="hidden sm:inline">Tra cứu đơn</span>
+        </button>
+
+        <!-- Giỏ Hàng -->
+        <button onclick="openCartModal()" class="relative p-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors flex-shrink-0" title="Xem giỏ hàng">
+          <span class="material-symbols-outlined text-[22px]">shopping_bag</span>
+          <span id="cart-count-badge" class="absolute -top-1 -right-1 bg-secondary text-white text-[11px] font-extrabold rounded-full h-5 min-w-[20px] px-1 flex items-center justify-center shadow-md">0</span>
+        </button>
+
+        <!-- CTA Nổi Bật: Nhận Combo -78% -->
+        <a href="#combo-section" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-secondary-container to-secondary text-white text-xs sm:text-sm font-bold shadow-[0_8px_18px_-4px_rgba(249,115,22,0.4)] hover:shadow-[0_12px_24px_-4px_rgba(249,115,22,0.5)] transition-all transform hover:-translate-y-0.5 whitespace-nowrap flex-shrink-0">
+          <span class="material-symbols-outlined text-[18px]">local_fire_department</span>
+          <span>Nhận Combo -78%</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       MAIN CONTENT
+       ========================================== -->
+  <main class="w-full pt-28 bg-background">
+    <div class="flex flex-col w-full">
+
+      <!-- SECTION 1: HERO SECTION -->
+      <section class="relative w-full overflow-hidden bg-gradient-to-b from-surface via-surface/60 to-background py-12 lg:py-20">
+        <!-- Ambient Glow -->
+        <div class="absolute -top-32 right-1/4 w-[480px] h-[480px] bg-primary/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+        <div class="absolute top-1/3 -left-20 w-[420px] h-[420px] bg-secondary-container/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+        <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
+          <!-- Live Purchase Ticker -->
+          <div class="flex justify-center mb-6">
+            <div id="hero-live-ticker" class="inline-flex items-center gap-2.5 px-4 py-2 bg-white rounded-full shadow-md border border-slate-100 text-on-surface transition-all duration-300 transform">
+              <span class="relative flex h-2.5 w-2.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary-container"></span>
+              </span>
+              <span class="material-symbols-outlined text-[18px] text-secondary">notifications_active</span>
+              <span class="text-xs sm:text-sm text-on-surface-variant">
+                <strong id="ticker-customer-name" class="text-on-surface font-bold">Nguyễn Thảo (Hà Nội)</strong> vừa mua <span id="ticker-item-name" class="text-primary font-semibold">Combo Solo Business &amp; AI</span> <span id="ticker-time" class="text-outline">vừa xong</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Hero Core Headline & Copy -->
+          <div class="text-center max-w-4xl mx-auto space-y-6">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-fixed text-primary font-bold text-xs sm:text-sm tracking-wide">
+              <span class="material-symbols-outlined text-[18px]">verified</span>
+              <span>Kiến thức thực chiến · Giao link tự động trong 60 giây</span>
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl lg:text-[56px] font-extrabold text-on-surface tracking-tight leading-snug sm:leading-tight lg:leading-[1.22]">
+              Nâng Tầm Kỹ Năng &amp; Tư Duy Với Kho Ebook <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-container to-secondary-container inline-block font-black">Thực Chiến</span> Hàng Đầu
+            </h1>
+
+            <p class="text-base sm:text-lg lg:text-xl text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
+              Tuyển tập sách tinh hoa về Khởi nghiệp tinh gọn, Tự động hóa AI, Solo Business, Marketing và Quản trị dòng tiền cá nhân. Viết súc tích, áp dụng thực chiến ngay lập tức.
+            </p>
+
+            <!-- Dual CTA Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+              <a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-secondary-container to-secondary text-white font-bold text-base shadow-[0_10px_25px_-5px_rgba(253,118,26,0.4)] hover:opacity-95 transition-all transform hover:-translate-y-0.5" href="#combo-section">
+                <span class="material-symbols-outlined text-[20px]">bolt</span>
+                <span>Xem Combo Tiết Kiệm -78%</span>
+              </a>
+              <a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-white border border-slate-200 text-primary font-bold text-base shadow-sm hover:bg-surface-container-low transition-all transform hover:-translate-y-0.5" href="#kho-ebook">
+                <span>🚀 Khám Phá Kho Ebook</span>
+                <span class="material-symbols-outlined text-[20px]">arrow_downward</span>
+              </a>
+            </div>
+
+            <!-- 4 Reassurance Badges -->
+            <div class="pt-6 flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 text-xs sm:text-sm font-semibold text-on-surface-variant">
+              <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white rounded-xl border border-slate-100 shadow-sm text-on-surface">
+                <span class="material-symbols-outlined text-primary text-[18px]">devices</span> Đọc trên mọi thiết bị (PDF / EPUB / Kindle)
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white rounded-xl border border-slate-100 shadow-sm text-on-surface">
+                <span class="material-symbols-outlined text-primary text-[18px]">all_inclusive</span> Sở hữu trọn đời
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white rounded-xl border border-slate-100 shadow-sm text-on-surface">
+                <span class="material-symbols-outlined text-primary text-[18px]">bolt</span> Tự động gửi link trong 60s
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white rounded-xl border border-slate-100 shadow-sm text-on-surface">
+                <span class="material-symbols-outlined text-secondary text-[18px]">verified_user</span> Cam kết hoàn tiền 30 ngày
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: TRUST STATS BAR -->
+      <section class="w-full bg-white py-8 border-y border-slate-100 shadow-sm">
+        <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 text-center">
+            <div class="p-4 rounded-2xl bg-surface-container-low transition-all">
+              <div class="text-2xl sm:text-3xl font-extrabold text-primary">15,000+</div>
+              <div class="text-sm font-bold text-on-surface mt-1">Độc Giả Tin Dùng</div>
+              <div class="text-xs text-on-surface-variant mt-0.5">Freelancer &amp; Doanh nhân trẻ</div>
+            </div>
+            <div class="p-4 rounded-2xl bg-surface-container-low transition-all">
+              <div id="stat-total-books" class="text-2xl sm:text-3xl font-extrabold text-primary">6+</div>
+              <div class="text-sm font-bold text-on-surface mt-1">Tựa Ebook Tuyển Chọn</div>
+              <div class="text-xs text-on-surface-variant mt-0.5">Thực chiến, không lý thuyết suông</div>
+            </div>
+            <div class="p-4 rounded-2xl bg-surface-container-low transition-all">
+              <div class="text-2xl sm:text-3xl font-extrabold text-secondary-container flex items-center justify-center gap-1">
+                <span>4.9</span>
+                <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">star</span>
+              </div>
+              <div class="text-sm font-bold text-on-surface mt-1">Đánh Giá Xuất Sắc</div>
+              <div class="text-xs text-on-surface-variant mt-0.5">Từ hơn 3,400+ độc giả thực tế</div>
+            </div>
+            <div class="p-4 rounded-2xl bg-surface-container-low transition-all">
+              <div class="text-2xl sm:text-3xl font-extrabold text-primary">30 Ngày</div>
+              <div class="text-sm font-bold text-on-surface mt-1">Bảo Hành Hoàn Tiền</div>
+              <div class="text-xs text-on-surface-variant mt-0.5">Không yêu cầu lý do phức tạp</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: GÓI COMBO TIẾT KIỆM (DỮ LIỆU THỰC TẾ ĐỒNG BỘ TỪ ADMIN) -->
+      <section class="w-full py-16 lg:py-24 bg-surface-container-low" id="combo-section">
+        <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
+          <div class="text-center max-w-3xl mx-auto mb-12">
+            <span class="px-4 py-1.5 rounded-full bg-secondary-container text-white text-xs font-extrabold uppercase tracking-wider shadow-sm">Gói Siêu Tiết Kiệm</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-on-surface mt-3 tracking-tight">Combo Ebook Theo Lộ Trình Toàn Diện</h2>
+            <p class="text-sm sm:text-base text-on-surface-variant mt-2 leading-relaxed">
+              Tiết kiệm từ 55% đến 78% so với mua lẻ từng cuốn. Bộ tài liệu trọn gói kèm toàn bộ template, prompt và file tính toán thực hành.
+            </p>
+          </div>
+
+          <!-- Dynamic Combos Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch" id="combos-cards-grid">
+            <!-- Render dynamically from JS based on real combos in Admin / EbookDB -->
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: KHO EBOOK TUYỂN CHỌN (DỮ LIỆU THỰC TẾ ĐỒNG BỘ TỪ ADMIN) -->
+      <section class="w-full py-16 lg:py-20 bg-background" id="kho-ebook">
+        <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
+          
+          <!-- Section Header & Real-time Search -->
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+            <div>
+              <span class="px-3 py-1 rounded-full bg-primary-fixed text-primary text-xs font-extrabold uppercase tracking-wider">Thư viện tri thức chất lượng cao</span>
+              <h2 class="text-2xl sm:text-4xl font-extrabold text-on-surface mt-2 tracking-tight">Kho Ebook Thực Chiến Đang Bán</h2>
+              <p class="text-sm sm:text-base text-on-surface-variant mt-1.5 max-w-xl">Dữ liệu sách thực tế được quản lý trực tiếp. Nhận link tải Google Drive bản quyền ngay khi chuyển khoản.</p>
+            </div>
+            <div class="relative w-full md:w-80">
+              <input id="ebook-search-input" class="w-full pl-10 pr-4 py-3 bg-white rounded-2xl text-sm text-on-surface placeholder-outline focus:outline-none focus:ring-2 focus:ring-primary shadow-sm border border-slate-200" placeholder="Tìm theo tên sách, tác giả..." type="text"/>
+              <span class="material-symbols-outlined absolute left-3.5 top-3.5 text-[20px] text-outline pointer-events-none">search</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Category Filter Chips -->
+          <div class="flex items-center gap-2.5 overflow-x-auto pb-3 mb-8 scrollbar-none" id="category-pills">
+            <!-- Render dynamically from JS -->
+          </div>
+
+          <!-- Dynamic Books Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 sm:gap-8" id="ebook-cards-grid">
+            <!-- Render dynamically from JS based on real data in Admin / EbookDB -->
+          </div>
+
+          <!-- Empty State (if no books found) -->
+          <div id="no-books-msg" class="hidden text-center py-16 bg-white rounded-3xl border border-dashed border-slate-200 p-8">
+            <span class="material-symbols-outlined text-5xl text-outline mb-3">menu_book</span>
+            <h3 class="text-lg font-bold text-on-surface">Không tìm thấy sách nào</h3>
+            <p class="text-sm text-on-surface-variant mt-1">Thử đổi từ khóa tìm kiếm hoặc chọn danh mục "Tất cả".</p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 5: QUY TRÌNH NHẬN SÁCH TỰ ĐỘNG (REDESIGNED ULTRA CLEAN) -->
+      <section class="w-full py-16 lg:py-20 bg-white" id="quy-trinh">
+        <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
+          <div class="text-center max-w-2xl mx-auto mb-14">
+            <span class="px-3.5 py-1.5 rounded-full bg-primary-fixed text-primary text-xs font-bold uppercase tracking-wider">Thao tác tối giản &amp; bảo mật</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-on-surface mt-2.5 tracking-tight">Quy Trình Nhận Sách Tự Động Trong 3 Bước</h2>
+            <p class="text-sm sm:text-base text-on-surface-variant mt-2">Hệ thống chuyển giao tự động 24/7. Hoàn toàn không cần chờ duyệt thủ công.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+            <!-- Connecting Line on Desktop -->
+            <div class="hidden md:block absolute top-14 left-[18%] right-[18%] h-0.5 bg-gradient-to-r from-primary via-secondary-container to-primary -z-0"></div>
+
+            <!-- Step 1 -->
+            <div class="relative z-10 bg-surface-container-low rounded-3xl p-7 text-center flex flex-col items-center border border-slate-100 hover:shadow-lg transition-all group">
+              <div class="w-14 h-14 rounded-2xl bg-primary text-white font-black text-xl flex items-center justify-center shadow-lg mb-5 group-hover:scale-110 transition-transform">
+                01
+              </div>
+              <h3 class="text-lg font-bold text-on-surface">1. Chọn Sách &amp; Đọc Thử</h3>
+              <p class="text-sm text-on-surface-variant mt-2 leading-relaxed">
+                Xem trực tiếp mục lục chi tiết và đọc thử trích đoạn nội dung chương 1 trên website để hoàn toàn yên tâm về giá trị thực tế trước khi mua.
+              </p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="relative z-10 bg-surface-container-low rounded-3xl p-7 text-center flex flex-col items-center border-2 border-secondary-container/30 hover:shadow-xl transition-all group bg-white shadow-md">
+              <div class="w-14 h-14 rounded-2xl bg-secondary-container text-white font-black text-xl flex items-center justify-center shadow-lg mb-5 group-hover:scale-110 transition-transform">
+                02
+              </div>
+              <h3 class="text-lg font-bold text-on-surface">2. Quét Mã VietQR Thông Minh</h3>
+              <p class="text-sm text-on-surface-variant mt-2 leading-relaxed">
+                Quét mã QR hiển thị sẵn chính xác số tiền và nội dung chuyển khoản. Cổng thanh toán Napas247 tự động nhận diện giao dịch chỉ sau 3 đến 30 giây.
+              </p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="relative z-10 bg-surface-container-low rounded-3xl p-7 text-center flex flex-col items-center border border-slate-100 hover:shadow-lg transition-all group">
+              <div class="w-14 h-14 rounded-2xl bg-primary text-white font-black text-xl flex items-center justify-center shadow-lg mb-5 group-hover:scale-110 transition-transform">
+                03
+              </div>
+              <h3 class="text-lg font-bold text-on-surface">3. Nhận Link Tải Tức Thì</h3>
+              <p class="text-sm text-on-surface-variant mt-2 leading-relaxed">
+                Nút tải Google Drive (PDF, EPUB, Template) xuất hiện ngay trên màn hình. Đồng thời hệ thống gửi email xác nhận chứa link lưu trữ vĩnh viễn vào hòm thư.
+              </p>
+            </div>
+          </div>
+
+          <!-- Trust Reassurance Strip -->
+          <div class="mt-12 p-6 rounded-2xl bg-surface-container-low border border-slate-200/80 flex flex-wrap items-center justify-around gap-4 text-center">
+            <div class="flex items-center gap-2 text-sm font-bold text-on-surface">
+              <span class="material-symbols-outlined text-primary text-[22px]">lock</span>
+              <span>Bảo mật giao dịch VietQR 100%</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm font-bold text-on-surface">
+              <span class="material-symbols-outlined text-secondary-container text-[22px]">headset_mic</span>
+              <span>Hỗ trợ kỹ thuật 24/7 qua Hotline/Zalo</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm font-bold text-on-surface">
+              <span class="material-symbols-outlined text-primary text-[22px]">history_edu</span>
+              <span>Tra cứu lại đơn hàng bất cứ lúc nào</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 6: LỢI ÍCH CỐT LÕI (6 GIÁ TRỊ) -->
+      <section class="w-full py-16 lg:py-20 bg-surface-container-low" id="loi-ich">
+        <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
+          <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="px-3.5 py-1.5 rounded-full bg-primary-fixed text-primary text-xs font-bold uppercase tracking-wider">Giá trị độc bản</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-on-surface mt-2 tracking-tight">Tại Sao 15,000+ Độc Giả Chọn EbookPe?</h2>
+            <p class="text-sm sm:text-base text-on-surface-variant mt-1.5">Chúng tôi tập trung vào việc giải quyết bài toán ứng dụng thực chiến thay vì lý thuyết chung chung.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+              <div class="w-12 h-12 rounded-xl bg-primary-fixed text-primary flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-[26px]">all_inclusive</span>
+              </div>
+              <h3 class="text-base font-bold text-on-surface">Sở Hữu Trọn Đời</h3>
+              <p class="text-xs sm:text-sm text-on-surface-variant mt-2 leading-relaxed">Mua 1 lần duy nhất, tải file không giới hạn về máy tính hoặc lưu Drive cá nhân mà không tốn phí duy trì hàng tháng.</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+              <div class="w-12 h-12 rounded-xl bg-secondary-fixed text-secondary flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-[26px]">bolt</span>
+              </div>
+              <h3 class="text-base font-bold text-on-surface">Giao Sách Trong 60 Giây</h3>
+              <p class="text-xs sm:text-sm text-on-surface-variant mt-2 leading-relaxed">Quy trình tự động hóa hoàn toàn 24/7. Dù là nửa đêm hay ngày lễ, bạn vẫn nhận link tải ngay lập tức sau khi quét QR.</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+              <div class="w-12 h-12 rounded-xl bg-primary-fixed text-primary flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-[26px]">target</span>
+              </div>
+              <h3 class="text-base font-bold text-on-surface">Nội Dung Thực Chiến 100%</h3>
+              <p class="text-xs sm:text-sm text-on-surface-variant mt-2 leading-relaxed">Không lý thuyết suông. Mỗi chương sách đều đi kèm mẫu template, checklist hành động và ví dụ thị trường Việt Nam.</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+              <div class="w-12 h-12 rounded-xl bg-secondary-fixed text-secondary flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-[26px]">coffee</span>
+              </div>
+              <h3 class="text-base font-bold text-on-surface">Chi Phí Bằng Bữa Sáng</h3>
+              <p class="text-xs sm:text-sm text-on-surface-variant mt-2 leading-relaxed">Chỉ từ 69.000đ/cuốn. Khoản đầu tư nhỏ nhất cho tư duy và kỹ năng cá nhân với tỷ suất hoàn vốn cao vượt trội.</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+              <div class="w-12 h-12 rounded-xl bg-primary-fixed text-primary flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-[26px]">verified_user</span>
+              </div>
+              <h3 class="text-base font-bold text-on-surface">Bảo Đảm Hoàn Tiền 30 Ngày</h3>
+              <p class="text-xs sm:text-sm text-on-surface-variant mt-2 leading-relaxed">Nếu nội dung không mang lại giá trị thiết thực cho bạn, gửi email hoặc nhắn Zalo để nhận hoàn 100% tiền qua VietQR.</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+              <div class="w-12 h-12 rounded-xl bg-secondary-fixed text-secondary flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-[26px]">devices_other</span>
+              </div>
+              <h3 class="text-base font-bold text-on-surface">Tương Thích Mọi Thiết Bị</h3>
+              <p class="text-xs sm:text-sm text-on-surface-variant mt-2 leading-relaxed">Chuẩn định dạng PDF độ nét cao cho Laptop/PC, và định dạng EPUB linh hoạt font chữ trên điện thoại, iPad và máy đọc sách.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 7: ĐÁNH GIÁ THỰC TẾ (TESTIMONIALS) -->
+      <section class="w-full py-16 lg:py-20 bg-white" id="doc-gia-noi-gi">
+        <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
+          <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="px-3.5 py-1.5 rounded-full bg-primary-fixed text-primary text-xs font-bold uppercase tracking-wider">Phản hồi từ cộng đồng</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-on-surface mt-2 tracking-tight">Độc Giả Nói Gì Về EbookPe?</h2>
+            <p class="text-sm sm:text-base text-on-surface-variant mt-1.5">Hơn 3,400+ phản hồi chân thực từ những người đã ứng dụng và tạo ra kết quả rõ rệt.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-surface-container-low rounded-3xl p-6 shadow-sm flex flex-col justify-between border border-slate-100">
+              <div class="space-y-3">
+                <div class="flex text-secondary-container">
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                </div>
+                <p class="text-sm text-on-surface italic leading-relaxed">
+                  "Tôi đã đọc nhiều sách kinh doanh dịch. EbookPe khác biệt ở chỗ — viết sát với thị trường Việt Nam, ví dụ thực tế và áp dụng được ngay vào việc bán lẻ online."
+                </p>
+              </div>
+              <div class="flex items-center gap-3 pt-4 mt-4 border-t border-slate-200">
+                <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">T</div>
+                <div>
+                  <div class="text-sm font-bold text-on-surface">Nguyễn Minh Tú</div>
+                  <div class="text-xs text-on-surface-variant">Founder Shop Thời Trang, Hà Nội</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-surface-container-low rounded-3xl p-6 shadow-sm flex flex-col justify-between border border-slate-100">
+              <div class="space-y-3">
+                <div class="flex text-secondary-container">
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                </div>
+                <p class="text-sm text-on-surface italic leading-relaxed">
+                  "Chương về khách hàng đầu tiên trong cuốn Khởi Nghiệp Tinh Gọn giúp tôi có 3 hợp đồng freelance trong 2 tuần mà không tốn một đồng chạy quảng cáo."
+                </p>
+              </div>
+              <div class="flex items-center gap-3 pt-4 mt-4 border-t border-slate-200">
+                <div class="w-10 h-10 rounded-full bg-secondary-container text-white flex items-center justify-center font-bold text-sm">A</div>
+                <div>
+                  <div class="text-sm font-bold text-on-surface">Trần Lan Anh</div>
+                  <div class="text-xs text-on-surface-variant">Freelancer → Agency Owner, Đà Nẵng</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-surface-container-low rounded-3xl p-6 shadow-sm flex flex-col justify-between border border-slate-100">
+              <div class="space-y-3">
+                <div class="flex text-secondary-container">
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                </div>
+                <p class="text-sm text-on-surface italic leading-relaxed">
+                  "Cuốn cẩm nang AI &amp; ChatGPT đã giúp team của tôi giảm 70% thời gian lên kịch bản video và viết bài fanpage. Quá đáng giá với mức giá chưa tới 100k!"
+                </p>
+              </div>
+              <div class="flex items-center gap-3 pt-4 mt-4 border-t border-slate-200">
+                <div class="w-10 h-10 rounded-full bg-tertiary text-white flex items-center justify-center font-bold text-sm">N</div>
+                <div>
+                  <div class="text-sm font-bold text-on-surface">Lê Hoàng Nam</div>
+                  <div class="text-xs text-on-surface-variant">Content Creator &amp; Solopreneur, TP.HCM</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 8: FAQ ACCORDION -->
+      <section class="w-full py-16 lg:py-20 bg-surface-container-low" id="faq">
+        <div class="max-w-[800px] mx-auto px-4 sm:px-6">
+          <div class="text-center mb-12">
+            <span class="px-3.5 py-1.5 rounded-full bg-primary-fixed text-primary text-xs font-bold uppercase tracking-wider">Giải đáp thắc mắc</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-on-surface mt-2 tracking-tight">Câu Hỏi Thường Gặp (FAQ)</h2>
+            <p class="text-sm sm:text-base text-on-surface-variant mt-1.5">Mọi thông tin về phương thức thanh toán và chuyển giao ebook đều minh bạch.</p>
+          </div>
+
+          <div class="space-y-3" id="faq-accordion">
+            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+              <button class="w-full text-left p-5 flex items-center justify-between text-base font-bold text-on-surface focus:outline-none" onclick="toggleFaq(this)">
+                <span>Tôi sẽ nhận được Ebook như thế nào sau khi thanh toán?</span>
+                <span class="material-symbols-outlined transition-transform duration-200 text-primary">expand_more</span>
+              </button>
+              <div class="faq-content px-5 pb-5 pt-0 text-sm text-on-surface-variant leading-relaxed">
+                Ngay khi bạn chuyển khoản qua mã VietQR, hệ thống Napas247 sẽ tự động đối soát trong vòng 3 đến 30 giây. Màn hình thanh toán sẽ lập tức chuyển thành nút "Tải Ebook Ngay" dẫn đến thư mục Google Drive tốc độ cao. Đồng thời, một email tự động chứa link tải vĩnh viễn cũng sẽ được gửi tới hòm thư của bạn.
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+              <button class="w-full text-left p-5 flex items-center justify-between text-base font-bold text-on-surface focus:outline-none" onclick="toggleFaq(this)">
+                <span>Tôi có thể đọc trên những thiết bị nào?</span>
+                <span class="material-symbols-outlined transition-transform duration-200 text-outline">expand_more</span>
+              </button>
+              <div class="faq-content hidden px-5 pb-5 pt-0 text-sm text-on-surface-variant leading-relaxed">
+                Mỗi tựa Ebook đều đi kèm 2 định dạng chuẩn: <strong>PDF</strong> chất lượng cao (thích hợp đọc trên Laptop, PC, máy tính bảng) và <strong>EPUB</strong> (tối ưu cho iPhone/iPad qua Apple Books, điện thoại Android qua Google Play Books hoặc gửi trực tiếp vào máy đọc sách Kindle).
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+              <button class="w-full text-left p-5 flex items-center justify-between text-base font-bold text-on-surface focus:outline-none" onclick="toggleFaq(this)">
+                <span>Chính sách bảo hành hoàn tiền 30 ngày hoạt động ra sao?</span>
+                <span class="material-symbols-outlined transition-transform duration-200 text-outline">expand_more</span>
+              </button>
+              <div class="faq-content hidden px-5 pb-5 pt-0 text-sm text-on-surface-variant leading-relaxed">
+                Chúng tôi cam kết 100% chất lượng nội dung. Nếu sau khi đọc bạn cảm thấy cuốn sách không mang lại bất kỳ ý tưởng ứng dụng nào, chỉ cần nhắn tin cho Hotline Zalo <strong>0333.399.956</strong> hoặc gửi email kèm mã đơn hàng. Chúng tôi sẽ hoàn trả 100% số tiền qua tài khoản ngân hàng của bạn trong 24 giờ mà không gây phiền hà.
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+              <button class="w-full text-left p-5 flex items-center justify-between text-base font-bold text-on-surface focus:outline-none" onclick="toggleFaq(this)">
+                <span>Link tải có bị hết hạn không? Đổi máy có tải lại được không?</span>
+                <span class="material-symbols-outlined transition-transform duration-200 text-outline">expand_more</span>
+              </button>
+              <div class="faq-content hidden px-5 pb-5 pt-0 text-sm text-on-surface-variant leading-relaxed">
+                Link tải không bao giờ hết hạn và quyền sở hữu file là vĩnh viễn. Khi đổi thiết bị mới, bạn chỉ cần mở lại email biên nhận đơn hàng hoặc sử dụng nút "Tra cứu đơn" ở thanh menu trên cùng để lấy lại toàn bộ link tải bất kỳ lúc nào.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 9: FINAL CTA BANNER -->
+      <section class="w-full py-16 bg-gradient-to-br from-primary via-primary-container to-tertiary text-white">
+        <div class="max-w-[1000px] mx-auto px-4 sm:px-6 text-center space-y-6">
+          <div class="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-white/10 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider">
+            <span class="material-symbols-outlined text-[16px]">local_fire_department</span>
+            Ưu đãi có giới hạn trong tuần này
+          </div>
+          <h2 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight max-w-2xl mx-auto leading-tight">
+            Sẵn Sàng Nâng Cấp Tư Duy &amp; Kỹ Năng Ngay Hôm Nay?
+          </h2>
+          <p class="text-base sm:text-lg text-primary-fixed max-w-xl mx-auto leading-relaxed">
+            Hàng trăm ebook thực chiến đang sẵn sàng. Giá chỉ từ 69.000đ. Nhận link tải Google Drive ngay trong 60 giây.
+          </p>
+          <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-white text-primary font-bold text-base shadow-2xl hover:bg-slate-50 transition-all transform hover:-translate-y-0.5" href="#kho-ebook">
+              <span class="material-symbols-outlined text-secondary-container text-[22px]">bolt</span>
+              <span>Khám Phá &amp; Sở Hữu Ebook Ngay</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ==========================================
+       FOOTER
+       ========================================== -->
+  <footer class="w-full bg-surface-container-low text-on-surface border-t border-slate-200">
+    <div class="max-w-[1200px] mx-auto px-4 sm:px-6 pt-16 pb-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-4 space-y-4">
+          <div class="flex items-center gap-2">
+            <img alt="EbookPe Logo" class="h-8 w-auto object-contain" src="logo/screen.png"/>
+            <span class="text-xl font-extrabold text-primary">Ebook<span class="text-secondary-container">Pe</span></span>
+          </div>
+          <p class="text-xs sm:text-sm text-on-surface-variant pr-4 leading-relaxed">
+            Nền tảng Ebook Thực Chiến dành riêng cho Doanh nhân, Freelancer và Nhà sáng tạo nội dung. Cung cấp tri thức tinh gọn, áp dụng ngay để tạo kết quả đo lường được.
+          </p>
+          <div class="space-y-2 pt-2">
+            <div class="flex items-center gap-2 text-xs sm:text-sm text-on-surface font-semibold">
+              <span class="material-symbols-outlined text-primary text-[18px]">call</span>
+              <span>Hotline/Zalo: 0333.399.956</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs sm:text-sm text-on-surface-variant">
+              <span class="material-symbols-outlined text-primary text-[18px]">mail</span>
+              <span>support@ebookpe.com</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-3">
+          <h4 class="text-sm font-bold text-on-surface uppercase tracking-wider">Sản Phẩm</h4>
+          <ul class="space-y-2 text-xs sm:text-sm text-on-surface-variant">
+            <li><a class="hover:text-primary transition-colors" href="#kho-ebook">Kho Ebook Mới</a></li>
+            <li><a class="hover:text-primary transition-colors" href="#combo-section">Combo Khởi Nghiệp</a></li>
+            <li><a class="hover:text-primary transition-colors" href="#combo-section">Combo Solo Business</a></li>
+            <li><a class="hover:text-primary transition-colors" href="#combo-section">Combo Quản Trị Tài Chính</a></li>
+          </ul>
+        </div>
+
+        <div class="lg:col-span-3 space-y-3">
+          <h4 class="text-sm font-bold text-on-surface uppercase tracking-wider">Chính Sách &amp; Hỗ Trợ</h4>
+          <ul class="space-y-2 text-xs sm:text-sm text-on-surface-variant">
+            <li><a class="hover:text-primary transition-colors" href="#quy-trinh">Quy Trình Nhận Sách</a></li>
+            <li><a class="hover:text-primary transition-colors" href="#loi-ich">Bảo Đảm Hoàn Tiền 30 Ngày</a></li>
+            <li><a class="hover:text-primary transition-colors" href="javascript:openLookupModal()">Tra Cứu Lại Đơn Hàng</a></li>
+            <li><a class="hover:text-primary transition-colors" href="#faq">Câu Hỏi Thường Gặp</a></li>
+          </ul>
+        </div>
+
+        <div class="lg:col-span-3 space-y-3">
+          <h4 class="text-sm font-bold text-on-surface uppercase tracking-wider">Thanh Toán VietQR 24/7</h4>
+          <p class="text-xs text-on-surface-variant">Hệ thống kích hoạt link tải tức thì ngay khi hoàn tất chuyển khoản.</p>
+          <div class="flex flex-wrap items-center gap-2 pt-1">
+            <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-bold text-on-surface">VIETQR</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-bold text-on-surface">NAPAS 247</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-bold text-on-surface">SEPAY</span>
+          </div>
+          <div class="flex items-center gap-1.5 pt-2 text-primary text-xs font-semibold">
+            <span class="material-symbols-outlined text-[18px]">verified_user</span>
+            <span>Bảo mật chuẩn SSL 256-bit</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-12 pt-6 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between text-xs text-on-surface-variant gap-4">
+        <p>© 2025 EbookPe. Nền tảng tri thức số thực chiến. Giữ toàn bộ bản quyền nội dung.</p>
+        <div class="flex items-center gap-4">
+          <a class="hover:text-on-surface transition-colors" href="#">Chính sách bảo mật</a>
+          <a class="hover:text-on-surface transition-colors" href="#">Điều khoản sử dụng</a>
+          <a class="hover:text-on-surface transition-colors" href="admin-login.html" target="_blank">Quản trị viên</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================
+       MODAL 1: PREVIEW EBOOK (ĐỌC THỬ)
+       ========================================== -->
+  <div class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" id="preview-modal">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl space-y-4 relative max-h-[90vh] overflow-y-auto">
+      <button class="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors" onclick="closePreviewModal()">
+        <span class="material-symbols-outlined text-[22px]">close</span>
+      </button>
+
+      <div class="flex items-start gap-4">
+        <div id="modal-book-thumb" class="w-16 h-22 rounded-xl flex-shrink-0 flex items-center justify-center text-white font-bold text-xs p-2 text-center shadow-md bg-gradient-to-tr from-primary to-primary-container">
+          📖
+        </div>
+        <div>
+          <span class="px-2.5 py-0.5 rounded-md bg-primary-fixed text-primary text-[11px] font-bold uppercase tracking-wider">Đọc thử trích đoạn</span>
+          <h3 class="text-lg sm:text-xl font-bold text-on-surface mt-1" id="modal-book-title">Tên Sách</h3>
+          <p class="text-xs sm:text-sm text-on-surface-variant" id="modal-book-author">Tác giả: ...</p>
+        </div>
+      </div>
+
+      <!-- Mục Lục -->
+      <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-xs sm:text-sm text-on-surface-variant space-y-2">
+        <div class="font-bold text-on-surface flex items-center gap-1.5 text-primary">
+          <span class="material-symbols-outlined text-[18px]">list_alt</span> Mục Lục Các Chương:
+        </div>
+        <div id="modal-book-toc" class="space-y-1.5 pl-1">
+          <!-- Render TOC -->
+        </div>
+      </div>
+
+      <!-- Trích Đoạn -->
+      <div class="p-4 bg-amber-50/70 rounded-2xl border border-amber-100/80 text-xs sm:text-sm text-slate-700 space-y-2">
+        <div class="font-bold text-amber-900 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[18px]">menu_book</span> Trích đoạn tiêu biểu:
+        </div>
+        <p id="modal-book-excerpt" class="italic leading-relaxed">
+          "..."
+        </p>
+      </div>
+
+      <div class="flex gap-3 pt-2">
+        <button class="flex-1 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-colors" onclick="closePreviewModal()">
+          Đóng lại
+        </button>
+        <button id="modal-btn-buy" class="flex-1 py-3 rounded-xl bg-primary text-white font-bold text-sm shadow-md hover:bg-primary-container transition-all flex items-center justify-center gap-1.5">
+          <span class="material-symbols-outlined text-[18px]">shopping_cart</span>
+          <span>Mua Bản Quyền Ngay</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL 2: QUICK BUY / VIETQR PAYMENT
+       ========================================== -->
+  <div class="fixed inset-0 z-50 hidden bg-slate-900/65 backdrop-blur-sm flex items-center justify-center p-4" id="checkout-modal">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-4 relative max-h-[95vh] overflow-y-auto">
+      <button class="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors" onclick="closeCheckoutModal()">
+        <span class="material-symbols-outlined text-[22px]">close</span>
+      </button>
+
+      <div class="text-center">
+        <div class="inline-flex p-3 rounded-2xl bg-secondary-fixed text-secondary mb-2">
+          <span class="material-symbols-outlined text-[28px]">qr_code_2</span>
+        </div>
+        <h3 class="text-xl font-extrabold text-on-surface">Thanh Toán VietQR Tự Động</h3>
+        <p class="text-xs text-on-surface-variant mt-0.5">Quét mã chuyển khoản - Hệ thống tự kích hoạt sau 3-30s</p>
+      </div>
+
+      <!-- Customer Form -->
+      <div class="space-y-2.5 text-left bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+        <div>
+          <label class="block text-xs font-bold text-on-surface mb-1">Họ và tên của bạn: *</label>
+          <input id="checkout-cust-name" type="text" placeholder="Ví dụ: Nguyễn Văn An" class="w-full px-3 py-2 text-xs bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-1 focus:ring-primary" required/>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-on-surface mb-1">Email nhận link tải Ebook: *</label>
+          <input id="checkout-cust-email" type="email" placeholder="email@gmail.com" class="w-full px-3 py-2 text-xs bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-1 focus:ring-primary" required/>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-on-surface mb-1">Số điện thoại (Zalo nhận hỗ trợ):</label>
+          <input id="checkout-cust-phone" type="tel" placeholder="0988..." class="w-full px-3 py-2 text-xs bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-1 focus:ring-primary"/>
+        </div>
+      </div>
+
+      <!-- Amount and QR -->
+      <div class="bg-surface-container-low p-4 rounded-2xl text-center space-y-2 border border-slate-200/80">
+        <div class="text-sm font-bold text-on-surface line-clamp-1" id="checkout-item-name">Tên Sản Phẩm</div>
+        <div class="text-2xl font-black text-secondary-container" id="checkout-item-price">0đ</div>
+        
+        <!-- Real VietQR Box -->
+        <div class="w-52 h-52 mx-auto bg-white p-2 rounded-2xl shadow-inner flex flex-col items-center justify-center border border-slate-200 relative">
+          <img id="real-qr-img" src="" alt="Mã QR Thanh Toán" class="w-full h-full object-contain hidden" />
+          <div id="qr-loading" class="text-on-surface-variant text-xs font-semibold flex flex-col items-center gap-2">
+            <div class="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <span>Đang tạo mã VietQR...</span>
+          </div>
+        </div>
+
+        <div class="text-[11px] text-on-surface-variant space-y-0.5">
+          <div>Ngân hàng: <strong id="qr-bank-name">MBBank</strong> · STK: <strong id="qr-acc-num">2456987654</strong></div>
+          <div>Chủ TK: <strong id="qr-acc-name">PHAN QUOC LOC</strong></div>
+          <div>Cú pháp: <span class="bg-amber-100 text-amber-800 font-bold px-1.5 py-0.5 rounded" id="qr-transfer-memo">EBPE123456</span></div>
+        </div>
+      </div>
+
+      <div id="qr-auto-banking-status" class="text-xs font-bold text-primary flex items-center justify-center gap-1.5 py-1 px-3 bg-blue-50 text-blue-700 rounded-xl border border-blue-100 animate-pulse">
+        <span class="material-symbols-outlined text-[16px]">sync</span>
+        <span>Đang chờ nhận diện chuyển khoản từ MBBank...</span>
+      </div>
+
+      <div class="text-center space-y-2">
+        <button class="w-full py-3.5 rounded-2xl bg-primary text-white font-bold text-sm shadow-md hover:bg-primary-container transition-all flex items-center justify-center gap-1.5" onclick="confirmPurchase()">
+          <span class="material-symbols-outlined text-[20px]">check_circle</span>
+          <span>Tôi Đã Chuyển Khoản Xong</span>
+        </button>
+        <p class="text-[11px] text-outline">Bảo đảm hoàn tiền 100% trong 30 ngày nếu không hài lòng</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL 3: TRA CỨU ĐƠN HÀNG (ORDER LOOKUP)
+       ========================================== -->
+  <div class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" id="lookup-modal">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-4 relative">
+      <button class="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors" onclick="closeLookupModal()">
+        <span class="material-symbols-outlined text-[22px]">close</span>
+      </button>
+
+      <div class="text-center">
+        <div class="inline-flex p-3 rounded-2xl bg-primary-fixed text-primary mb-2">
+          <span class="material-symbols-outlined text-[28px]">receipt_long</span>
+        </div>
+        <h3 class="text-xl font-extrabold text-on-surface">Tra Cứu Đơn Hàng &amp; Link Tải</h3>
+        <p class="text-xs text-on-surface-variant mt-0.5">Nhập mã đơn hàng hoặc Email để lấy lại link tải Ebook</p>
+      </div>
+
+      <div class="space-y-3">
+        <input id="lookup-input" type="text" placeholder="Nhập mã đơn (VD: EBPE-123456) hoặc Email..." class="w-full px-4 py-3 text-sm bg-surface-container-low rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary"/>
+        <button onclick="handleLookupOrder()" class="w-full py-3 rounded-2xl bg-primary text-white font-bold text-sm hover:bg-primary-container transition-all">
+          🔍 Tìm Đơn Hàng
+        </button>
+      </div>
+
+      <div id="lookup-results" class="max-h-60 overflow-y-auto space-y-2 pt-2">
+        <!-- Render lookup results -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL 4: THANH TOÁN THÀNH CÔNG & TẢI TÀI LIỆU NGAY
+       ========================================== -->
+  <div class="fixed inset-0 z-50 hidden bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" id="success-modal">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-5 relative my-8 border border-emerald-100">
+      <button class="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors" onclick="closeSuccessModal()">
+        <span class="material-symbols-outlined text-[22px]">close</span>
+      </button>
+
+      <!-- Success Header Icon -->
+      <div class="text-center space-y-2">
+        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+          <span class="material-symbols-outlined text-[36px]">check_circle</span>
+        </div>
+        <h3 class="text-2xl font-extrabold text-on-surface">Thanh Toán Thành Công! 🎉</h3>
+        <p class="text-xs sm:text-sm text-on-surface-variant">Cảm ơn bạn đã tin tưởng EbookPe. Tài liệu bản quyền của bạn đã sẵn sàng tải về ngay bên dưới.</p>
+      </div>
+
+      <!-- Order Summary Card -->
+      <div class="bg-surface-container-low rounded-2xl p-4 border border-slate-200/80 text-xs sm:text-sm space-y-2">
+        <div class="flex justify-between items-center">
+          <span class="text-on-surface-variant">Mã đơn hàng:</span>
+          <strong class="text-primary font-bold text-sm" id="success-order-id">#EBPE123456</strong>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-on-surface-variant">Khách hàng:</span>
+          <span class="font-semibold text-on-surface" id="success-customer-name">Khách hàng</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-on-surface-variant">Email nhận sách:</span>
+          <span class="font-semibold text-primary" id="success-customer-email">email@gmail.com</span>
+        </div>
+        <div class="flex justify-between items-center border-t border-slate-200/60 pt-2">
+          <span class="text-on-surface-variant font-bold">Tổng thanh toán:</span>
+          <strong class="text-secondary font-extrabold text-base" id="success-total-amount">0đ</strong>
+        </div>
+      </div>
+
+      <!-- Gmail Notification Alert -->
+      <div id="success-email-status-box" class="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-start gap-2.5">
+        <span class="material-symbols-outlined text-emerald-600 text-[20px] flex-shrink-0 mt-0.5">mark_email_read</span>
+        <div>
+          <strong class="font-bold block" id="success-email-title">Đã kích hoạt gửi link về Gmail!</strong>
+          <span id="success-email-desc">Hệ thống đã tự động gửi toàn bộ link tải Ebook và tài liệu đính kèm về Gmail: <strong id="success-email-target">email@gmail.com</strong>.</span>
+        </div>
+      </div>
+
+      <!-- Download Links Container -->
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1">
+          <span class="material-symbols-outlined text-[16px] text-primary">cloud_download</span>
+          <span>Tải Trực Tiếp Tài Liệu &amp; Ebook (Google Drive)</span>
+        </h4>
+        <div id="success-download-items" class="space-y-2.5 max-h-60 overflow-y-auto pr-1">
+          <!-- Dynamic Download Buttons Rendered here -->
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="space-y-2 pt-2">
+        <button onclick="closeSuccessModal()" class="w-full py-3 rounded-2xl bg-slate-100 text-on-surface font-bold text-xs sm:text-sm hover:bg-slate-200 transition-all">
+          Hoàn Tất &amp; Đóng Cửa Sổ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SCRIPTS & REAL-TIME ENGINE
+       ========================================== -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="js/data.js"></script>
+  <script>
+    // Phím tắt Ctrl + Shift + L (hoặc Cmd + Shift + L, Ctrl + Shift + A) để mở trang Admin
+    window.addEventListener('keydown', function(e) {
+      const isCmdOrCtrl = e.ctrlKey || e.metaKey;
+      if (isCmdOrCtrl && e.shiftKey && (e.key === 'L' || e.key === 'l' || e.code === 'KeyL' || e.keyCode === 76 || e.key === 'A' || e.key === 'a' || e.code === 'KeyA')) {
+        e.preventDefault();
+        window.location.href = 'admin.html';
+      }
+    }, true);
+
+    // State
+    let currentCategory = 'all';
+    let currentSearchTerm = '';
+    let currentOrder = null;
+
+    // Initialize App on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCategoryPills();
+      renderEbooks();
+      renderCombos();
+      bindSearchEvents();
+      bindSyncChannel();
+      updateCartCount();
+      updateTotalStats();
+      initLiveTicker();
+    });
+
+    // BroadcastChannel sync: auto reload if Admin changes books or combos
+    function bindSyncChannel() {
+      if (typeof BroadcastChannel !== 'undefined') {
+        const channel = new BroadcastChannel('ebookpe_sync_channel');
+        channel.onmessage = (e) => {
+          if (['BOOKS_UPDATED', 'COMBOS_UPDATED', 'SETTINGS_UPDATED', 'RESET_ALL', 'IMPORT_SUCCESS'].includes(e.data.type)) {
+            renderCategoryPills();
+            renderEbooks();
+            renderCombos();
+            updateTotalStats();
+          }
+        };
+      }
+    }
+
+    function updateTotalStats() {
+      const books = window.EbookDB ? window.EbookDB.getBooks().filter(b => !b.status || b.status === 'active') : [];
+      const statEl = document.getElementById('stat-total-books');
+      if (statEl) statEl.innerText = `${books.length}+`;
+    }
+
+    // Render Category Filter Chips
+    function renderCategoryPills() {
+      const container = document.getElementById('category-pills');
+      if (!container || !window.EbookDB) return;
+
+      const books = window.EbookDB.getBooks().filter(b => !b.status || b.status === 'active');
+      const counts = { all: books.length };
+      books.forEach(b => {
+        counts[b.category] = (counts[b.category] || 0) + 1;
+      });
+
+      container.innerHTML = DEFAULT_CATEGORIES.map(cat => {
+        const count = counts[cat.id] || 0;
+        const isActive = currentCategory === cat.id;
+        const activeCls = isActive 
+          ? 'bg-primary text-white shadow-md' 
+          : 'bg-white text-on-surface-variant hover:text-on-surface border border-slate-200/80 shadow-sm';
+
+        return `
+          <button class="category-pill-btn px-4 py-2 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${activeCls}" onclick="selectCategory('${cat.id}', this)">
+            <span>${cat.name}</span>
+            <span class="opacity-75 text-[11px] ml-0.5">(${count})</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectCategory(catId, btnEl) {
+      currentCategory = catId;
+      document.querySelectorAll('.category-pill-btn').forEach(b => {
+        b.className = 'category-pill-btn px-4 py-2 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-all bg-white text-on-surface-variant hover:text-on-surface border border-slate-200/80 shadow-sm';
+      });
+      if (btnEl) {
+        btnEl.className = 'category-pill-btn px-4 py-2 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-all bg-primary text-white shadow-md';
+      }
+      renderEbooks();
+    }
+
+    // Render Ebook Cards
+    function renderEbooks() {
+      const container = document.getElementById('ebook-cards-grid');
+      const noBooksMsg = document.getElementById('no-books-msg');
+      if (!container || !window.EbookDB) return;
+
+      let books = window.EbookDB.getBooks().filter(b => !b.status || b.status === 'active');
+
+      // Category filter
+      if (currentCategory !== 'all') {
+        books = books.filter(b => b.category === currentCategory);
+      }
+
+      // Search filter
+      if (currentSearchTerm.trim() !== '') {
+        const q = currentSearchTerm.toLowerCase();
+        books = books.filter(b => 
+          b.title.toLowerCase().includes(q) || 
+          (b.author && b.author.toLowerCase().includes(q)) ||
+          (b.categoryName && b.categoryName.toLowerCase().includes(q)) ||
+          (b.shortDesc && b.shortDesc.toLowerCase().includes(q))
+        );
+      }
+
+      if (books.length === 0) {
+        container.innerHTML = '';
+        noBooksMsg?.classList.remove('hidden');
+        return;
+      }
+      noBooksMsg?.classList.add('hidden');
+
+      container.innerHTML = books.map(book => {
+        // Preset cover style
+        let coverBg = '';
+        const presetNum = (book.coverStyle || 'cover-1').replace('cover-', '');
+        const presetClass = `cover-preset-${presetNum || '1'}`;
+
+        let coverVisualHtml = '';
+        if (book.coverImage && book.coverImage.trim() !== '') {
+          coverVisualHtml = `
+            <div class="book-mockup w-36 h-48 rounded-r-lg rounded-l-sm relative overflow-hidden shadow-lg transform group-hover:scale-105 transition-transform duration-300" style="background: url('${book.coverImage}') center/cover no-repeat;">
+              <div class="book-spine-line"></div>
+            </div>
+          `;
+        } else {
+          coverVisualHtml = `
+            <div class="book-mockup ${presetClass} w-36 h-48 rounded-r-lg rounded-l-sm p-3.5 text-white flex flex-col justify-between relative shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+              <div class="book-spine-line"></div>
+              <div class="text-[10px] font-extrabold uppercase tracking-widest text-white/70 pl-2">${book.subTitle || 'EbookPe Master'}</div>
+              <div class="font-extrabold text-sm leading-snug line-clamp-3 pl-2 drop-shadow-sm">${book.title}</div>
+              <div class="text-[11px] font-semibold text-white/80 pl-2">${book.author || 'EbookPe'}</div>
+            </div>
+          `;
+        }
+
+        const discountPercent = book.originalPrice && book.originalPrice > book.price
+          ? Math.round(((book.originalPrice - book.price) / book.originalPrice) * 100)
+          : null;
+
+        return `
+          <div class="ebook-card bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl border border-slate-100 transition-all duration-300 flex flex-col justify-between group">
+            <!-- Top Cover Showcase -->
+            <div class="relative bg-gradient-to-b from-slate-100 to-slate-200/70 p-6 flex items-center justify-center overflow-hidden book-mockup-wrap">
+              <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-primary text-white text-[11px] font-extrabold uppercase shadow-sm">
+                ${book.badge || book.categoryName || 'Ebook'}
+              </span>
+              <span class="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-white/90 text-on-surface text-[11px] font-bold shadow-sm backdrop-blur-sm">
+                ${book.pages || 180} trang
+              </span>
+
+              ${coverVisualHtml}
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-5 sm:p-6 flex flex-col flex-1 justify-between">
+              <div>
+                <div class="flex items-center justify-between text-xs text-on-surface-variant mb-1.5">
+                  <span class="flex items-center gap-1 text-secondary-container font-extrabold">
+                    <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                    ${book.rating || '4.9'}
+                  </span>
+                  <span class="font-medium">${book.salesCount || 120} lượt mua</span>
+                </div>
+
+                <h3 class="font-bold text-base text-on-surface group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                  ${book.title}
+                </h3>
+                <p class="text-xs text-on-surface-variant mt-1.5 line-clamp-2 leading-relaxed">
+                  ${book.shortDesc || 'Tài liệu thực chiến áp dụng trực tiếp.'}
+                </p>
+              </div>
+
+              <!-- Price & Actions -->
+              <div class="pt-4 mt-4 border-t border-slate-100">
+                <div class="flex items-baseline gap-2 mb-3">
+                  <span class="text-xl font-black text-secondary-container">
+                    ${window.EbookDB.formatVND(book.price)}
+                  </span>
+                  ${book.originalPrice ? `<span class="text-xs text-outline line-through">${window.EbookDB.formatVND(book.originalPrice)}</span>` : ''}
+                  ${discountPercent ? `<span class="text-[11px] font-extrabold text-secondary bg-secondary-fixed px-1.5 py-0.5 rounded">-${discountPercent}%</span>` : ''}
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                  <button class="py-2.5 px-3 rounded-xl bg-slate-100 text-on-surface font-bold text-xs hover:bg-slate-200 transition-colors" onclick="openPreviewModal('${book.id}')">
+                    Đọc thử
+                  </button>
+                  <button class="py-2.5 px-3 rounded-xl bg-primary text-white font-bold text-xs hover:bg-primary-container transition-all shadow-md flex items-center justify-center gap-1" onclick="handleQuickBuyBook('${book.id}')">
+                    <span>Mua ngay</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Render Combos
+    function renderCombos() {
+      const container = document.getElementById('combos-cards-grid');
+      if (!container || !window.EbookDB) return;
+
+      const combos = window.EbookDB.getCombos().filter(c => !c.status || c.status === 'active');
+
+      if (combos.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-12 bg-white rounded-3xl border border-dashed border-slate-200 p-8">
+            <span class="material-symbols-outlined text-4xl text-outline mb-2">bolt</span>
+            <h3 class="text-base font-bold text-on-surface">Chưa có gói Combo nào</h3>
+            <p class="text-xs text-on-surface-variant mt-1">Các gói combo siêu tiết kiệm sẽ được cập nhật sớm.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = combos.map(combo => {
+        const isPopular = combo.popular || (combo.tag && combo.tag.includes('78%')) || (combo.tag && combo.tag.includes('VIP'));
+        
+        let bonusItemsHtml = '';
+        if (combo.bonusList && Array.isArray(combo.bonusList)) {
+          bonusItemsHtml = combo.bonusList.map(item => `
+            <li class="flex items-start gap-2 text-xs sm:text-sm text-on-surface-variant">
+              <span class="material-symbols-outlined text-primary text-[18px] mt-0.5 flex-shrink-0">check_circle</span>
+              <span class="leading-relaxed">${item}</span>
+            </li>
+          `).join('');
+        } else if (combo.bookIds && Array.isArray(combo.bookIds)) {
+          const allBooks = window.EbookDB.getBooks();
+          bonusItemsHtml = combo.bookIds.map(bId => {
+            const b = allBooks.find(item => item.id === bId);
+            return `
+              <li class="flex items-start gap-2 text-xs sm:text-sm text-on-surface-variant">
+                <span class="material-symbols-outlined text-primary text-[18px] mt-0.5 flex-shrink-0">check_circle</span>
+                <span class="leading-relaxed">Ebook: ${b ? b.title : bId}</span>
+              </li>
+            `;
+          }).join('');
+        }
+
+        if (isPopular) {
+          return `
+            <div class="relative bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border-2 border-secondary-container flex flex-col justify-between transform lg:-translate-y-4">
+              <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-secondary-container to-secondary text-white text-[11px] font-extrabold tracking-wider uppercase shadow-md flex items-center gap-1">
+                <span class="material-symbols-outlined text-[15px]">local_fire_department</span> Khuyên Dùng - Best Seller
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mt-2">
+                  <span class="text-xs font-bold px-3 py-1 bg-primary-fixed text-primary rounded-full">Bộ Siêu VIP</span>
+                  <span class="text-xs font-black px-2.5 py-0.5 bg-secondary-fixed text-secondary rounded">${combo.discountBadge || 'GIẢM 78%'}</span>
+                </div>
+
+                <h3 class="text-xl font-extrabold text-on-surface mt-4">${combo.title}</h3>
+                <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">${combo.subTitle || 'Bộ cẩm nang toàn diện tối tân'}</p>
+
+                <div class="flex items-baseline gap-2.5 my-5">
+                  <span class="text-3xl font-black text-secondary-container">${window.EbookDB.formatVND(combo.price)}</span>
+                  ${combo.originalPrice ? `<span class="text-sm text-outline line-through">${window.EbookDB.formatVND(combo.originalPrice)}</span>` : ''}
+                </div>
+
+                <ul class="space-y-3 mb-6">
+                  ${bonusItemsHtml}
+                </ul>
+              </div>
+
+              <button class="w-full py-4 rounded-2xl bg-gradient-to-r from-secondary-container to-secondary text-white font-bold text-sm hover:opacity-95 transition-all shadow-[0_10px_20px_-5px_rgba(249,115,22,0.4)] flex items-center justify-center gap-1.5" onclick="handleQuickBuyCombo('${combo.id}')">
+                <span class="material-symbols-outlined text-[18px]">bolt</span>
+                <span>Sở Hữu Gói VIP Này (-78%)</span>
+              </button>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm hover:shadow-md border border-slate-100 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold px-3 py-1 bg-surface-container text-primary rounded-full">${combo.tag || 'Combo Tiết Kiệm'}</span>
+                <span class="text-xs font-black px-2.5 py-0.5 bg-secondary-fixed text-secondary rounded">${combo.discountBadge || 'TIẾT KIỆM'}</span>
+              </div>
+
+              <h3 class="text-xl font-extrabold text-on-surface mt-4">${combo.title}</h3>
+              <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">${combo.subTitle || 'Lộ trình thực thi an toàn'}</p>
+
+              <div class="flex items-baseline gap-2.5 my-5">
+                <span class="text-2xl font-extrabold text-primary">${window.EbookDB.formatVND(combo.price)}</span>
+                ${combo.originalPrice ? `<span class="text-sm text-outline line-through">${window.EbookDB.formatVND(combo.originalPrice)}</span>` : ''}
+              </div>
+
+              <ul class="space-y-3 mb-6">
+                ${bonusItemsHtml}
+              </ul>
+            </div>
+
+            <button class="w-full py-3.5 rounded-2xl bg-surface-container text-primary font-bold text-sm hover:bg-primary-container hover:text-white transition-all" onclick="handleQuickBuyCombo('${combo.id}')">
+              Mua Combo Này
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Search Box live input
+    function bindSearchEvents() {
+      const searchInputs = [document.getElementById('ebook-search-input'), document.getElementById('nav-search-input')];
+      searchInputs.forEach(input => {
+        if (!input) return;
+        input.addEventListener('input', (e) => {
+          currentSearchTerm = e.target.value;
+          renderEbooks();
+        });
+      });
+    }
+
+    // FAQ Toggle
+    function toggleFaq(button) {
+      const content = button.nextElementSibling;
+      const icon = button.querySelector('.material-symbols-outlined');
+      const isHidden = content.classList.contains('hidden');
+
+      document.querySelectorAll('.faq-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('#faq-accordion .material-symbols-outlined').forEach(i => {
+        i.textContent = 'expand_more';
+        i.classList.remove('text-primary');
+        i.classList.add('text-outline');
+      });
+
+      if (isHidden) {
+        content.classList.remove('hidden');
+        icon.textContent = 'expand_less';
+        icon.classList.remove('text-outline');
+        icon.classList.add('text-primary');
+      }
+    }
+
+    // Preview Modal (Đọc thử)
+    function openPreviewModal(bookId) {
+      const book = window.EbookDB.getBookById(bookId);
+      if (!book) return;
+
+      document.getElementById('modal-book-title').innerText = book.title;
+      document.getElementById('modal-book-author').innerText = `Tác giả: ${book.author || 'EbookPe'} · ${book.pages || 180} trang · ${book.format || 'PDF'}`;
       
+      const tocContainer = document.getElementById('modal-book-toc');
+      if (book.toc && Array.isArray(book.toc) && book.toc.length > 0) {
+        tocContainer.innerHTML = book.toc.map(item => `<div>• ${item}</div>`).join('');
+      } else {
+        tocContainer.innerHTML = `
+          <div>• Chương 1: Tổng quan chiến lược &amp; Tư duy cốt lõi</div>
+          <div>• Chương 2: Phương pháp thực thi từng bước trong thực tế</div>
+          <div>• Chương 3: Checklist hành động &amp; Xử lý rủi ro</div>
+        `;
+      }
+
+      document.getElementById('modal-book-excerpt').innerText = book.sampleExcerpt || book.shortDesc || 'Đọc thử trích đoạn sách chất lượng cao.';
+      
+      const buyBtn = document.getElementById('modal-btn-buy');
+      buyBtn.onclick = () => {
+        closePreviewModal();
+        handleQuickBuyBook(book.id);
+      };
+
+      document.getElementById('preview-modal').classList.remove('hidden');
+    }
+
+    function closePreviewModal() {
+      document.getElementById('preview-modal').classList.add('hidden');
+    }
+
+    const DEFAULT_DRIVE_URL = 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing';
+
+    // Quick Buy Handlers (VietQR Modal)
+    function handleQuickBuyBook(bookId) {
+      const book = window.EbookDB.getBookById(bookId);
+      if (!book) return;
+      let dlUrl = (book.downloadUrl || '').trim();
+      if (dlUrl.startsWith('drive.google.com')) dlUrl = 'https://' + dlUrl;
+      if (!dlUrl || dlUrl === '#' || dlUrl === 'https://drive.google.com') dlUrl = DEFAULT_DRIVE_URL;
+      openCheckoutModal(book.title, book.price, [{ id: book.id, title: book.title, price: book.price, qty: 1, isCombo: false, downloadUrl: dlUrl }]);
+    }
+
+    function handleQuickBuyCombo(comboId) {
+      const combo = window.EbookDB.getComboById(comboId);
+      if (!combo) return;
+      let dlUrl = (combo.downloadUrl || '').trim();
+      if (dlUrl.startsWith('drive.google.com')) dlUrl = 'https://' + dlUrl;
+      if (!dlUrl || dlUrl === '#' || dlUrl === 'https://drive.google.com') dlUrl = DEFAULT_DRIVE_URL;
+      openCheckoutModal(combo.title, combo.price, [{ id: combo.id, title: combo.title, price: combo.price, qty: 1, isCombo: true, downloadUrl: dlUrl }]);
+    }
+
+    let sepayPollTimer = null;
+    const sentEmailOrderIds = new Set();
+
+    function openCheckoutModal(name, price, items) {
+      const settings = window.EbookDB ? window.EbookDB.getSettings() : {};
+      
+      document.getElementById('checkout-item-name').innerText = name;
+      document.getElementById('checkout-item-price').innerText = window.EbookDB.formatVND(price);
+
+      const qrImg = document.getElementById('real-qr-img');
+      const qrLoading = document.getElementById('qr-loading');
+      qrImg.classList.add('hidden');
+      qrLoading.classList.remove('hidden');
+
+      const orderNum = Math.floor(100000 + Math.random() * 900000);
+      const transferPrefix = settings.transferPrefix || 'EBPE';
+      const orderCode = `${transferPrefix}${orderNum}`;
+
+      document.getElementById('qr-bank-name').innerText = settings.bankName || 'MBBank';
+      document.getElementById('qr-acc-num').innerText = settings.accountNumber || '2456987654';
+      document.getElementById('qr-acc-name').innerText = settings.accountName || 'PHAN QUOC LOC';
+      document.getElementById('qr-transfer-memo').innerText = orderCode;
+
+      // Real VietQR URL
+      const bankCode = settings.bankCode || 'MB';
+      const accNum = settings.accountNumber || '2456987654';
+      const template = settings.qrTemplate || 'compact2';
+      const accName = encodeURIComponent(settings.accountName || 'PHAN QUOC LOC');
+      
+      const qrUrl = `https://img.vietqr.io/image/${bankCode}-${accNum}-${template}.png?amount=${price}&addInfo=${orderCode}&accountName=${accName}`;
+
       qrImg.src = qrUrl;
       qrImg.onload = () => {
         qrLoading.classList.add('hidden');
@@ -800,44 +1334,621 @@
       };
 
       currentOrder = {
-        orderId: transferPrefix + orderId,
-        total: price,
-        items: [{ id: 'quick-buy-' + Date.now(), name: name, price: price, qty: 1 }]
+        orderId: orderCode,
+        totalAmount: price,
+        items: items
       };
-    } else {
-      qrLoading.innerText = "Lỗi: Không tải được thông tin thanh toán.";
+
+      // Start automatic payment detection (SePay / MBBank)
+      startSePayPolling(orderCode, price);
+
+      document.getElementById('checkout-modal').classList.remove('hidden');
     }
 
-    document.getElementById('checkout-modal').classList.remove('hidden');
-  }
+    function closeCheckoutModal() {
+      stopSePayPolling();
+      document.getElementById('checkout-modal').classList.add('hidden');
+    }
 
-  function closeCheckoutModal() {
-    document.getElementById('checkout-modal').classList.add('hidden');
-  }
+    // Tự động quét giao dịch MBBank qua SePay API
+    function startSePayPolling(orderId, expectedAmount) {
+      stopSePayPolling();
+      const settings = window.EbookDB ? window.EbookDB.getSettings() : {};
+      const statusBox = document.getElementById('qr-auto-banking-status');
 
-  function confirmPurchase() {
-    if (currentOrder && window.EbookDB) {
-      window.EbookDB.createOrder({
-        customerName: "Khách Mua Nhanh",
-        customerEmail: "khachhang@example.com",
-        customerPhone: "",
+      if (!settings.sepayApiKey) {
+        if (statusBox) {
+          statusBox.innerHTML = '<span class="material-symbols-outlined text-[16px]">qr_code_scanner</span><span>Quét mã QR bằng App ngân hàng bất kỳ để chuyển khoản</span>';
+        }
+        return;
+      }
+
+      if (statusBox) {
+        statusBox.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">sync</span><span>🟢 <strong>Auto-Banking:</strong> Đang tự động quét giao dịch từ MBBank...</span>';
+      }
+
+      sepayPollTimer = setInterval(async () => {
+        try {
+          const cleanToken = (settings.sepayApiKey || '').trim();
+          if (!cleanToken) return;
+
+          // Fetch via local proxy or direct
+          let response;
+          try {
+            response = await fetch(`/api/sepay-proxy?token=${encodeURIComponent(cleanToken)}&limit=20`);
+          } catch (e) {
+            response = await fetch(`https://my.sepay.vn/userapi/transactions/list?limit=20`, {
+              headers: { 'Authorization': `Bearer ${cleanToken}` }
+            });
+          }
+
+          if (response && response.ok) {
+            const data = await response.json();
+            if (data && data.transactions && Array.isArray(data.transactions)) {
+              const cleanOrder = orderId.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+              const matched = data.transactions.find(tx => {
+                const content = (tx.transaction_content || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                const code = (tx.code || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                const amountIn = parseFloat(tx.amount_in || 0);
+                return (content.includes(cleanOrder) || code.includes(cleanOrder)) && amountIn >= expectedAmount;
+              });
+
+              if (matched) {
+                stopSePayPolling();
+                if (statusBox) {
+                  statusBox.innerHTML = '<span>✅ <strong>MBBank đã nhận tiền thành công!</strong> Đang mở tài liệu...</span>';
+                }
+                setTimeout(() => {
+                  executeOrderCompletion(true);
+                }, 800);
+              }
+            }
+          }
+        } catch (err) {
+          // Keep polling
+        }
+      }, 3000);
+    }
+
+    function stopSePayPolling() {
+      if (sepayPollTimer) {
+        clearInterval(sepayPollTimer);
+        sepayPollTimer = null;
+      }
+    }
+
+    // Xử lý khi bấm nút "Tôi Đã Chuyển Khoản Xong"
+    async function confirmPurchase() {
+      if (!currentOrder) return;
+
+      const settings = window.EbookDB ? window.EbookDB.getSettings() : {};
+      
+      // NẾU ĐÃ CẤU HÌNH SEPAY: BẮT BUỘC KIỂM TRA GIAO DỊCH THỰC TẾ TRONG TÀI KHOẢN MBBANK
+      if (settings.sepayApiKey && settings.sepayApiKey.trim()) {
+        const btn = document.querySelector('#checkout-modal button[onclick="confirmPurchase()"]');
+        let origBtnHtml = '';
+        if (btn) {
+          origBtnHtml = btn.innerHTML;
+          btn.disabled = true;
+          btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">sync</span><span>Đang kiểm tra MBBank...</span>';
+        }
+
+        try {
+          const cleanToken = settings.sepayApiKey.trim();
+          let response;
+          try {
+            response = await fetch(`/api/sepay-proxy?token=${encodeURIComponent(cleanToken)}&limit=30`);
+          } catch (e) {
+            response = await fetch(`https://my.sepay.vn/userapi/transactions/list?limit=30`, {
+              headers: { 'Authorization': `Bearer ${cleanToken}` }
+            });
+          }
+
+          if (response && response.ok) {
+            const data = await response.json();
+            if (data && data.transactions && Array.isArray(data.transactions)) {
+              const cleanOrder = currentOrder.orderId.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+              const matched = data.transactions.find(tx => {
+                const content = (tx.transaction_content || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                const code = (tx.code || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                const amountIn = parseFloat(tx.amount_in || 0);
+                return (content.includes(cleanOrder) || code.includes(cleanOrder)) && amountIn >= currentOrder.totalAmount;
+              });
+
+              if (matched) {
+                if (btn) { btn.disabled = false; btn.innerHTML = origBtnHtml; }
+                executeOrderCompletion(true);
+                return;
+              } else {
+                if (btn) { btn.disabled = false; btn.innerHTML = origBtnHtml; }
+                alert(`⚠️ Hệ thống chưa nhận được tiền chuyển khoản cho mã đơn #${currentOrder.orderId} trong tài khoản MBBank.\n\nNếu bạn vừa quét mã chuyển tiền, vui lòng đợi 3 - 5 giây để ngân hàng đồng bộ giao dịch rồi bấm lại nhé!`);
+                return;
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('Lỗi kiểm tra SePay:', err);
+        }
+
+        if (btn) { btn.disabled = false; btn.innerHTML = origBtnHtml; }
+        alert(`⚠️ Hệ thống chưa nhận được tiền chuyển khoản cho mã đơn #${currentOrder.orderId}.\n\nVui lòng hoàn tất chuyển khoản đúng số tiền và nội dung ${currentOrder.orderId} trước khi xác nhận.`);
+        return;
+      }
+
+      // Chưa cấu hình SePay API Token -> Chế độ xác nhận trực tiếp
+      executeOrderCompletion(false);
+    }
+
+    // Thực hiện hoàn tất đơn hàng, mở Modal tải sách và gửi Email
+    function executeOrderCompletion(isAuto = false) {
+      if (!currentOrder) return;
+
+      const custName = document.getElementById('checkout-cust-name')?.value.trim() || 'Khách Hàng';
+      const custEmail = document.getElementById('checkout-cust-email')?.value.trim() || 'khachhang@gmail.com';
+      const custPhone = document.getElementById('checkout-cust-phone')?.value.trim() || '';
+
+      const completedOrder = {
+        orderId: currentOrder.orderId,
+        customerName: custName,
+        customerEmail: custEmail,
+        customerPhone: custPhone,
         items: currentOrder.items,
-        total: currentOrder.total
-      });
-    }
-    alert('Thanh toán thành công! Đơn hàng đã được ghi nhận vào hệ thống Admin. Hệ thống sẽ gửi link tải qua Email cho bạn.');
-    closeCheckoutModal();
-  }
+        totalAmount: currentOrder.totalAmount,
+        status: 'completed',
+        createdAt: new Date().toISOString()
+      };
 
-  // Hide header on scroll down
-  let lastScrollY = window.scrollY;
-  const header = document.getElementById('main-header');
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > lastScrollY && window.scrollY > 100) {
-      header.classList.add('-translate-y-full');
-    } else {
-      header.classList.remove('-translate-y-full');
+      if (window.EbookDB) {
+        window.EbookDB.createOrder(completedOrder);
+      }
+
+      closeCheckoutModal();
+      openSuccessModal(completedOrder);
+      sendAutoEmailToCustomer(completedOrder);
+      if (typeof updateCartCount === 'function') {
+        updateCartCount();
+      }
     }
-    lastScrollY = window.scrollY;
-  });
-</script></main><footer class="w-full bg-surface-container-low text-on-surface"><div class="max-w-[1200px] mx-auto px-margin pt-space-xl pb-space-lg"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-gutter"><div class="lg:col-span-4 space-y-space-sm"><div class="flex items-center gap-space-xs"><img alt="EbookPe Logo" class="h-7 w-auto object-contain" src="logo/screen.png"/><span class="font-headline-sm text-headline-sm text-primary font-bold">EbookPe</span></div><p class="text-body-sm font-body-sm text-on-surface-variant pr-4 leading-relaxed">Nền tảng Ebook Thực Chiến dành riêng cho Doanh nhân, Freelancer và Nhà sáng tạo nội dung. Cung cấp tri thức tinh gọn, áp dụng ngay để tạo kết quả đo lường được.</p><div class="space-y-1.5 pt-2"><div class="flex items-center gap-2 text-body-sm font-body-sm text-on-surface"><span class="material-symbols-outlined text-primary text-[18px]">call</span><span class="font-semibold">Hotline/Zalo: 0333.399.956</span></div><div class="flex items-center gap-2 text-body-sm font-body-sm text-on-surface-variant"><span class="material-symbols-outlined text-primary text-[18px]">mail</span><span>support@ebookpe.com</span></div></div></div><div class="lg:col-span-2 space-y-space-sm"><h4 class="font-headline-sm text-headline-sm text-on-surface">Sản Phẩm</h4><ul class="space-y-2 text-body-sm font-body-sm text-on-surface-variant"><li><a class="hover:text-primary transition-colors" href="#">Kho Toàn Bộ Ebook</a></li><li><a class="hover:text-primary transition-colors" href="#">Combo Khởi Nghiệp</a></li><li><a class="hover:text-primary transition-colors" href="#">Bộ Toolkit Marketing</a></li><li><a class="hover:text-primary transition-colors" href="#">Sách Mới Xuất Bản</a></li><li><a class="hover:text-primary transition-colors" href="#">Ebook Best-Seller</a></li></ul></div><div class="lg:col-span-3 space-y-space-sm"><h4 class="font-headline-sm text-headline-sm text-on-surface">Danh Mục &amp; Chính Sách</h4><ul class="space-y-2 text-body-sm font-body-sm text-on-surface-variant"><li><a class="hover:text-primary transition-colors" href="#">Kinh Doanh &amp; Khởi Nghiệp</a></li><li><a class="hover:text-primary transition-colors" href="#">Marketing &amp; Bán Hàng</a></li><li><a class="hover:text-primary transition-colors" href="#">Tài Chính Cá Nhân</a></li><li><a class="hover:text-primary transition-colors" href="#">Bảo Đảm Hoàn Tiền 30 Ngày</a></li><li><a class="hover:text-primary transition-colors" href="#">Điều Khoản Sử Dụng</a></li></ul></div><div class="lg:col-span-3 space-y-space-sm"><h4 class="font-headline-sm text-headline-sm text-on-surface">Thanh Toán Tự Động 24/7</h4><p class="text-body-sm font-body-sm text-on-surface-variant">Hệ thống kích hoạt link tải tức thì ngay khi hoàn tất chuyển khoản.</p><div class="flex flex-wrap items-center gap-2 pt-1"><span class="px-2.5 py-1.5 rounded-lg bg-surface-container font-label-badge text-label-badge text-on-surface font-bold">VIETQR</span><span class="px-2.5 py-1.5 rounded-lg bg-surface-container font-label-badge text-label-badge text-on-surface font-bold">NAPAS 247</span><span class="px-2.5 py-1.5 rounded-lg bg-surface-container font-label-badge text-label-badge text-on-surface font-bold">MOMO</span></div><div class="flex items-center gap-2 pt-2 text-primary font-label-md text-label-md"><span class="material-symbols-outlined text-[18px]">verified_user</span><span>Bảo mật nội dung số chuẩn SSL</span></div></div></div><div class="mt-space-xl pt-space-md flex flex-col md:flex-row items-center justify-between text-body-sm font-body-sm text-on-surface-variant gap-4"><p>© 2025 EbookPe. Nền tảng tri thức số thực chiến. Giữ toàn bộ bản quyền nội dung.</p><div class="flex items-center gap-space-md"><a class="hover:text-on-surface transition-colors" href="#">Chính sách bảo mật</a><a class="hover:text-on-surface transition-colors" href="#">Bản quyền sở hữu trí tuệ</a><a class="hover:text-on-surface transition-colors" href="#">Hỗ trợ kỹ thuật</a></div></div></div></footer></body></html>
+
+    // Modal Thanh Toán Thành Công & Tải Sách Trực Tiếp
+    function openSuccessModal(order) {
+      document.getElementById('success-order-id').innerText = `#${order.orderId}`;
+      document.getElementById('success-customer-name').innerText = order.customerName || 'Khách hàng';
+      document.getElementById('success-customer-email').innerText = order.customerEmail || 'email@gmail.com';
+      document.getElementById('success-email-target').innerText = order.customerEmail || 'email@gmail.com';
+      document.getElementById('success-total-amount').innerText = window.EbookDB ? window.EbookDB.formatVND(order.totalAmount || 0) : `${order.totalAmount}đ`;
+
+      const downloadContainer = document.getElementById('success-download-items');
+      if (!downloadContainer) return;
+
+      let html = '';
+      (order.items || []).forEach(item => {
+        const isCombo = item.isCombo || (item.id && item.id.startsWith('combo')) || (window.EbookDB && window.EbookDB.getComboById(item.id) !== null);
+
+        if (isCombo) {
+          const combo = window.EbookDB ? window.EbookDB.getComboById(item.id) : null;
+          let booksInCombo = [];
+          if (combo && combo.bookIds && Array.isArray(combo.bookIds)) {
+            booksInCombo = combo.bookIds.map(bId => window.EbookDB.getBookById(bId)).filter(Boolean);
+          }
+          if (booksInCombo.length === 0 && window.EbookDB) {
+            booksInCombo = window.EbookDB.getBooks().slice(0, 3);
+          }
+
+          html += `
+            <div class="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-2.5">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">📦</span>
+                <div>
+                  <strong class="text-xs sm:text-sm font-bold text-emerald-900 block">${item.title || combo?.title || 'Combo Ebook'}</strong>
+                  <span class="text-[11px] text-emerald-700 font-medium">Bao gồm ${booksInCombo.length} cuốn Ebook bản quyền — Vui lòng tải từng cuốn bên dưới:</span>
+                </div>
+              </div>
+              <div class="space-y-1.5 pt-1 border-t border-emerald-200/60">
+                ${booksInCombo.map(b => {
+                  let bUrl = (b.downloadUrl || '').trim();
+                  if (bUrl.startsWith('drive.google.com')) bUrl = 'https://' + bUrl;
+                  if (!bUrl || bUrl === '#' || bUrl === 'https://drive.google.com') bUrl = DEFAULT_DRIVE_URL;
+                  return `
+                    <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-emerald-100 text-xs gap-2">
+                      <div class="flex-1 min-w-0">
+                        <span class="font-bold text-slate-700 line-clamp-1 block">📖 ${b.title}</span>
+                        <div class="text-[11px] text-slate-500 mt-0.5">
+                          👉 <a href="${bUrl}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-semibold break-all">${bUrl}</a>
+                        </div>
+                      </div>
+                      <a href="${bUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-primary hover:bg-primary-container text-white font-bold text-xs shadow-sm transition-all shrink-0">
+                        <span class="material-symbols-outlined text-[14px]">cloud_download</span>
+                        <span>Tải PDF</span>
+                      </a>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        } else {
+          // Single Book
+          const book = window.EbookDB ? window.EbookDB.getBookById(item.id) : null;
+          let dlUrl = (book?.downloadUrl || item.downloadUrl || '').trim();
+          if (dlUrl.startsWith('drive.google.com')) dlUrl = 'https://' + dlUrl;
+          if (!dlUrl || dlUrl === '#' || dlUrl === 'https://drive.google.com') dlUrl = DEFAULT_DRIVE_URL;
+
+          html += `
+            <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+              <div class="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
+                <div class="flex items-center gap-2.5">
+                  <span class="text-xl">📄</span>
+                  <div>
+                    <strong class="text-xs sm:text-sm font-bold text-on-surface block line-clamp-1">${item.title || book?.title || 'Ebook'}</strong>
+                    <span class="text-[11px] text-on-surface-variant">Định dạng: PDF + EPUB bản quyền</span>
+                  </div>
+                </div>
+                <a href="${dlUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-3.5 py-2 rounded-xl bg-primary hover:bg-primary-container text-white font-bold text-xs shadow-md transition-all whitespace-nowrap">
+                  <span class="material-symbols-outlined text-[16px]">cloud_download</span>
+                  <span>Tải Ebook Ngay</span>
+                </a>
+              </div>
+              <div class="text-[11px] text-slate-600">
+                👉 <b>Link Google Drive:</b> <a href="${dlUrl}" target="_blank" rel="noopener noreferrer" class="text-primary font-bold underline break-all">${dlUrl}</a>
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      downloadContainer.innerHTML = html;
+      document.getElementById('success-modal').classList.remove('hidden');
+    }
+
+    function closeSuccessModal() {
+      document.getElementById('success-modal').classList.add('hidden');
+    }
+
+    // Tự Động Gửi Email Chứa Link Sách Tới Gmail Khách Hàng (EmailJS)
+    async function sendAutoEmailToCustomer(order) {
+      if (!order || !order.orderId) return;
+
+      if (sentEmailOrderIds.has(order.orderId)) {
+        return;
+      }
+      sentEmailOrderIds.add(order.orderId);
+
+      const settings = window.EbookDB ? window.EbookDB.getSettings() : {};
+      const statusTitle = document.getElementById('success-email-title');
+      const statusDesc = document.getElementById('success-email-desc');
+
+      // Prepare link strings & HTML for Email Template
+      const bookTitles = [];
+      const downloadHtmlCards = [];
+      const downloadListHtml = [];
+      let primaryUrl = '';
+
+      (order.items || []).forEach(item => {
+        const isCombo = item.isCombo || (item.id && item.id.startsWith('combo')) || (window.EbookDB && window.EbookDB.getComboById(item.id) !== null);
+
+        if (isCombo) {
+          const combo = window.EbookDB ? window.EbookDB.getComboById(item.id) : null;
+          const comboTitle = item.title || combo?.title || 'Combo Ebook';
+          bookTitles.push(`[Combo] ${comboTitle}`);
+
+          let booksInCombo = [];
+          if (combo && combo.bookIds && Array.isArray(combo.bookIds)) {
+            booksInCombo = combo.bookIds.map(bId => window.EbookDB.getBookById(bId)).filter(Boolean);
+          }
+          if (booksInCombo.length === 0 && window.EbookDB) {
+            booksInCombo = window.EbookDB.getBooks().slice(0, 3);
+          }
+
+          // Generate individual download buttons for each ebook inside the combo (NO generic combo button)
+          booksInCombo.forEach(b => {
+            let bUrl = (b.downloadUrl || '').trim();
+            if (bUrl.startsWith('drive.google.com')) bUrl = 'https://' + bUrl;
+            if (!bUrl || bUrl === '#' || bUrl === 'https://drive.google.com') bUrl = DEFAULT_DRIVE_URL;
+            if (!primaryUrl) primaryUrl = bUrl;
+
+            downloadHtmlCards.push(`
+              <div style="margin: 6px 0;">
+                <a href="${bUrl}" target="_blank" style="display: inline-block; background-color: #1a73e8; color: #ffffff; text-decoration: none; font-size: 13px; font-weight: bold; padding: 10px 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(26,115,232,0.25);">
+                  📖 Tải Ebook: ${b.title}
+                </a>
+              </div>
+            `);
+          });
+
+          // Detailed List for Email
+          let subBooksHtml = booksInCombo.map(b => {
+            let bUrl = (b.downloadUrl || '').trim();
+            if (bUrl.startsWith('drive.google.com')) bUrl = 'https://' + bUrl;
+            if (!bUrl || bUrl === '#' || bUrl === 'https://drive.google.com') bUrl = DEFAULT_DRIVE_URL;
+            return `
+              <div style="margin: 6px 0; font-size: 13px; padding: 8px 10px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
+                • <strong>${b.title}</strong><br>
+                👉 <strong>Link tải PDF:</strong> <a href="${bUrl}" target="_blank" style="color: #1a73e8; font-weight: bold; text-decoration: underline;">${bUrl}</a>
+              </div>
+            `;
+          }).join('');
+
+          downloadListHtml.push(`
+            <div style="margin-bottom: 12px; padding: 12px; background: #ffffff; border: 1.5px solid #86efac; border-radius: 8px;">
+              <div style="font-weight: 700; color: #166534; font-size: 14px; margin-bottom: 6px;">📦 ${comboTitle} (${booksInCombo.length} Ebook trong gói):</div>
+              <div>${subBooksHtml}</div>
+            </div>
+          `);
+
+        } else {
+          // Single Book
+          const book = window.EbookDB ? window.EbookDB.getBookById(item.id) : null;
+          const title = item.title || book?.title || 'Ebook';
+          bookTitles.push(title);
+
+          let bookUrl = (book?.downloadUrl || item.downloadUrl || '').trim();
+          if (bookUrl.startsWith('drive.google.com')) bookUrl = 'https://' + bookUrl;
+          if (!bookUrl || bookUrl === '#' || bookUrl === 'https://drive.google.com') bookUrl = DEFAULT_DRIVE_URL;
+          if (!primaryUrl) primaryUrl = bookUrl;
+
+          // HTML Button
+          downloadHtmlCards.push(`
+            <div style="margin: 6px 0;">
+              <a href="${bookUrl}" target="_blank" style="display: inline-block; background-color: #1a73e8; color: #ffffff; text-decoration: none; font-size: 13px; font-weight: bold; padding: 10px 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(26,115,232,0.25);">
+                📄 Tải Ebook: ${title}
+              </a>
+            </div>
+          `);
+
+          // Detailed List
+          downloadListHtml.push(`
+            <div style="margin-bottom: 10px; padding: 12px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px;">
+              <div style="font-weight: 700; color: #1e293b; font-size: 14px;">📄 ${title}</div>
+              <div style="margin-top: 4px; font-size: 13px;">👉 <strong>Link tải Google Drive:</strong> <a href="${bookUrl}" target="_blank" style="color: #1a73e8; font-weight: 700; text-decoration: underline;">${bookUrl}</a></div>
+            </div>
+          `);
+        }
+      });
+
+      const finalPrimaryUrl = primaryUrl || DEFAULT_DRIVE_URL;
+      const titlesString = bookTitles.join(', ');
+      const htmlButtons = downloadHtmlCards.join('');
+      const htmlDetails = downloadListHtml.join('');
+
+      const serviceId = (settings.emailjsServiceId || '').trim();
+      const templateId = (settings.emailjsTemplateId || '').trim();
+      const publicKey = (settings.emailjsPublicKey || '').trim();
+
+      if (serviceId && templateId && publicKey && typeof emailjs !== 'undefined') {
+        try {
+          emailjs.init(publicKey);
+          
+          // Gửi kèm tất cả các biến khớp chính xác 100% với Template Email của người dùng
+          const templateParams = {
+            to_name: order.customerName || 'Khách hàng',
+            user_name: order.customerName || 'Khách hàng',
+            name: order.customerName || 'Khách hàng',
+            customer_name: order.customerName || 'Khách hàng',
+            to_email: order.customerEmail,
+            user_email: order.customerEmail,
+            email: order.customerEmail,
+            customer_email: order.customerEmail,
+            recipient: order.customerEmail,
+            recipient_email: order.customerEmail,
+            reply_to: order.customerEmail,
+            order_id: order.orderId,
+            orderId: order.orderId,
+            total_amount: window.EbookDB ? window.EbookDB.formatVND(order.totalAmount || 0) : `${order.totalAmount}đ`,
+            total: window.EbookDB ? window.EbookDB.formatVND(order.totalAmount || 0) : `${order.totalAmount}đ`,
+            book_titles: titlesString,
+            books: titlesString,
+            titles: titlesString,
+            html_download_links: htmlButtons,
+            download_links: htmlDetails,
+            download_link: finalPrimaryUrl,
+            download_url: finalPrimaryUrl,
+            google_drive_link: finalPrimaryUrl,
+            link: finalPrimaryUrl,
+            message: htmlDetails,
+            sender_name: 'EbookPe — Nền Tảng Ebook Thực Chiến',
+            support_hotline: settings.hotline || '0333.399.956'
+          };
+
+          const res = await emailjs.send(serviceId, templateId, templateParams, publicKey);
+          console.log('✅ EmailJS gửi thành công:', res);
+
+          if (statusTitle) statusTitle.innerText = '✅ Đã gửi email thành công!';
+          if (statusDesc) statusDesc.innerHTML = `Email chứa đầy đủ link tải Ebook bản quyền đã được gửi thành công tới <strong>${order.customerEmail}</strong>. Hãy kiểm tra hòm thư của bạn.`;
+        } catch (err) {
+          console.error('❌ Lỗi gửi email qua EmailJS:', err);
+          const errMsg = err?.text || err?.message || JSON.stringify(err);
+          if (statusTitle) statusTitle.innerText = 'Tài liệu đã sẵn sàng tải trực tiếp!';
+          if (statusDesc) statusDesc.innerHTML = `Bạn có thể bấm trực tiếp các nút tải màu xanh bên dưới để mở Google Drive lưu sách ngay lập tức. (Lỗi EmailJS: ${errMsg})`;
+        }
+      } else {
+        if (statusTitle) statusTitle.innerText = 'Tài liệu đã sẵn sàng tải trực tiếp!';
+        if (statusDesc) statusDesc.innerHTML = `Bạn có thể bấm trực tiếp các nút màu xanh bên dưới để mở link Google Drive tải Ebook ngay bây giờ.`;
+      }
+    }
+
+    // Tra Cứu Đơn Hàng (Lookup Modal)
+    function openLookupModal() {
+      document.getElementById('lookup-results').innerHTML = '';
+      document.getElementById('lookup-input').value = '';
+      document.getElementById('lookup-modal').classList.remove('hidden');
+    }
+
+    function closeLookupModal() {
+      document.getElementById('lookup-modal').classList.add('hidden');
+    }
+
+    function handleLookupOrder() {
+      const query = document.getElementById('lookup-input').value.trim().toLowerCase();
+      const resultsContainer = document.getElementById('lookup-results');
+      if (!query) {
+        resultsContainer.innerHTML = '<div class="text-xs text-red-500 text-center">Vui lòng nhập mã đơn hoặc Email!</div>';
+        return;
+      }
+
+      const orders = window.EbookDB ? window.EbookDB.getOrders() : [];
+      const found = orders.filter(o => 
+        (o.orderId && o.orderId.toLowerCase().includes(query)) ||
+        (o.customerEmail && o.customerEmail.toLowerCase().includes(query)) ||
+        (o.customerPhone && o.customerPhone.includes(query))
+      );
+
+      if (found.length === 0) {
+        resultsContainer.innerHTML = `
+          <div class="text-xs text-slate-500 text-center p-3 bg-slate-50 rounded-xl">
+            Không tìm thấy đơn hàng nào khớp với "${query}". Vui lòng kiểm tra lại mã hoặc liên hệ Hotline/Zalo <strong>0333.399.956</strong>.
+          </div>
+        `;
+        return;
+      }
+
+      resultsContainer.innerHTML = found.map(order => {
+        const orderLinks = (order.items || []).map(item => {
+          const isCombo = item.isCombo || (item.id && item.id.startsWith('combo')) || (window.EbookDB && window.EbookDB.getComboById(item.id) !== null);
+
+          if (isCombo) {
+            const combo = window.EbookDB ? window.EbookDB.getComboById(item.id) : null;
+            let booksInCombo = [];
+            if (combo && combo.bookIds && Array.isArray(combo.bookIds)) {
+              booksInCombo = combo.bookIds.map(bId => window.EbookDB.getBookById(bId)).filter(Boolean);
+            }
+            if (booksInCombo.length === 0 && window.EbookDB) {
+              booksInCombo = window.EbookDB.getBooks().slice(0, 3);
+            }
+
+            return `
+              <div class="p-2 bg-emerald-50/70 rounded-xl border border-emerald-200/80 mt-1.5 space-y-1">
+                <div class="font-bold text-emerald-900 text-[11px]">📦 ${item.title || combo?.title || 'Combo Ebook'} (${booksInCombo.length} Ebook):</div>
+                ${booksInCombo.map(b => {
+                  let bUrl = (b.downloadUrl || '').trim();
+                  if (bUrl.startsWith('drive.google.com')) bUrl = 'https://' + bUrl;
+                  if (!bUrl || bUrl === '#' || bUrl === 'https://drive.google.com') bUrl = DEFAULT_DRIVE_URL;
+                  return `
+                    <div class="flex items-center justify-between p-1.5 bg-white rounded-lg border border-emerald-100 text-[11px]">
+                      <span class="font-semibold text-slate-700 truncate pr-2">📖 ${b.title}</span>
+                      <a href="${bUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary text-white font-bold text-[10px] hover:bg-primary-container shrink-0">
+                        <span class="material-symbols-outlined text-[12px]">cloud_download</span>
+                        <span>Tải PDF</span>
+                      </a>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            `;
+          } else {
+            const book = window.EbookDB ? window.EbookDB.getBookById(item.id) : null;
+            let itemUrl = (book?.downloadUrl || item.downloadUrl || '').trim();
+            if (itemUrl.startsWith('drive.google.com')) itemUrl = 'https://' + itemUrl;
+            if (!itemUrl || itemUrl === '#' || itemUrl === 'https://drive.google.com') itemUrl = DEFAULT_DRIVE_URL;
+
+            return `
+              <div class="flex items-center justify-between p-2 bg-white rounded-xl border border-slate-200 mt-1">
+                <span class="font-semibold text-slate-700 truncate pr-2">📄 ${item.title || 'Ebook'}</span>
+                <a href="${itemUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-primary text-white font-bold text-[11px] hover:bg-primary-container shrink-0">
+                  <span class="material-symbols-outlined text-[14px]">cloud_download</span>
+                  <span>Tải Sách</span>
+                </a>
+              </div>
+            `;
+          }
+        }).join('');
+
+        return `
+        <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-1.5">
+          <div class="flex justify-between items-center">
+            <strong class="text-primary font-bold">#${order.orderId}</strong>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">Đã thanh toán</span>
+          </div>
+          <div class="text-on-surface">Khách hàng: <strong>${order.customerName}</strong> (${order.customerEmail})</div>
+          <div class="text-on-surface-variant">Tổng tiền: <strong class="text-secondary-container">${window.EbookDB.formatVND(order.totalAmount || 0)}</strong></div>
+          <div class="pt-1">
+            ${orderLinks || `<a href="${DEFAULT_DRIVE_URL}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"><span class="material-symbols-outlined text-[16px]">cloud_download</span><span>Mở Google Drive tải sách</span></a>`}
+          </div>
+        </div>
+      `}).join('');
+    }
+
+    function openCartModal() {
+      const books = window.EbookDB.getBooks();
+      if (books.length > 0) {
+        handleQuickBuyBook(books[0].id);
+      } else {
+        alert('Giỏ hàng trống!');
+      }
+    }
+
+    function updateCartCount() {
+      const badge = document.getElementById('cart-count-badge');
+      if (badge) badge.innerText = '1';
+    }
+
+    // Hide Header on Scroll Down
+    let lastScrollY = window.scrollY;
+    const header = document.getElementById('main-header');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > lastScrollY && window.scrollY > 120) {
+        header?.classList.add('-translate-y-full');
+      } else {
+        header?.classList.remove('-translate-y-full');
+      }
+      lastScrollY = window.scrollY;
+    });
+
+    // ==========================================
+    // DYNAMIC LIVE TICKER (Based on Real Store Catalog)
+    // ==========================================
+    const BUYER_NAMES = [
+      'Nguyễn Thảo (Hà Nội)',
+      'Phạm Hải Nam (TP.HCM)',
+      'Lê Minh Quân (Đà Nẵng)',
+      'Trần Bích Ngọc (Cần Thơ)',
+      'Vũ Tuấn Anh (Hải Phòng)',
+      'Đặng Thu Trang (Bình Dương)',
+      'Hoàng Văn Nam (Đồng Nai)',
+      'Ngô Khánh Linh (Huế)',
+      'Bùi Quốc Thái (Nha Trang)',
+      'Đỗ Mai Phương (Quảng Ninh)'
+    ];
+    const TIME_LABELS = ['vừa xong', '1 phút trước', '2 phút trước', '4 phút trước', '6 phút trước', '10 phút trước'];
+
+    function initLiveTicker() {
+      function getActiveCatalogItems() {
+        const books = window.EbookDB ? window.EbookDB.getBooks().filter(b => !b.status || b.status === 'active') : [];
+        const combos = window.EbookDB ? window.EbookDB.getCombos().filter(c => !c.status || c.status === 'active') : [];
+        const items = [];
+        combos.forEach(c => items.push({ title: c.title, isCombo: true }));
+        books.forEach(b => items.push({ title: b.title, isCombo: false }));
+        return items;
+      }
+
+      function updateTicker() {
+        const items = getActiveCatalogItems();
+        if (items.length === 0) return;
+
+        const randomBuyer = BUYER_NAMES[Math.floor(Math.random() * BUYER_NAMES.length)];
+        const randomItem = items[Math.floor(Math.random() * items.length)];
+        const randomTime = TIME_LABELS[Math.floor(Math.random() * TIME_LABELS.length)];
+
+        const tickerWrapper = document.getElementById('hero-live-ticker');
+        const nameEl = document.getElementById('ticker-customer-name');
+        const itemEl = document.getElementById('ticker-item-name');
+        const timeEl = document.getElementById('ticker-time');
+
+        if (tickerWrapper && nameEl && itemEl && timeEl) {
+          tickerWrapper.classList.add('opacity-0', '-translate-y-1');
+          setTimeout(() => {
+            nameEl.innerText = randomBuyer;
+            itemEl.innerText = randomItem.title;
+            timeEl.innerText = randomTime;
+            tickerWrapper.classList.remove('opacity-0', '-translate-y-1');
+          }, 250);
+        }
+      }
+
+      // Initial update and recurring timer
+      setTimeout(updateTicker, 800);
+      setInterval(updateTicker, 5000);
+    }
+  </script>
+</body>
+</html>

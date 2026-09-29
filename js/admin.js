@@ -1369,23 +1369,58 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         if (typeof emailjs !== 'undefined') {
           emailjs.init(publicKey);
+          const sampleDriveUrl = 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing';
+          const sampleButtons = `
+            <div style="margin: 6px 0;">
+              <a href="${sampleDriveUrl}" target="_blank" style="display: inline-block; background-color: #1a73e8; color: #ffffff; text-decoration: none; font-size: 13px; font-weight: bold; padding: 10px 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(26,115,232,0.25);">
+                📖 Tải Ebook 1: Khởi Nghiệp Tinh Gọn Từ Số 0
+              </a>
+            </div>
+            <div style="margin: 6px 0;">
+              <a href="${sampleDriveUrl}" target="_blank" style="display: inline-block; background-color: #1a73e8; color: #ffffff; text-decoration: none; font-size: 13px; font-weight: bold; padding: 10px 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(26,115,232,0.25);">
+                📖 Tải Ebook 2: Ứng Dụng AI Vào Kinh Doanh
+              </a>
+            </div>
+          `;
+          const sampleDetails = `
+            <div style="margin-bottom: 12px; padding: 12px; background: #ffffff; border: 1.5px solid #86efac; border-radius: 8px;">
+              <div style="font-weight: 700; color: #166534; font-size: 14px; margin-bottom: 6px;">📦 Combo Khởi Nghiệp (Test) - Danh sách 2 Ebook trong gói:</div>
+              <div style="margin: 6px 0; font-size: 13px; padding: 8px 10px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
+                • <strong>Khởi Nghiệp Tinh Gọn Từ Số 0</strong><br>
+                👉 <strong>Link tải PDF:</strong> <a href="${sampleDriveUrl}" target="_blank" style="color: #1a73e8; font-weight: bold; text-decoration: underline;">${sampleDriveUrl}</a>
+              </div>
+              <div style="margin: 6px 0; font-size: 13px; padding: 8px 10px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
+                • <strong>Ứng Dụng AI Vào Kinh Doanh</strong><br>
+                👉 <strong>Link tải PDF:</strong> <a href="${sampleDriveUrl}" target="_blank" style="color: #1a73e8; font-weight: bold; text-decoration: underline;">${sampleDriveUrl}</a>
+              </div>
+            </div>
+          `;
+
           await emailjs.send(serviceId, templateId, {
             to_name: 'PHAN QUOC LOC (Chủ shop EbookPe)',
             user_name: 'PHAN QUOC LOC',
             name: 'PHAN QUOC LOC',
+            customer_name: 'PHAN QUOC LOC',
             to_email: targetEmail,
             user_email: targetEmail,
             email: targetEmail,
+            customer_email: targetEmail,
             recipient: targetEmail,
             recipient_email: targetEmail,
             reply_to: targetEmail,
             order_id: 'EBPE-TEST',
             total_amount: '199.000đ',
-            book_titles: 'Khởi Nghiệp Không Lối Mòn (Thử nghiệm tự động gửi)',
-            download_links: 'https://example.com/download-sample.pdf',
-            message: 'Đây là email thử nghiệm tự động từ hệ thống EbookPe.vn gửi tới bạn.',
+            book_titles: 'Combo Khởi Nghiệp Tinh Gọn (Thử nghiệm)',
+            html_download_links: sampleButtons,
+            download_links: sampleDetails,
+            download_link: sampleDriveUrl,
+            download_url: sampleDriveUrl,
+            google_drive_link: sampleDriveUrl,
+            link: sampleDriveUrl,
+            message: sampleDetails,
+            sender_name: 'EbookPe — Nền Tảng Ebook Thực Chiến',
             support_hotline: document.getElementById('setting-hotline')?.value || '0333.399.956'
-          });
+          }, publicKey);
           loadingToast.close();
           showAdminToast(`Đã gửi email thử nghiệm thành công tới ${targetEmail}! Hãy kiểm tra hộp thư của bạn.`, 'success', { title: '✅ Gửi Email thành công' });
         } else {
