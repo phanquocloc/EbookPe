@@ -3,6 +3,196 @@
  * Quản lý Ebook (CRUD), Đơn hàng, Thống kê doanh thu và Cài đặt tài khoản VietQR
  */
 
+// ==========================================
+// TOAST & NOTIFICATION ENGINE
+// ==========================================
+
+let lastAdminToastMsg = '';
+let lastAdminToastTime = 0;
+let currentAdminToastTimer = null;
+
+function showAdminToast(msg, type = 'info', options = {}) {
+  if (!msg) return { close: () => {} };
+
+  if (typeof options === 'string') {
+    options = { title: options };
+  }
+
+  // Làm sạch icon thừa ở đầu chuỗi tin nhắn và tiêu đề
+  const cleanMsg = msg.replace(/^[\s✅⚠️ℹ️❌🚀⚡📦📄]+/, '').trim();
+  const finalMsg = cleanMsg || msg;
+
+  const rawTitle = options.title || (
+    type === 'success' ? 'Thành công' :
+    type === 'error' ? 'Lỗi thao tác' :
+    type === 'warning' ? 'Cảnh báo' :
+    type === 'loading' ? 'Đang xử lý...' : 'Thông báo'
+  );
+  const cleanTitle = rawTitle.replace(/^[\s✅⚠️ℹ️❌🚀⚡📦📄]+/, '').trim() || rawTitle;
+
+  const now = Date.now();
+  // Chống lặp thông báo giống nhau trong vòng 2.5 giây (trừ loại loading)
+  if (type !== 'loading' && finalMsg === lastAdminToastMsg && (now - lastAdminToastTime) < 2500) {
+    return { close: () => {} };
+  }
+  lastAdminToastMsg = finalMsg;
+  lastAdminToastTime = now;
+
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+
+  // DỌN SẠCH TẤT CẢ TOAST CŨ NGAY LẬP TỨC - CHỈ GIỮ ĐÚNG 1 THÔNG BÁO HIỆN HÀNH
+  if (currentAdminToastTimer) {
+    clearTimeout(currentAdminToastTimer);
+    currentAdminToastTimer = null;
+  }
+  container.innerHTML = '';
+
+  const duration = options.duration !== undefined ? options.duration : (type === 'loading' ? 0 : 3800);
+
+  let iconHtml = '';
+  if (type === 'success') {
+    iconHtml = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
+  } else if (type === 'error') {
+    iconHtml = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
+  } else if (type === 'warning') {
+    iconHtml = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+  } else if (type === 'loading') {
+    iconHtml = `<span class="toast-spinner"></span>`;
+  } else {
+    iconHtml = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
+  }
+
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `
+    <div class="toast-icon-wrap">${iconHtml}</div>
+    <div class="toast-body">
+      <div class="toast-title">${cleanTitle}</div>
+      <div class="toast-msg">${finalMsg}</div>
+    </div>
+    <button type="button" class="toast-close-btn" aria-label="Đóng">&times;</button>
+    ${duration > 0 ? `<div class="toast-progress"><div class="toast-progress-bar" style="animation: toastProgress ${duration}ms linear forwards;"></div></div>` : ''}
+  `;
+
+  container.appendChild(toast);
+
+  let isClosed = false;
+  const dismiss = () => {
+    if (isClosed) return;
+    isClosed = true;
+    toast.classList.add('hiding');
+    setTimeout(() => {
+      try {
+        if (toast.parentElement) toast.remove();
+      } catch (e) {}
+    }, 200);
+  };
+
+  toast.querySelector('.toast-close-btn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dismiss();
+  });
+
+  if (duration > 0) {
+    currentAdminToastTimer = setTimeout(dismiss, duration);
+  }
+
+  return {
+    el: toast,
+    close: dismiss
+  };
+}
+
+function showAdminConfirm({ title = 'Xác nhận thao tác', message = '', confirmText = 'Đồng ý', cancelText = 'Hủy bỏ', type = 'primary' }) {
+  return new Promise((resolve) => {
+    let backdrop = document.getElementById('admin-dialog-backdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = 'admin-dialog-backdrop';
+      backdrop.className = 'admin-dialog-backdrop';
+      document.body.appendChild(backdrop);
+    }
+
+    let iconSymbol = '❓';
+    let iconClass = 'info';
+    let btnClass = 'confirm-primary';
+    if (type === 'danger') {
+      iconSymbol = '🗑️';
+      iconClass = 'danger';
+      btnClass = 'confirm-danger';
+    } else if (type === 'warning') {
+      iconSymbol = '⚠️';
+      iconClass = 'warning';
+      btnClass = 'confirm-warning';
+    } else if (type === 'success') {
+      iconSymbol = '✅';
+      iconClass = 'success';
+      btnClass = 'confirm-primary';
+    }
+
+    backdrop.innerHTML = `
+      <div class="admin-dialog-card" role="dialog" aria-modal="true">
+        <div class="admin-dialog-header">
+          <div class="admin-dialog-icon ${iconClass}">${iconSymbol}</div>
+          <div class="admin-dialog-title">${title}</div>
+        </div>
+        <div class="admin-dialog-desc">${message}</div>
+        <div class="admin-dialog-actions">
+          ${cancelText ? `<button type="button" class="admin-dialog-btn cancel" id="dialog-btn-cancel">${cancelText}</button>` : ''}
+          <button type="button" class="admin-dialog-btn ${btnClass}" id="dialog-btn-confirm">${confirmText}</button>
+        </div>
+      </div>
+    `;
+
+    const closeDialog = (result) => {
+      backdrop.classList.remove('active');
+      setTimeout(() => {
+        backdrop.innerHTML = '';
+      }, 250);
+      document.removeEventListener('keydown', handleKeyDown);
+      resolve(result);
+    };
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') closeDialog(false);
+      if (e.key === 'Enter') closeDialog(true);
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    backdrop.querySelector('#dialog-btn-confirm')?.addEventListener('click', () => closeDialog(true));
+    backdrop.querySelector('#dialog-btn-cancel')?.addEventListener('click', () => closeDialog(false));
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) closeDialog(false);
+    });
+
+    requestAnimationFrame(() => {
+      backdrop.classList.add('active');
+      backdrop.querySelector('#dialog-btn-confirm')?.focus();
+    });
+  });
+}
+
+function showAdminAlert(message, title = 'Thông báo', type = 'info') {
+  return showAdminConfirm({
+    title,
+    message,
+    cancelText: '',
+    confirmText: 'Đã hiểu',
+    type
+  });
+}
+
+window.showAdminToast = showAdminToast;
+window.showAdminConfirm = showAdminConfirm;
+window.showAdminAlert = showAdminAlert;
+
 document.addEventListener('DOMContentLoaded', () => {
   // Trạng thái Admin
   const adminState = {
@@ -384,6 +574,12 @@ document.addEventListener('DOMContentLoaded', () => {
     renderBooksTable();
   });
 
+  function updatePresetButtons() {
+    document.querySelectorAll('.cover-preset-btn').forEach(b => {
+      b.classList.toggle('selected', b.dataset.cover === adminState.selectedCoverStyle);
+    });
+  }
+
   // Mở modal thêm Ebook
   function openAddBookModal() {
     adminState.editingBookId = null;
@@ -399,6 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('book-pages').value = '180';
     document.getElementById('book-status').value = 'active';
 
+    updatePresetButtons();
     updateCoverPreview();
     bookModal?.classList.add('active');
   }
@@ -430,6 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('book-sample').value = book.sampleExcerpt || '';
     document.getElementById('book-download-url').value = book.downloadUrl || '';
 
+    updatePresetButtons();
     updateCoverPreview();
     bookModal?.classList.add('active');
   };
@@ -447,15 +645,23 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Xóa sách
-  window.adminDeleteBook = function(bookId) {
+  window.adminDeleteBook = async function(bookId) {
     const book = EbookDB.getBookById(bookId);
     if (!book) return;
 
-    if (confirm(`Bạn có chắc chắn muốn xóa cuốn sách "${book.title}" khỏi hệ thống không?`)) {
+    const confirmed = await showAdminConfirm({
+      title: 'Xóa Ebook khỏi hệ thống',
+      message: `Bạn có chắc chắn muốn xóa cuốn "<strong>${Security.escapeHTML(book.title)}</strong>" không? Thao tác này không thể hoàn tác.`,
+      confirmText: 'Xóa Ebook',
+      cancelText: 'Hủy bỏ',
+      type: 'danger'
+    });
+
+    if (confirmed) {
       EbookDB.deleteBook(bookId);
       renderBooksTable();
       renderDashboard();
-      showAdminToast('Đã xóa cuốn ebook thành công!', 'success');
+      showAdminToast(`Đã xóa cuốn "${book.title}" thành công!`, 'success');
     }
   };
 
@@ -483,7 +689,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const file = e.target.files[0];
         if (file) {
           if (file.size > 2 * 1024 * 1024) {
-            alert('Vui lòng chọn ảnh dung lượng dưới 2MB để đảm bảo tốc độ tải trang!');
+            showAdminToast('Vui lòng chọn ảnh dung lượng dưới 2MB để đảm bảo tốc độ tải trang!', 'warning', { title: 'Ảnh quá lớn' });
             return;
           }
           const reader = new FileReader();
@@ -550,7 +756,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadUrl = document.getElementById('book-download-url').value.trim();
 
     if (!title || price <= 0) {
-      alert('Vui lòng nhập Tên sách và Giá bán hợp lệ!');
+      showAdminToast('Vui lòng nhập Tên sách và Giá bán hợp lệ!', 'warning', { title: 'Thiếu thông tin' });
       return;
     }
 
@@ -832,11 +1038,19 @@ document.addEventListener('DOMContentLoaded', () => {
     openEditComboModal(id);
   };
 
-  window.deleteCombo = function(id) {
+  window.deleteCombo = async function(id) {
     const combo = EbookDB.getComboById(id);
     if (!combo) return;
 
-    if (confirm(`Bạn có chắc chắn muốn xóa Gói Combo "${combo.title}" không?`)) {
+    const confirmed = await showAdminConfirm({
+      title: 'Xóa Gói Combo',
+      message: `Bạn có chắc chắn muốn xóa Gói Combo "<strong>${Security.escapeHTML(combo.title)}</strong>" không?`,
+      confirmText: 'Xóa Combo',
+      cancelText: 'Hủy bỏ',
+      type: 'danger'
+    });
+
+    if (confirmed) {
       EbookDB.deleteCombo(id);
       renderCombosTable();
       showAdminToast('Đã xóa Gói Combo thành công!', 'success');
@@ -889,12 +1103,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const bookNames = checkedBoxes.map(cb => cb.dataset.title);
 
       if (!title || price <= 0) {
-        alert('Vui lòng nhập Tên combo và Giá bán hợp lệ!');
+        showAdminToast('Vui lòng nhập Tên combo và Giá bán hợp lệ!', 'warning', { title: 'Thiếu thông tin' });
         return;
       }
 
       if (bookIds.length === 0) {
-        alert('Vui lòng tích chọn ít nhất 1 cuốn Ebook để tạo Gói Combo!');
+        showAdminToast('Vui lòng tích chọn ít nhất 1 cuốn Ebook để tạo Gói Combo!', 'warning', { title: 'Chưa chọn sách' });
         return;
       }
 
@@ -921,8 +1135,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Xóa tất cả combo
-    document.getElementById('btn-clear-all-combos')?.addEventListener('click', () => {
-      if (confirm('Bạn có chắc chắn muốn XÓA TOÀN BỘ GÓI COMBO không?')) {
+    document.getElementById('btn-clear-all-combos')?.addEventListener('click', async () => {
+      const confirmed = await showAdminConfirm({
+        title: 'Xóa Toàn Bộ Combo',
+        message: 'Bạn có chắc chắn muốn xóa toàn bộ danh sách gói combo? Thao tác này sẽ xóa tất cả combo hiện có.',
+        confirmText: 'Xóa Tất Cả',
+        cancelText: 'Hủy bỏ',
+        type: 'danger'
+      });
+      if (confirmed) {
         EbookDB.clearAllCombos();
         renderCombosTable();
         showAdminToast('Đã xóa toàn bộ Gói Combo!', 'success');
@@ -1053,16 +1274,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Test kết nối SePay.vn
-    document.getElementById('btn-test-sepay')?.addEventListener('click', async () => {
+    const btnTestSepay = document.getElementById('btn-test-sepay');
+    btnTestSepay?.addEventListener('click', async () => {
       const sepayToken = document.getElementById('setting-sepay-token').value.trim();
       if (!sepayToken) {
-        alert('Vui lòng nhập Mã API Token SePay.vn để kiểm tra!');
+        showAdminToast('Vui lòng nhập Mã API Token SePay.vn vào ô bên trên để kiểm tra kết nối!', 'warning', { title: 'Chưa có API Token' });
+        document.getElementById('setting-sepay-token')?.focus();
         return;
       }
 
-      showAdminToast('Đang kiểm tra kết nối tới SePay.vn...', 'info');
+      const origHtml = btnTestSepay.innerHTML;
+      btnTestSepay.classList.add('btn-admin-loading');
+      btnTestSepay.innerHTML = '<span class="btn-inline-spinner"></span> Đang kết nối SePay...';
+
+      const loadingToast = showAdminToast('Đang kết nối và kiểm tra API SePay.vn...', 'loading', { duration: 0, title: 'Kiểm tra SePay' });
+
       try {
         let data = null;
+        let viaProxy = false;
+
         // 1. Thử gọi qua proxy nội bộ
         try {
           const proxyRes = await fetch(`/api/sepay-proxy?limit=5`, {
@@ -1070,10 +1300,11 @@ document.addEventListener('DOMContentLoaded', () => {
           });
           if (proxyRes.ok) {
             data = await proxyRes.json();
+            viaProxy = true;
           }
         } catch (e) {}
 
-        // 2. Nếu proxy không có, gọi trực tiếp
+        // 2. Nếu proxy không có hoặc thất bại, gọi trực tiếp
         if (!data) {
           const directRes = await fetch('https://my.sepay.vn/userapi/transactions/list?limit=5', {
             headers: {
@@ -1084,35 +1315,57 @@ document.addEventListener('DOMContentLoaded', () => {
           if (directRes.ok) {
             data = await directRes.json();
           } else {
-            throw new Error(`Mã phản hồi từ SePay: ${directRes.status}`);
+            const errJson = await directRes.json().catch(() => null);
+            throw new Error((errJson && errJson.error) ? errJson.error : `Mã phản hồi từ SePay: ${directRes.status}`);
           }
         }
 
-        if (data && data.transactions) {
+        loadingToast.close();
+
+        if (data && (data.transactions !== undefined || data.status === 200 || Array.isArray(data.messages))) {
           const txCount = Array.isArray(data.transactions) ? data.transactions.length : 0;
-          showAdminToast(`✅ Kết nối SePay thành công! Nhận diện được ${txCount} giao dịch MBBank gần nhất.`, 'success');
+          showAdminToast(
+            `Xác thực Token SePay thành công! Nhận diện được ${txCount} giao dịch MBBank gần nhất qua ${viaProxy ? 'Proxy Server' : 'kết nối trực tiếp'}.`,
+            'success',
+            { title: '✅ Kết nối SePay thành công' }
+          );
         } else if (data && data.error) {
-          alert('Lỗi SePay: ' + data.error);
+          showAdminToast(`Lỗi SePay: ${data.error}. Vui lòng kiểm tra lại Token.`, 'error', { title: 'Lỗi xác thực SePay' });
         } else {
-          showAdminToast('✅ Kết nối SePay.vn thành công!', 'success');
+          showAdminToast('Kết nối SePay.vn thành công! Tài khoản hoạt động bình thường.', 'success', { title: '✅ Kết nối thành công' });
         }
       } catch (err) {
-        alert(`Không thể kết nối tới SePay: ${err.message}. Vui lòng kiểm tra lại Token SePay!`);
+        loadingToast.close();
+        showAdminToast(
+          `Không thể kết nối tới SePay: ${err.message}. Vui lòng kiểm tra lại Token hoặc mạng!`,
+          'error',
+          { title: 'Kết nối SePay thất bại' }
+        );
+      } finally {
+        btnTestSepay.classList.remove('btn-admin-loading');
+        btnTestSepay.innerHTML = origHtml;
       }
     });
 
     // Test gửi Email
-    document.getElementById('btn-test-email')?.addEventListener('click', async () => {
+    const btnTestEmail = document.getElementById('btn-test-email');
+    btnTestEmail?.addEventListener('click', async () => {
       const serviceId = document.getElementById('setting-emailjs-service').value.trim();
       const templateId = document.getElementById('setting-emailjs-template').value.trim();
       const publicKey = document.getElementById('setting-emailjs-public').value.trim();
+      const targetEmail = document.getElementById('setting-email')?.value.trim() || 'thinhloclinh@gmail.com';
 
       if (!serviceId || !templateId || !publicKey) {
-        alert('Vui lòng điền đủ Service ID, Template ID và Public Key của EmailJS trước khi gửi thử!');
+        showAdminToast('Vui lòng điền đủ Service ID, Template ID và Public Key của EmailJS trước khi gửi thử!', 'warning', { title: 'Thiếu cấu hình EmailJS' });
         return;
       }
 
-      showAdminToast('Đang gửi thử Email tới thinhloclinh@gmail.com...', 'info');
+      const origHtml = btnTestEmail.innerHTML;
+      btnTestEmail.classList.add('btn-admin-loading');
+      btnTestEmail.innerHTML = '<span class="btn-inline-spinner"></span> Đang gửi email...';
+
+      const loadingToast = showAdminToast(`Đang gửi thử Email tới ${targetEmail}...`, 'loading', { duration: 0, title: 'EmailJS' });
+
       try {
         if (typeof emailjs !== 'undefined') {
           emailjs.init(publicKey);
@@ -1120,25 +1373,31 @@ document.addEventListener('DOMContentLoaded', () => {
             to_name: 'PHAN QUOC LOC (Chủ shop EbookPe)',
             user_name: 'PHAN QUOC LOC',
             name: 'PHAN QUOC LOC',
-            to_email: 'thinhloclinh@gmail.com',
-            user_email: 'thinhloclinh@gmail.com',
-            email: 'thinhloclinh@gmail.com',
-            recipient: 'thinhloclinh@gmail.com',
-            recipient_email: 'thinhloclinh@gmail.com',
-            reply_to: 'thinhloclinh@gmail.com',
+            to_email: targetEmail,
+            user_email: targetEmail,
+            email: targetEmail,
+            recipient: targetEmail,
+            recipient_email: targetEmail,
+            reply_to: targetEmail,
             order_id: 'EBPE-TEST',
             total_amount: '199.000đ',
             book_titles: 'Khởi Nghiệp Không Lối Mòn (Thử nghiệm tự động gửi)',
             download_links: 'https://example.com/download-sample.pdf',
             message: 'Đây là email thử nghiệm tự động từ hệ thống EbookPe.vn gửi tới bạn.',
-            support_hotline: '0333.399.956'
+            support_hotline: document.getElementById('setting-hotline')?.value || '0333.399.956'
           });
-          showAdminToast('Đã gửi email thử nghiệm thành công! Hãy kiểm tra hòm thư Gmail của bạn.', 'success');
+          loadingToast.close();
+          showAdminToast(`Đã gửi email thử nghiệm thành công tới ${targetEmail}! Hãy kiểm tra hộp thư của bạn.`, 'success', { title: '✅ Gửi Email thành công' });
         } else {
-          alert('Không tìm thấy thư viện EmailJS.');
+          loadingToast.close();
+          showAdminToast('Không tìm thấy thư viện EmailJS.', 'error', { title: 'Lỗi nạp thư viện' });
         }
       } catch (err) {
-        alert('Lỗi gửi email: ' + (err.text || err.message || JSON.stringify(err)));
+        loadingToast.close();
+        showAdminToast('Lỗi gửi email: ' + (err.text || err.message || JSON.stringify(err)), 'error', { title: 'Gửi Email thất bại' });
+      } finally {
+        btnTestEmail.classList.remove('btn-admin-loading');
+        btnTestEmail.innerHTML = origHtml;
       }
     });
 
@@ -1176,7 +1435,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderOrdersTable();
             loadSettingsForm();
           } else {
-            alert('File sao lưu không hợp lệ: ' + res.error);
+            showAdminToast('File sao lưu không hợp lệ: ' + res.error, 'error', { title: 'Lỗi khôi phục' });
           }
         };
         reader.readAsText(file);
@@ -1184,8 +1443,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Xóa tất cả Ebook
-    document.getElementById('btn-clear-all-books')?.addEventListener('click', () => {
-      if (confirm('Bạn có chắc chắn muốn XÓA TOÀN BỘ EBOOK trong kho không? Trang bán hàng sẽ được làm trống để bạn thêm sách mới.')) {
+    document.getElementById('btn-clear-all-books')?.addEventListener('click', async () => {
+      const confirmed = await showAdminConfirm({
+        title: 'Xóa Toàn Bộ Ebook',
+        message: 'Bạn có chắc chắn muốn xóa toàn bộ sách trong kho không? Trang bán hàng sẽ được làm trống để bạn thêm sách mới.',
+        confirmText: 'Xóa Sạch Ebook',
+        cancelText: 'Hủy bỏ',
+        type: 'danger'
+      });
+      if (confirmed) {
         EbookDB.clearAllBooks();
         renderBooksTable();
         renderDashboard();
@@ -1194,8 +1460,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Xóa tất cả đơn hàng (Reset doanh thu về 0đ)
-    document.getElementById('btn-clear-all-orders')?.addEventListener('click', () => {
-      if (confirm('Bạn có chắc chắn muốn XÓA TẤT CẢ ĐƠN HÀNG và RESET DOANH THU về 0đ không?')) {
+    document.getElementById('btn-clear-all-orders')?.addEventListener('click', async () => {
+      const confirmed = await showAdminConfirm({
+        title: 'Reset Toàn Bộ Đơn Hàng',
+        message: 'Bạn có chắc chắn muốn XÓA TẤT CẢ ĐƠN HÀNG và RESET DOANH THU về 0đ không?',
+        confirmText: 'Reset Doanh Thu',
+        cancelText: 'Hủy bỏ',
+        type: 'danger'
+      });
+      if (confirmed) {
         EbookDB.clearAllOrders();
         renderOrdersTable();
         renderDashboard();
@@ -1204,8 +1477,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Xóa sạch dữ liệu / Reset
-    document.getElementById('btn-reset-default')?.addEventListener('click', () => {
-      if (confirm('Thao tác này sẽ xóa sạch toàn bộ sách và đơn hàng để bắt đầu bán hàng thực tế từ đầu. Bạn có chắc chắn không?')) {
+    document.getElementById('btn-reset-default')?.addEventListener('click', async () => {
+      const confirmed = await showAdminConfirm({
+        title: 'Bắt Đầu Mới / Reset Dữ Liệu',
+        message: 'Thao tác này sẽ làm trống toàn bộ sách và đơn hàng mẫu để bắt đầu bán hàng thực tế từ đầu. Bạn có chắc chắn không?',
+        confirmText: 'Xác Nhận Reset',
+        cancelText: 'Hủy bỏ',
+        type: 'warning'
+      });
+      if (confirmed) {
         EbookDB.resetToDefault();
         showAdminToast('Đã làm sạch toàn bộ kho sách và doanh thu về 0đ!', 'info');
         renderDashboard();
@@ -1227,31 +1507,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (previewImg) previewImg.src = qrUrl;
   }
 
-  // Toast Helper
-  function showAdminToast(msg, type = 'info') {
-    let container = document.getElementById('toast-container');
-    if (!container) {
-      container = document.createElement('div');
-      container.id = 'toast-container';
-      container.className = 'toast-container';
-      document.body.appendChild(container);
-    }
-
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    const icon = type === 'success' ? '✅' : (type === 'error' ? '⚠️' : 'ℹ️');
-    toast.innerHTML = `<span>${icon}</span> <span>${msg}</span>`;
-    container.appendChild(toast);
-
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transition = 'all 0.25s ease';
-      setTimeout(() => toast.remove(), 250);
-    }, 3000);
-  }
-
-  window.showAdminToast = showAdminToast;
-
   // ==========================================
   // [OWASP] Bảo Mật & Xác Thực (Security Tab)
   // ==========================================
@@ -1260,8 +1515,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Nút logout trong sidebar
     const btnLogout = document.getElementById('btn-admin-logout');
     if (btnLogout) {
-      btnLogout.addEventListener('click', () => {
-        if (confirm('Bạn có chắc muốn đăng xuất khỏi hệ thống quản trị?')) {
+      btnLogout.addEventListener('click', async () => {
+        const confirmed = await showAdminConfirm({
+          title: 'Đăng Xuất Quản Trị',
+          message: 'Bạn có chắc chắn muốn đăng xuất khỏi hệ thống quản trị EbookPe?',
+          confirmText: 'Đăng Xuất',
+          cancelText: 'Ở lại',
+          type: 'warning'
+        });
+        if (confirmed) {
           AdminAuth.logout();
           window.location.replace('admin-login.html');
         }
@@ -1313,8 +1575,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Nút logout trong security tab
     const btnLogoutSec = document.getElementById('btn-logout-security');
     if (btnLogoutSec) {
-      btnLogoutSec.addEventListener('click', () => {
-        if (confirm('Bạn có chắc muốn đăng xuất?')) {
+      btnLogoutSec.addEventListener('click', async () => {
+        const confirmed = await showAdminConfirm({
+          title: 'Đăng Xuất',
+          message: 'Bạn có chắc muốn đăng xuất khỏi phiên làm việc hiện tại?',
+          confirmText: 'Đăng Xuất',
+          cancelText: 'Hủy bỏ',
+          type: 'warning'
+        });
+        if (confirmed) {
           AdminAuth.logout();
           window.location.replace('admin-login.html');
         }
@@ -1324,12 +1593,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Xóa logs
     const btnClearLogs = document.getElementById('btn-clear-logs');
     if (btnClearLogs) {
-      btnClearLogs.addEventListener('click', () => {
-        if (confirm('Xóa toàn bộ nhật ký bảo mật?')) {
+      btnClearLogs.addEventListener('click', async () => {
+        const confirmed = await showAdminConfirm({
+          title: 'Xóa Toàn Bộ Nhật Ký Bảo Mật',
+          message: 'Bạn có chắc chắn muốn xóa toàn bộ lịch sử sự kiện bảo mật và đăng nhập không?',
+          confirmText: 'Xóa Toàn Bộ',
+          cancelText: 'Hủy bỏ',
+          type: 'danger'
+        });
+        if (confirmed) {
           localStorage.removeItem('ebookpe_audit_logs_v1');
           Security.logEvent('LOGS_CLEARED', 'WARNING', 'Quản trị viên đã xóa toàn bộ audit log');
           renderSecurityTab();
-          showAdminToast('Đã xóa nhật ký bảo mật!', 'success');
+          showAdminToast('Đã xóa nhật ký bảo mật thành công!', 'success');
         }
       });
     }

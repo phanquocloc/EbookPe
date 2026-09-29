@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
           renderCategories();
           renderCombos();
           renderBooks();
-          showToast('Dữ liệu đã được cập nhật từ quản trị viên!', 'info');
+          // Đồng bộ âm thầm dữ liệu mới từ Admin mà không bắn toast gây phiền người dùng
         }
       };
     }
@@ -127,35 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ebooksSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  function startLiveToastTicker() {
-    const toastEl = document.getElementById('showcase-live-toast');
-    const userEl = document.getElementById('live-toast-user');
-    if (!toastEl || !userEl) return;
-
-    const fakePurchases = [
-      'Quốc Bảo (Hà Nội) vừa sở hữu Ebook Khởi Nghiệp Không Lối Mòn',
-      'Thanh Mai (TP.HCM) vừa mua Combo Siêu Tiết Kiệm',
-      'Hoàng Nam (Đà Nẵng) vừa tải Ebook 20 Ngách Freelance',
-      'Đức Anh (Hải Phòng) vừa sở hữu Trọn Bộ Kinh Doanh Thực Chiến',
-      'Thu Thảo (Cần Thơ) vừa mua Ebook Đòn Bẩy AI',
-      'Văn Hùng (Bình Dương) vừa nhận link tải Ebook Mindset Solo'
-    ];
-    let idx = 0;
-
-    setInterval(() => {
-      idx = (idx + 1) % fakePurchases.length;
-      toastEl.style.opacity = '0';
-      toastEl.style.transform = 'translateY(4px)';
-      setTimeout(() => {
-        const item = fakePurchases[idx];
-        const parts = item.split(' vừa ');
-        userEl.innerHTML = `<strong>${parts[0]}</strong> vừa ${parts[1]}`;
-        toastEl.style.opacity = '1';
-        toastEl.style.transform = 'translateY(0)';
-      }, 300);
-    }, 5500);
-  }
 
   // ==========================================
   // RENDER COMBOS (#combo)
@@ -876,7 +847,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast('✅ MBBank nhận được tiền thành công! Đang chuyển hướng...', 'success');
             setTimeout(() => {
               handleCheckoutSubmit(true);
-            }, 1200);
+            }, 800);
           }
         }
       } catch (err) {
@@ -892,8 +863,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Quản lý chống gửi trùng lặp Email
+  const sentEmailOrderIds = new Set();
+  let isProcessingCheckout = false;
+
   // Tự động gửi Email vào Gmail của khách hàng qua EmailJS
   async function sendAutoEmailToCustomer(order) {
+    if (!order || !order.orderId) return false;
+
+    // Chống gửi trùng lặp email cho cùng một mã đơn
+    if (sentEmailOrderIds.has(order.orderId) || order.emailSent) {
+      console.log('Email đã được gửi cho đơn hàng này, bỏ qua:', order.orderId);
+      return false;
+    }
+    sentEmailOrderIds.add(order.orderId);
+
     const settings = EbookDB.getSettings();
     if (!settings.autoEmailEnabled || !settings.emailjsServiceId || !settings.emailjsTemplateId || !settings.emailjsPublicKey) {
       return false;
@@ -902,57 +886,105 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       if (typeof emailjs !== 'undefined') {
         emailjs.init(settings.emailjsPublicKey);
-        const bookList = order.items.map(i => {
-          if (i.isCombo) {
-            const combo = EbookDB.getComboById(i.id);
-            if (combo && combo.bookIds && combo.bookIds.length > 0) {
-              const booksInCombo = combo.bookIds.map(bId => EbookDB.getBookById(bId)).filter(Boolean);
-              return `[Gói Combo] ${i.title} (${booksInCombo.map(b => b.title).join(' + ')})`;
-            }
-          }
-          return i.title;
-        }).join(', ');
+        
+        const bookTitlesList = [];
+        const downloadLines = [];
+        const htmlLinks = [];
+        let primaryFirstUrl = '';
 
-        const downloadList = order.items.map(i => {
+        (order.items || []).forEach(i => {
           if (i.isCombo) {
             const combo = EbookDB.getComboById(i.id);
             if (combo) {
-              const lines = [`📦 [GÓI COMBO] ${combo.title}:`];
-              if (combo.downloadUrl && combo.downloadUrl.trim() !== '' && combo.downloadUrl !== '#') {
-                lines.push(`  🔗 Link trọn bộ: ${combo.downloadUrl}`);
+              bookTitlesList.push(`[Combo] ${combo.title}`);
+              let comboDlUrl = (combo.downloadUrl || '').trim();
+              if (comboDlUrl.startsWith('drive.google.com')) comboDlUrl = 'https://' + comboDlUrl;
+
+              if (comboDlUrl && comboDlUrl !== '#') {
+                if (!primaryFirstUrl) primaryFirstUrl = comboDlUrl;
+                downloadLines.push(`📦 [Gói Combo] ${combo.title}:\n👉 Link tải trọn bộ Google Drive: ${comboDlUrl}`);
+                htmlLinks.push(`<div><b>📦 ${combo.title} (Trọn bộ):</b><br><a href="${comboDlUrl}" target="_blank" style="display:inline-block;padding:8px 16px;background:#16a34a;color:#fff;text-decoration:none;border-radius:6px;margin:6px 0;font-weight:bold;">⬇️ Mở Google Drive Tải Combo</a></div>`);
+              } else {
+                downloadLines.push(`📦 [Gói Combo] ${combo.title}:`);
               }
+
               if (combo.bookIds && Array.isArray(combo.bookIds)) {
                 combo.bookIds.forEach(bId => {
                   const b = EbookDB.getBookById(bId);
                   if (b) {
-                    lines.push(`  • ${b.title}: ${b.downloadUrl || 'Đã đính kèm trên hệ thống'}`);
+                    let bUrl = (b.downloadUrl || '').trim();
+                    if (bUrl.startsWith('drive.google.com')) bUrl = 'https://' + bUrl;
+                    if (bUrl && bUrl !== '#') {
+                      if (!primaryFirstUrl) primaryFirstUrl = bUrl;
+                      downloadLines.push(`  • ${b.title}: ${bUrl}`);
+                      htmlLinks.push(`<div style="margin-left:14px;">• ${b.title}: <a href="${bUrl}" target="_blank" style="color:#2563eb;font-weight:bold;">Tải file PDF (${bUrl})</a></div>`);
+                    } else {
+                      downloadLines.push(`  • ${b.title}: (Đã kích hoạt trên hệ thống EbookPe)`);
+                    }
                   }
                 });
               }
-              return lines.join('\n');
+            }
+          } else {
+            const book = EbookDB.getBookById(i.id);
+            const title = i.title || book?.title || 'Ebook';
+            let dlUrl = (book?.downloadUrl || i.downloadUrl || '').trim();
+            if (dlUrl.startsWith('drive.google.com')) dlUrl = 'https://' + dlUrl;
+
+            bookTitlesList.push(title);
+
+            if (dlUrl && dlUrl !== '#') {
+              if (!primaryFirstUrl) primaryFirstUrl = dlUrl;
+              downloadLines.push(`📄 ${title}:\n👉 Link Google Drive tải sách: ${dlUrl}`);
+              htmlLinks.push(`<div><b>📄 ${title}:</b><br><a href="${dlUrl}" target="_blank" style="display:inline-block;padding:8px 16px;background:#2563eb;color:#fff;text-decoration:none;border-radius:6px;margin:6px 0;font-weight:bold;">⬇️ Tải Ebook PDF (Google Drive)</a><br><small style="color:#64748b;">Hoặc copy link: ${dlUrl}</small></div>`);
+            } else {
+              downloadLines.push(`📄 ${title}: (Đã kích hoạt trên hệ thống EbookPe)`);
+              htmlLinks.push(`<div><b>📄 ${title}</b>: Đã kích hoạt bản quyền trên hệ thống EbookPe.vn</div>`);
             }
           }
-          const book = EbookDB.getBookById(i.id);
-          return `• ${i.title}: ${book?.downloadUrl || 'Đã đính kèm trên hệ thống EbookPe'}`;
-        }).join('\n\n');
+        });
+
+        const bookTitlesStr = bookTitlesList.join(', ');
+        const downloadLinksStr = downloadLines.join('\n\n');
+        const htmlDownloadStr = htmlLinks.join('<br>');
+        const finalPrimaryUrl = primaryFirstUrl || 'https://ebookpe.vn';
 
         await emailjs.send(settings.emailjsServiceId, settings.emailjsTemplateId, {
-          to_name: order.customerName,
-          user_name: order.customerName,
-          name: order.customerName,
+          to_name: order.customerName || 'Khách hàng',
+          user_name: order.customerName || 'Khách hàng',
+          name: order.customerName || 'Khách hàng',
+          customer_name: order.customerName || 'Khách hàng',
           to_email: order.customerEmail,
           user_email: order.customerEmail,
           email: order.customerEmail,
+          customer_email: order.customerEmail,
           recipient: order.customerEmail,
           recipient_email: order.customerEmail,
           reply_to: order.customerEmail,
           order_id: order.orderId,
           total_amount: EbookDB.formatVND(order.totalAmount),
-          book_titles: bookList,
-          download_links: downloadList,
-          message: downloadList,
+          book_titles: bookTitlesStr,
+          download_links: downloadLinksStr,
+          download_link: finalPrimaryUrl,
+          download_url: finalPrimaryUrl,
+          link: finalPrimaryUrl,
+          google_drive_link: finalPrimaryUrl,
+          html_download_links: htmlDownloadStr,
+          message: downloadLinksStr,
           support_hotline: settings.hotline || '0333.399.956'
         });
+
+        // Đánh dấu đơn hàng đã gửi email thành công
+        order.emailSent = true;
+        try {
+          const orders = EbookDB.getOrders();
+          const target = orders.find(o => o.orderId === order.orderId);
+          if (target) {
+            target.emailSent = true;
+            localStorage.setItem('ebookpe_orders_v2', JSON.stringify(orders));
+          }
+        } catch (e) {}
+
         showToast(`Đã tự động gửi email chứa link Ebook tới ${order.customerEmail}!`, 'success');
         return true;
       }
@@ -963,6 +995,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function handleCheckoutSubmit(isAutoTriggered = false) {
+    if (isProcessingCheckout) {
+      return;
+    }
+    isProcessingCheckout = true;
+
     const nameInput = document.getElementById('checkout-name');
     const emailInput = document.getElementById('checkout-email');
     const phoneInput = document.getElementById('checkout-phone');
@@ -978,6 +1015,7 @@ document.addEventListener('DOMContentLoaded', () => {
         customerEmail = customerEmail || 'khachhang@ebookpe.vn';
       } else {
         showToast('Vui lòng nhập Họ tên và Email nhận sách!', 'error');
+        isProcessingCheckout = false;
         return;
       }
     }
@@ -986,6 +1024,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(customerEmail)) {
       showToast('Địa chỉ email không hợp lệ, vui lòng kiểm tra lại!', 'error');
+      isProcessingCheckout = false;
       return;
     }
 
@@ -994,9 +1033,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const expectedAmount = state.currentTotalAmount;
 
     // BẮT BUỘC: CHỐNG GIAN LẬN THANH TOÁN
-    // 1. Nếu chưa cấu hình SePay API Token trong Admin -> Báo lỗi, không cho tải sách bừa bãi!
+    // 1. Nếu chưa cấu hình SePay API Token trong Admin -> Báo lỗi
     if (!isAutoTriggered && !settings.sepayApiKey) {
       showToast(`⚠️ Chưa cấu hình SePay API Token trong Admin. Vui lòng vào trang Quản trị -> Cài đặt VietQR -> Dán SePay Token để hệ thống tự động nhận diện tiền MBBank!`, 'error');
+      isProcessingCheckout = false;
       return;
     }
 
@@ -1031,6 +1071,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.innerHTML = '🔄 Tôi đã quét mã — Kiểm tra thanh toán ngay';
           }
           showToast(`⚠️ Hệ thống chưa nhận được tiền cho mã đơn "${orderId}" trong tài khoản MBBank. Vui lòng quét mã QR chuyển khoản và đợi 3-10 giây để ngân hàng xử lý!`, 'error');
+          isProcessingCheckout = false;
           return;
         }
       } catch (err) {
@@ -1039,6 +1080,7 @@ document.addEventListener('DOMContentLoaded', () => {
           submitBtn.innerHTML = '🔄 Tôi đã quét mã — Kiểm tra thanh toán ngay';
         }
         showToast(`⚠️ Lỗi đối soát SePay (${err.message}). Vui lòng kiểm tra lại Token SePay trong Cài Đặt Admin!`, 'error');
+        isProcessingCheckout = false;
         return;
       }
     }
@@ -1066,12 +1108,16 @@ document.addEventListener('DOMContentLoaded', () => {
     EbookDB.clearCart();
     updateCartBadge();
 
-    // Tự động gửi Email vào Gmail khách hàng nếu đã cấu hình
+    // Tự động gửi Email vào Gmail khách hàng (đã có cơ chế deduplication)
     sendAutoEmailToCustomer(order);
 
     // Đóng checkout modal và mở Success modal
     closeAllModals();
     openSuccessModal(order);
+
+    setTimeout(() => {
+      isProcessingCheckout = false;
+    }, 1500);
   }
 
   // ==========================================
@@ -1086,7 +1132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (emailSpan) emailSpan.textContent = order.customerEmail;
 
     if (downloadList) {
-      downloadList.innerHTML = order.items.map(item => {
+      downloadList.innerHTML = (order.items || []).map(item => {
         if (item.isCombo) {
           const combo = EbookDB.getComboById(item.id);
           if (combo) {
@@ -1095,9 +1141,12 @@ document.addEventListener('DOMContentLoaded', () => {
               booksInCombo = combo.bookIds.map(bId => EbookDB.getBookById(bId)).filter(Boolean);
             }
             
+            let comboDl = (combo.downloadUrl || '').trim();
+            if (comboDl.startsWith('drive.google.com')) comboDl = 'https://' + comboDl;
+
             return `
-              <div style="padding:14px; background:#f0fdf4; border-radius:10px; border:1.5px solid #86efac; margin-bottom:12px;">
-                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; border-bottom:1px dashed #bbf7d0; padding-bottom:8px;">
+              <div style="padding:14px; background:#f0fdf4; border-radius:10px; border:1.5px solid #86efac; margin-bottom:14px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; border-bottom:1px dashed #bbf7d0; padding-bottom:8px; flex-wrap:wrap; gap:8px;">
                   <div style="display:flex; align-items:center; gap:8px;">
                     <span style="font-size:1.4rem;">📦</span>
                     <div>
@@ -1105,21 +1154,37 @@ document.addEventListener('DOMContentLoaded', () => {
                       <div style="font-size:0.75rem; color:#15803d;">Gói gồm ${booksInCombo.length} cuốn Ebook bản quyền</div>
                     </div>
                   </div>
-                  ${combo.downloadUrl && combo.downloadUrl.trim() !== '' && combo.downloadUrl !== '#' ? `
-                    <button class="btn-primary" style="padding:6px 14px; font-size:0.8rem; background:#16a34a;" onclick="window.downloadBookFile('${combo.title} - Trọn Bộ', '${combo.downloadUrl}')">
-                      ⬇️ Tải Trọn Bộ File
+                  ${comboDl && comboDl !== '#' ? `
+                    <button class="btn-primary" style="padding:7px 16px; font-size:0.82rem; background:#16a34a;" onclick="window.downloadBookFile('${combo.title} - Trọn Bộ', '${comboDl}')">
+                      ⬇️ Mở Google Drive Tải Trọn Bộ
                     </button>
                   ` : ''}
                 </div>
+                ${comboDl && comboDl !== '#' ? `
+                  <div style="margin-bottom:8px; font-size:0.78rem;">
+                    👉 <b>Link Google Drive:</b> <a href="${comboDl}" target="_blank" rel="noopener noreferrer" style="color:#15803d; text-decoration:underline; word-break:break-all;">${comboDl}</a>
+                  </div>
+                ` : ''}
                 <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
-                  ${booksInCombo.map(b => `
-                    <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:#fff; border-radius:6px; border:1px solid #e2e8f0;">
-                      <span style="font-size:0.85rem; font-weight:600; color:#334155;">📖 ${b.title}</span>
-                      <button class="btn-primary" style="padding:5px 12px; font-size:0.78rem;" onclick="window.downloadBookFile('${b.title}', '${b.downloadUrl || '#'}')">
-                        ⬇️ Tải PDF
-                      </button>
-                    </div>
-                  `).join('')}
+                  ${booksInCombo.map(b => {
+                    let bDl = (b.downloadUrl || '').trim();
+                    if (bDl.startsWith('drive.google.com')) bDl = 'https://' + bDl;
+                    return `
+                      <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:#fff; border-radius:6px; border:1px solid #e2e8f0; flex-wrap:wrap; gap:6px;">
+                        <div style="flex:1; min-width:200px;">
+                          <span style="font-size:0.85rem; font-weight:600; color:#334155;">📖 ${b.title}</span>
+                          ${bDl && bDl !== '#' ? `
+                            <div style="font-size:0.75rem; margin-top:2px;">
+                              <a href="${bDl}" target="_blank" rel="noopener noreferrer" style="color:#2563eb; text-decoration:underline; word-break:break-all;">🔗 ${bDl}</a>
+                            </div>
+                          ` : ''}
+                        </div>
+                        <button class="btn-primary" style="padding:6px 14px; font-size:0.78rem;" onclick="window.downloadBookFile('${b.title}', '${bDl || '#'}')">
+                          ⬇️ Tải PDF ngay
+                        </button>
+                      </div>
+                    `;
+                  }).join('')}
                 </div>
               </div>
             `;
@@ -1128,17 +1193,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Single book
         const book = EbookDB.getBookById(item.id);
-        const downloadUrl = book?.downloadUrl || '#';
+        const title = item.title || book?.title || 'Ebook';
+        let downloadUrl = (book?.downloadUrl || item.downloadUrl || '').trim();
+        if (downloadUrl.startsWith('drive.google.com')) downloadUrl = 'https://' + downloadUrl;
+
         return `
-          <div style="display:flex; align-items:center; justify-content:space-between; padding:12px; background:#fff; border-radius:8px; border:1px solid var(--border); margin-bottom:8px;">
-            <div style="display:flex; align-items:center; gap:10px;">
-              <span style="font-size:1.5rem;">📄</span>
-              <div>
-                <strong style="font-size:0.9rem;">${item.title}</strong>
-                <div style="font-size:0.75rem; color:var(--text-muted);">Định dạng: PDF bản quyền EbookPe</div>
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:14px; background:#fff; border-radius:10px; border:1.5px solid var(--border); margin-bottom:10px; flex-wrap:wrap; gap:10px;">
+            <div style="display:flex; align-items:flex-start; gap:12px; flex:1; min-width:220px;">
+              <span style="font-size:1.6rem; line-height:1;">📄</span>
+              <div style="flex:1;">
+                <strong style="font-size:0.92rem; color:var(--text-main); display:block; margin-bottom:2px;">${title}</strong>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:4px;">Định dạng: PDF bản quyền EbookPe</div>
+                ${downloadUrl && downloadUrl !== '#' ? `
+                  <div style="font-size:0.78rem;">
+                    👉 <b>Link Google Drive:</b> <a href="${downloadUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--primary); font-weight:600; text-decoration:underline; word-break:break-all;">${downloadUrl}</a>
+                  </div>
+                ` : ''}
               </div>
             </div>
-            <button class="btn-primary" style="padding:8px 16px; font-size:0.82rem;" onclick="window.downloadBookFile('${item.title}', '${downloadUrl}')">
+            <button class="btn-primary" style="padding:9px 18px; font-size:0.84rem; white-space:nowrap;" onclick="window.downloadBookFile('${title}', '${downloadUrl || '#'}')">
               ⬇️ Tải PDF ngay
             </button>
           </div>
@@ -1149,11 +1222,32 @@ document.addEventListener('DOMContentLoaded', () => {
     successModal?.classList.add('active');
   }
 
-  // Giả lập tải file PDF mẫu chuẩn
-  window.downloadBookFile = function(title, url) {
+  // Mở link Google Drive hoặc tải file PDF thực tế
+  window.downloadBookFile = function(title, rawUrl) {
+    let url = (rawUrl || '').trim();
+    if (url.startsWith('drive.google.com')) {
+      url = 'https://' + url;
+    }
+
+    // 1. Nếu có link tải thực tế (Google Drive, Dropbox, HTTP/HTTPS)
+    if (url && url !== '#' && (url.startsWith('http://') || url.startsWith('https://'))) {
+      showToast(`Đang mở link Google Drive tải Ebook "${title}"...`, 'success');
+      
+      const win = window.open(url, '_blank', 'noopener,noreferrer');
+      if (!win) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+      return;
+    }
+
+    // 2. Fallback: Nếu admin chưa điền link tải Google Drive, tải PDF mẫu
     showToast(`Đang chuẩn bị file "${title}" tải về máy...`, 'info');
-    
-    // Tạo file text/pdf demo tải trực tiếp về máy người dùng
     setTimeout(() => {
       const blob = new Blob([
         `%PDF-1.4\n%EbookPe - Nền tảng Ebook Thực Chiến\n\nTiêu đề: ${title}\nBản quyền thuộc về EbookPe.vn\nCảm ơn bạn đã mua sách tại EbookPe!\nChúc bạn ứng dụng thành công và đạt được kết quả đột phá.`
@@ -1212,14 +1306,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span style="color:var(--text-muted);">${order.orderDate}</span>
               </div>
               <div style="display:flex; flex-direction:column; gap:8px;">
-                ${order.items.map(item => `
-                  <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:10px 14px; border-radius:8px; border:1px solid var(--border-light);">
-                    <span style="font-size:0.88rem; font-weight:600;">📘 ${item.title}</span>
-                    <button class="btn-primary" style="padding:6px 14px; font-size:0.78rem;" onclick="window.downloadBookFile('${item.title}', '#')">
-                      ⬇️ Tải lại
-                    </button>
-                  </div>
-                `).join('')}
+                ${(order.items || []).map(item => {
+                  let dlUrl = item.downloadUrl || '';
+                  if (!dlUrl) {
+                    if (item.isCombo) {
+                      const c = EbookDB.getComboById(item.id);
+                      dlUrl = c?.downloadUrl || '';
+                    } else {
+                      const b = EbookDB.getBookById(item.id);
+                      dlUrl = b?.downloadUrl || '';
+                    }
+                  }
+                  if (dlUrl.startsWith('drive.google.com')) dlUrl = 'https://' + dlUrl;
+
+                  return `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:10px 14px; border-radius:8px; border:1px solid var(--border-light); flex-wrap:wrap; gap:8px;">
+                      <div style="flex:1; min-width:180px;">
+                        <span style="font-size:0.88rem; font-weight:600;">📘 ${item.title}</span>
+                        ${dlUrl && dlUrl !== '#' ? `
+                          <div style="font-size:0.75rem; margin-top:2px;">
+                            <a href="${dlUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--primary); text-decoration:underline; word-break:break-all;">🔗 ${dlUrl}</a>
+                          </div>
+                        ` : ''}
+                      </div>
+                      <button class="btn-primary" style="padding:6px 14px; font-size:0.78rem;" onclick="window.downloadBookFile('${item.title}', '${dlUrl || '#'}')">
+                        ⬇️ Tải lại
+                      </button>
+                    </div>
+                  `;
+                }).join('')}
               </div>
             </div>
           `).join('')}
@@ -1266,7 +1381,25 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.removeChild(textArea);
   }
 
+  let lastToastMsg = '';
+  let lastToastTime = 0;
+  let currentToastTimer = null;
+
   function showToast(message, type = 'info') {
+    if (!message) return;
+
+    // Làm sạch message: nếu message đã có icon ở đầu thì bỏ icon đầu đi để không bị lặp 2 icon
+    const cleanMsg = message.replace(/^[\s✅⚠️ℹ️❌🚀⚡📦📄]+/, '').trim();
+    const finalMsg = cleanMsg || message;
+
+    // Chống lặp thông báo giống hệt nhau trong 2.5 giây
+    const now = Date.now();
+    if (finalMsg === lastToastMsg && (now - lastToastTime) < 2500) {
+      return;
+    }
+    lastToastMsg = finalMsg;
+    lastToastTime = now;
+
     let container = document.getElementById('toast-container');
     if (!container) {
       container = document.createElement('div');
@@ -1275,18 +1408,29 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.appendChild(container);
     }
 
+    // DỌN SẠCH TẤT CẢ TOAST CŨ NGAY LẬP TỨC - CHỈ GIỮ ĐÚNG 1 THÔNG BÁO DUY NHẤT
+    if (currentToastTimer) {
+      clearTimeout(currentToastTimer);
+      currentToastTimer = null;
+    }
+    container.innerHTML = '';
+
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     const icon = type === 'success' ? '✅' : (type === 'error' ? '⚠️' : 'ℹ️');
-    toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+    toast.innerHTML = `<span>${icon}</span> <span>${finalMsg}</span>`;
 
     container.appendChild(toast);
 
-    setTimeout(() => {
+    currentToastTimer = setTimeout(() => {
       toast.style.opacity = '0';
       toast.style.transform = 'translateY(10px)';
       toast.style.transition = 'all 0.25s ease';
-      setTimeout(() => toast.remove(), 250);
+      setTimeout(() => {
+        try {
+          if (toast.parentElement) toast.remove();
+        } catch (e) {}
+      }, 250);
     }, 3200);
   }
 
