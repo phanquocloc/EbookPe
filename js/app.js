@@ -1449,43 +1449,104 @@ document.addEventListener('DOMContentLoaded', () => {
   function startLiveToastTicker() {
     const toastUserEl = document.getElementById('live-toast-user');
     const toastWrap = document.getElementById('showcase-live-toast');
+    const toastTimeEl = toastWrap ? toastWrap.querySelector('.live-buyer-time') : null;
     if (!toastUserEl || !toastWrap) return;
 
+    // Danh sách người mua mặc định đa dạng, phong phú từ nhiều tỉnh thành
     const defaultBuyers = [
       { name: 'Quốc Bảo (Hà Nội)', book: 'Khởi Nghiệp Không Lối Mòn' },
       { name: 'Minh Thư (TP.HCM)', book: 'Bí Mật Tư Duy Triệu Phú' },
       { name: 'Hoàng Long (Đà Nẵng)', book: 'Combo Vua Bán Hàng Thực Chiến' },
       { name: 'Thanh Nga (Cần Thơ)', book: 'Nghệ Thuật Đàm Phán Giá Trị Cao' },
       { name: 'Đức Trí (Hải Phòng)', book: 'Ứng Dụng AI Tự Động Hóa Doanh Nghiệp' },
-      { name: 'Khánh Linh (Nha Trang)', book: 'Quản Trị Tài Chính Cá Nhân 4.0' }
+      { name: 'Khánh Linh (Nha Trang)', book: 'Quản Trị Tài Chính Cá Nhân 4.0' },
+      { name: 'Văn Hùng (Bình Dương)', book: 'Chiến Lược Marketing 0 Đồng' },
+      { name: 'Ngọc Ánh (Huế)', book: 'Kỹ Năng Lãnh Đạo Xuất Chúng' },
+      { name: 'Tuấn Anh (Quảng Ninh)', book: 'Combo Khởi Nghiệp Toàn Diện' },
+      { name: 'Thu Trang (Đồng Nai)', book: 'Tâm Lý Học Trong Giao Tiếp & Thuyết Phục' },
+      { name: 'Hải Đăng (Vũng Tàu)', book: 'Xây Dựng Thương Hiệu Cá Nhân' },
+      { name: 'Bảo Trâm (Quy Nhơn)', book: 'Kế Hoạch Tài Chính & Tự Do' },
+      { name: 'Phương Nam (Hà Nội)', book: 'Combo Đột Phá Doanh Số 2025' },
+      { name: 'Hồng Nhung (TP.HCM)', book: 'Nghệ Thuật Quản Lý Thời Gian Tối Ưu' }
     ];
 
-    let currentIndex = 0;
+    const timeOptions = ['• Vừa xong', '• 1 phút trước', '• 2 phút trước', '• 3 phút trước', '• 5 phút trước', '• 8 phút trước'];
+    const recentNames = []; // Lưu các tên vừa hiển thị gần đây để tuyệt đối không lặp liên tục
 
-    setInterval(() => {
-      // Lấy danh sách đơn hàng thực tế nếu có trong DB, hoặc dùng defaultBuyers
-      const realOrders = typeof EbookDB !== 'undefined' ? EbookDB.getOrders().filter(o => o.status === 'completed') : [];
-      let buyerText = '';
+    function cleanCustomerName(rawName) {
+      if (!rawName) return 'Độc giả';
+      // Lọc bỏ mã sinh viên / mã đơn nếu có ở đầu tên (ví dụ: B25DCCN291 Phan Quoc Loc -> Phan Quoc Loc)
+      let cleaned = rawName.replace(/^[A-Z0-9_-]{5,15}\s+/i, '').trim();
+      return cleaned || rawName;
+    }
 
-      if (realOrders.length > 0 && Math.random() > 0.4) {
-        const randomOrder = realOrders[Math.floor(Math.random() * realOrders.length)];
-        const bookName = randomOrder.items?.[0]?.title || 'Ebook Bản Quyền';
-        const safeName = randomOrder.customerName || 'Độc giả';
-        buyerText = `<strong>${safeName}</strong> vừa sở hữu <em>${bookName}</em>`;
-      } else {
-        currentIndex = (currentIndex + 1) % defaultBuyers.length;
-        const buyer = defaultBuyers[currentIndex];
-        buyerText = `<strong>${buyer.name}</strong> vừa sở hữu <em>${buyer.book}</em>`;
+    function getNextBuyer() {
+      // Lấy danh sách đơn hàng thực tế đã hoàn thành
+      const realOrders = (typeof EbookDB !== 'undefined' && EbookDB.getOrders)
+        ? EbookDB.getOrders().filter(o => o.status === 'completed')
+        : [];
+
+      // Chuẩn bị pool ứng viên
+      const candidates = [];
+
+      // Thêm các đơn hàng thực tế hợp lệ
+      realOrders.forEach(order => {
+        const cName = cleanCustomerName(order.customerName);
+        const bTitle = order.items?.[0]?.title || 'Ebook Bản Quyền';
+        candidates.push({ name: cName, book: bTitle, isReal: true });
+      });
+
+      // Thêm pool mẫu
+      defaultBuyers.forEach(b => {
+        candidates.push({ name: b.name, book: b.book, isReal: false });
+      });
+
+      // Lọc bỏ những người vừa hiển thị gần đây (trong danh sách recentNames)
+      let available = candidates.filter(c => !recentNames.includes(c.name));
+
+      // Nếu tất cả đều vừa xuất hiện, xóa bớt lịch sử để tạo vòng quay mới
+      if (available.length === 0) {
+        recentNames.splice(0, Math.floor(recentNames.length / 2));
+        available = candidates.filter(c => !recentNames.includes(c.name));
       }
+
+      // Chọn ngẫu nhiên 1 người trong available
+      const chosen = (available.length > 0)
+        ? available[Math.floor(Math.random() * available.length)]
+        : defaultBuyers[0];
+
+      // Lưu lại vào recentNames (tối đa giữ 8 tên gần nhất)
+      recentNames.push(chosen.name);
+      if (recentNames.length > 8) {
+        recentNames.shift();
+      }
+
+      return chosen;
+    }
+
+    function showNextNotification() {
+      const buyer = getNextBuyer();
+      const timeStr = timeOptions[Math.floor(Math.random() * timeOptions.length)];
 
       toastWrap.style.opacity = '0';
       toastWrap.style.transform = 'translateY(4px)';
+
       setTimeout(() => {
-        toastUserEl.innerHTML = buyerText;
+        toastUserEl.innerHTML = `<strong>${buyer.name}</strong> vừa sở hữu <em>${buyer.book}</em>`;
+        if (toastTimeEl) {
+          toastTimeEl.textContent = timeStr;
+        }
         toastWrap.style.opacity = '1';
         toastWrap.style.transform = 'translateY(0)';
-      }, 300);
-    }, 4500);
+      }, 350);
+
+      // Dãn thời gian: random từ 9 đến 14 giây cho mỗi lần hiện để tạo cảm giác tự nhiên, không bị dồn dập
+      const nextDelay = 9000 + Math.floor(Math.random() * 5000);
+      setTimeout(showNextNotification, nextDelay);
+    }
+
+    // Bắt đầu chu kỳ đầu tiên sau 6 giây mở trang
+    setTimeout(showNextNotification, 6000);
   }
 
   window.showToast = showToast;
