@@ -1246,6 +1246,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('setting-emailjs-public').value = s.emailjsPublicKey || '';
     document.getElementById('setting-auto-email').checked = !!s.autoEmailEnabled;
 
+    // Cài đặt Supabase Cloud Database
+    const supabaseUrlEl = document.getElementById('setting-supabase-url');
+    const supabaseKeyEl = document.getElementById('setting-supabase-key');
+    const supabaseEnabledEl = document.getElementById('setting-supabase-enabled');
+
+    if (supabaseUrlEl) supabaseUrlEl.value = s.supabaseUrl || 'https://jymkfplrxrbtmskinvre.supabase.co';
+    if (supabaseKeyEl) supabaseKeyEl.value = s.supabaseKey || 'sb_publishable_uozNN_5s8HXEca1_IAU3lw_h5br3rfd';
+    if (supabaseEnabledEl) supabaseEnabledEl.checked = s.supabaseEnabled !== false;
+
     updateVietQRPreviewLive();
   }
 
@@ -1265,12 +1274,101 @@ document.addEventListener('DOMContentLoaded', () => {
         emailjsServiceId: document.getElementById('setting-emailjs-service').value.trim(),
         emailjsTemplateId: document.getElementById('setting-emailjs-template').value.trim(),
         emailjsPublicKey: document.getElementById('setting-emailjs-public').value.trim(),
-        autoEmailEnabled: document.getElementById('setting-auto-email').checked
+        autoEmailEnabled: document.getElementById('setting-auto-email').checked,
+        supabaseUrl: document.getElementById('setting-supabase-url')?.value.trim() || '',
+        supabaseKey: document.getElementById('setting-supabase-key')?.value.trim() || '',
+        supabaseEnabled: document.getElementById('setting-supabase-enabled')?.checked ?? true
       };
 
       EbookDB.saveSettings(updated);
       updateVietQRPreviewLive();
-      showAdminToast('Đã lưu cấu hình tài khoản ngân hàng & tự động hóa!', 'success');
+      showAdminToast('Đã lưu cấu hình tài khoản ngân hàng, Supabase & tự động hóa!', 'success');
+    });
+
+    // Test kết nối Supabase Cloud
+    const btnTestSupabase = document.getElementById('btn-test-supabase');
+    btnTestSupabase?.addEventListener('click', async () => {
+      const origHtml = btnTestSupabase.innerHTML;
+      btnTestSupabase.classList.add('btn-admin-loading');
+      btnTestSupabase.innerHTML = '<span class="btn-inline-spinner"></span> Đang kết nối...';
+      const loadingToast = showAdminToast('Đang kết nối tới Supabase Cloud Database...', 'loading', { duration: 0, title: 'Supabase' });
+
+      try {
+        if (window.EbookSupabase) {
+          const res = await window.EbookSupabase.testConnection();
+          loadingToast.close();
+          const badge = document.getElementById('supabase-status-badge');
+          if (res.success) {
+            if (badge) {
+              badge.textContent = '🟢 Đã Kết Nối';
+              badge.style.background = '#dcfce7';
+              badge.style.color = '#15803d';
+            }
+            showAdminToast(res.message, res.warning ? 'warning' : 'success', { title: '✅ Supabase Cloud', duration: 6000 });
+          } else {
+            if (badge) {
+              badge.textContent = '🔴 Lỗi Kết Nối';
+              badge.style.background = '#fee2e2';
+              badge.style.color = '#dc2626';
+            }
+            showAdminToast(res.message, 'error', { title: 'Lỗi Supabase' });
+          }
+        }
+      } catch (err) {
+        loadingToast.close();
+        showAdminToast('Lỗi kiểm tra Supabase: ' + err.message, 'error');
+      } finally {
+        btnTestSupabase.classList.remove('btn-admin-loading');
+        btnTestSupabase.innerHTML = origHtml;
+      }
+    });
+
+    // Đồng bộ toàn bộ dữ liệu lên Supabase Cloud
+    const btnSyncSupabase = document.getElementById('btn-sync-supabase');
+    btnSyncSupabase?.addEventListener('click', async () => {
+      const origHtml = btnSyncSupabase.innerHTML;
+      btnSyncSupabase.classList.add('btn-admin-loading');
+      btnSyncSupabase.innerHTML = '<span class="btn-inline-spinner"></span> Đang đồng bộ...';
+      const loadingToast = showAdminToast('Đang đồng bộ Đơn hàng, Sách, Combo và Cài đặt lên Supabase Cloud...', 'loading', { duration: 0, title: 'Đồng bộ Supabase' });
+
+      try {
+        if (window.EbookSupabase) {
+          const res = await window.EbookSupabase.syncAllToSupabase();
+          loadingToast.close();
+          if (res.errors && res.errors.length > 0) {
+            showAdminToast(
+              `Đã đồng bộ thành công ${res.booksCount} Sách, ${res.combosCount} Combo, ${res.ordersCount} Đơn hàng. (Lưu ý: Một số bảng cần chạy script SQL: ${res.errors.join('; ')})`,
+              'warning',
+              { title: 'Đồng bộ hoàn tất (có lưu ý)', duration: 8000 }
+            );
+          } else {
+            showAdminToast(
+              `Đồng bộ toàn bộ dữ liệu lên Supabase thành công! (${res.booksCount} Sách, ${res.combosCount} Combo, ${res.ordersCount} Đơn hàng, Cài đặt).`,
+              'success',
+              { title: '🚀 Supabase Synced 100%' }
+            );
+          }
+        }
+      } catch (err) {
+        loadingToast.close();
+        showAdminToast('Lỗi đồng bộ Supabase: ' + err.message + '. Bạn đã chạy script tạo bảng SQL trong Supabase chưa?', 'error', { duration: 8000 });
+      } finally {
+        btnSyncSupabase.classList.remove('btn-admin-loading');
+        btnSyncSupabase.innerHTML = origHtml;
+      }
+    });
+
+    // Copy SQL Schema Script
+    const btnCopySql = document.getElementById('btn-copy-sql');
+    btnCopySql?.addEventListener('click', () => {
+      if (window.EbookSupabase) {
+        const sql = window.EbookSupabase.getSQLSchema();
+        navigator.clipboard.writeText(sql).then(() => {
+          showAdminToast('Đã copy toàn bộ mã SQL tạo bảng vào bộ nhớ tạm! Bạn chỉ cần vào Supabase -> SQL Editor và dán rồi nhấn Run.', 'success', { title: '📋 Đã copy mã SQL', duration: 7000 });
+        }).catch(() => {
+          showAdminToast('Vui lòng cấp quyền clipboard hoặc copy trực tiếp trong file js/supabase.js', 'warning');
+        });
+      }
     });
 
     // Test kết nối SePay.vn

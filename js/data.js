@@ -30,7 +30,11 @@ const DEFAULT_SETTINGS = {
   emailjsServiceId: '',
   emailjsTemplateId: '',
   emailjsPublicKey: '',
-  autoEmailEnabled: false
+  autoEmailEnabled: false,
+  // Cấu hình Cơ sở dữ liệu Cloud Supabase
+  supabaseUrl: 'https://jymkfplrxrbtmskinvre.supabase.co',
+  supabaseKey: 'sb_publishable_uozNN_5s8HXEca1_IAU3lw_h5br3rfd',
+  supabaseEnabled: true
 };
 
 // Danh mục mặc định
@@ -520,6 +524,15 @@ class EbookDB {
       });
       localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(books));
       this.notifyChange('BOOKS_UPDATED', { books });
+    }
+
+    // Tự động đẩy đơn hàng lên Supabase Cloud Database (nếu có cấu hình)
+    if (typeof window !== 'undefined' && window.EbookSupabase && typeof window.EbookSupabase.saveOrder === 'function') {
+      try {
+        window.EbookSupabase.saveOrder(newOrder);
+      } catch (e) {
+        console.warn('Lỗi lưu đơn hàng Supabase:', e);
+      }
     }
 
     return newOrder;

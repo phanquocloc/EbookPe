@@ -421,6 +421,46 @@
                     </button>
                   </div>
                 </div>
+
+                <!-- 3. Supabase Cloud Database Integration -->
+                <div style="background:#f0fdf4; padding:16px; border-radius:8px; border:1.5px solid #86efac; margin-top:14px;">
+                  <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+                    <div style="font-weight:700; font-size:0.9rem; color:#166534; display:flex; align-items:center; gap:6px;">
+                      <span>⚡ 3. Cơ Sở Dữ Liệu Đám Mây Supabase (PostgreSQL Cloud)</span>
+                      <span id="supabase-status-badge" style="font-size:0.72rem; padding:2px 8px; border-radius:12px; background:#dcfce7; color:#15803d; font-weight:700;">🟢 Sẵn Sàng</span>
+                    </div>
+                  </div>
+
+                  <div class="admin-form-group" style="margin-bottom:10px;">
+                    <label for="setting-supabase-url" style="color:#166534; font-weight:600;">Supabase Project URL:</label>
+                    <input type="text" id="setting-supabase-url" placeholder="https://xyz.supabase.co" value="https://jymkfplrxrbtmskinvre.supabase.co">
+                  </div>
+
+                  <div class="admin-form-group" style="margin-bottom:10px;">
+                    <label for="setting-supabase-key" style="color:#166534; font-weight:600;">Supabase Anon / Publishable Key:</label>
+                    <input type="password" id="setting-supabase-key" placeholder="sb_publishable_..." value="sb_publishable_uozNN_5s8HXEca1_IAU3lw_h5br3rfd">
+                  </div>
+
+                  <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-top:12px; padding-top:10px; border-top:1px dashed #bbf7d0;">
+                    <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; cursor:pointer;">
+                      <input type="checkbox" id="setting-supabase-enabled" checked style="width:16px; height:16px;">
+                      <span style="color:#14532d; font-weight:600;">Tự động lưu đơn hàng &amp; đồng bộ dữ liệu với Supabase Cloud</span>
+                    </label>
+
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                      <button type="button" id="btn-test-supabase" class="btn-admin-primary" style="background:#059669; font-size:0.78rem; padding:6px 12px;">
+                        🧪 Kiểm Tra Kết Nối
+                      </button>
+                      <button type="button" id="btn-sync-supabase" class="btn-admin-primary" style="background:#2563EB; font-size:0.78rem; padding:6px 12px;">
+                        🚀 Đồng Bộ Dữ Liệu Lên Cloud
+                      </button>
+                      <button type="button" id="btn-copy-sql" class="btn-admin-primary" style="background:#4B5563; font-size:0.78rem; padding:6px 12px;">
+                        📋 Copy Script Tạo Bảng SQL
+                      </button>
+                    </div>
+                  </div>
+                  <div id="supabase-test-result" style="margin-top:8px; font-size:0.78rem; color:#166534; display:none;"></div>
+                </div>
               </div>
 
               <button type="submit" class="btn-admin-primary" style="padding:12px 24px; margin-top:16px;">
@@ -826,6 +866,8 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
   <script src="js/data.js"></script>
   <script src="js/admin.js"></script>
 </body>
