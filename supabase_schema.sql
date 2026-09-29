@@ -8,10 +8,18 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
+-- Xóa bảng cũ nếu đã tồn tại để tránh xung đột cột
+DROP TABLE IF EXISTS public.audit_logs CASCADE;
+DROP TABLE IF EXISTS public.orders CASCADE;
+DROP TABLE IF EXISTS public.combos CASCADE;
+DROP TABLE IF EXISTS public.books CASCADE;
+DROP TABLE IF EXISTS public.categories CASCADE;
+DROP TABLE IF EXISTS public.settings CASCADE;
+
 -- =============================================================================
 -- 1. BẢNG CÀI ĐẶT HỆ THỐNG (SETTINGS)
 -- =============================================================================
-CREATE TABLE IF NOT EXISTS public.settings (
+CREATE TABLE public.settings (
     id TEXT PRIMARY KEY DEFAULT 'main_settings',
     store_name TEXT DEFAULT 'EbookPe',
     store_slogan TEXT DEFAULT 'Nền tảng Ebook thực chiến #1 Việt Nam',
