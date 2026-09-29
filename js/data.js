@@ -396,6 +396,12 @@ class EbookDB {
     }
     localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(books));
     this.notifyChange('BOOKS_UPDATED', { books });
+
+    // Tự động đẩy lên Supabase Cloud
+    if (typeof window !== 'undefined' && window.EbookSupabase && typeof window.EbookSupabase.saveBook === 'function') {
+      window.EbookSupabase.saveBook(updated);
+    }
+
     return updated;
   }
 
@@ -404,6 +410,12 @@ class EbookDB {
     books = books.filter(b => b.id !== id);
     localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(books));
     this.notifyChange('BOOKS_UPDATED', { books });
+
+    // Tự động xóa trên Supabase Cloud
+    if (typeof window !== 'undefined' && window.EbookSupabase && typeof window.EbookSupabase.deleteBook === 'function') {
+      window.EbookSupabase.deleteBook(id);
+    }
+
     return true;
   }
 
@@ -470,6 +482,12 @@ class EbookDB {
     }
     localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(combos));
     this.notifyChange('COMBOS_UPDATED', { combos });
+
+    // Tự động đẩy lên Supabase Cloud
+    if (typeof window !== 'undefined' && window.EbookSupabase && typeof window.EbookSupabase.saveCombo === 'function') {
+      window.EbookSupabase.saveCombo(updated);
+    }
+
     return updated;
   }
 
@@ -478,6 +496,12 @@ class EbookDB {
     combos = combos.filter(c => c.id !== id);
     localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(combos));
     this.notifyChange('COMBOS_UPDATED', { combos });
+
+    // Tự động xóa trên Supabase Cloud
+    if (typeof window !== 'undefined' && window.EbookSupabase && typeof window.EbookSupabase.deleteCombo === 'function') {
+      window.EbookSupabase.deleteCombo(id);
+    }
+
     return true;
   }
 

@@ -1,7 +1,7 @@
 /**
  * EbookPe — Supabase Cloud Database Integration Layer
  * Tích hợp lưu trữ cơ sở dữ liệu thời gian thực Supabase (PostgreSQL)
- * Hỗ trợ cả Supabase JS SDK và REST API Direct Fetch (chống lỗi thư viện bên thứ 3)
+ * Hỗ trợ đồng bộ 2 chiều tự động: Sách, Combo, Đơn hàng & Cài đặt
  */
 
 (function (window) {
@@ -43,7 +43,7 @@
     }
 
     /**
-     * Gửi yêu cầu REST API trực tiếp tới Supabase (fallback siêu nhanh & độc lập)
+     * Gửi yêu cầu REST API trực tiếp tới Supabase
      */
     static async request(endpoint, options = {}) {
       const cfg = this.getSettings();
@@ -94,19 +94,181 @@
       }
 
       try {
-        // Thử query 1 bản ghi từ bảng orders
-        await this.request('orders?limit=1', { method: 'GET' });
-        return { success: true, message: 'Kết nối Supabase thành công! Bảng orders đã sẵn sàng.' };
+        await this.request('books?limit=1', { method: 'GET' });
+        return { success: true, message: 'Kết nối Supabase thành công! Dữ liệu Cloud đã sẵn sàng.' };
       } catch (err) {
         const msg = err.message || '';
-        if (msg.includes('Could not find the table') || msg.includes('relation') || msg.includes('404') || msg.includes('PGRST205')) {
-          return {
-            success: true,
-            warning: true,
-            message: 'Đã kết nối tới Server Supabase thành công! (Lưu ý: Cần chạy script SQL để tạo bảng dữ liệu).'
-          };
-        }
         return { success: false, message: `Lỗi kết nối Supabase: ${msg}` };
+      }
+    }
+
+    /**
+     * Lấy danh sách Sách từ Supabase Cloud và đồng bộ vào LocalStorage
+     */
+    static async fetchBooks() {
+      try {
+        const rows = await this.request('books?select=*&order=created_at.asc');
+        if (Array.isArray(rows) && rows.length > 0) {
+          const mapped = rows.map(r => ({
+            id: r.id,
+            title: r.title,
+            subTitle: r.sub_title || '',
+            author: r.author || 'EbookPe',
+            category: r.category || 'all',
+            categoryName: r.category_name || 'Ebook',
+            price: parseFloat(r.price || 0),
+            originalPrice: parseFloat(r.original_price || 0),
+            badge: r.badge || '',
+            pages: parseInt(r.pages || 180),
+            format: r.format || 'PDF + EPUB',
+            status: r.status || 'active',
+            rating: parseFloat(r.rating || 5.0),
+            reviewsCount: parseInt(r.reviews_count || 0),
+            salesCount: parseInt(r.sales_count || 0),
+            shortDesc: r.short_desc || '',
+            fullDesc: r.full_desc || '',
+            toc: r.toc || [],
+            sampleExcerpt: r.sample_excerpt || '',
+            downloadUrl: r.download_url || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
+            coverStyle: r.cover_style || 'cover-1',
+            coverImage: r.cover_image || ''
+          }));
+          localStorage.setItem('ebookpe_books_v2', JSON.stringify(mapped));
+          return mapped;
+        }
+      } catch (e) {
+        console.warn('[Supabase] Tải sách từ Cloud:', e.message);
+      }
+      return null;
+    }
+
+    /**
+     * Lấy danh sách Combo từ Supabase Cloud và đồng bộ vào LocalStorage
+     */
+    static async fetchCombos() {
+      try {
+        const rows = await this.request('combos?select=*&order=created_at.asc');
+        if (Array.isArray(rows) && rows.length > 0) {
+          const mapped = rows.map(r => ({
+            id: r.id,
+            title: r.title,
+            subTitle: r.sub_title || '',
+            tag: r.tag || 'Ưu đãi',
+            discountBadge: r.discount_badge || '',
+            price: parseFloat(r.price || 0),
+            originalPrice: parseFloat(r.original_price || 0),
+            popular: !!r.popular,
+            status: r.status || 'active',
+            bookIds: r.book_ids || [],
+            bonusList: r.bonus_list || [],
+            downloadUrl: r.download_url || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing'
+          }));
+          localStorage.setItem('ebookpe_combos_v2', JSON.stringify(mapped));
+          return mapped;
+        }
+      } catch (e) {
+        console.warn('[Supabase] Tải combo từ Cloud:', e.message);
+      }
+      return null;
+    }
+
+    /**
+     * Lưu/Cập nhật Sách lên Supabase Cloud
+     */
+    static async saveBook(b) {
+      if (!b || !b.id) return;
+      try {
+        const payload = {
+          id: b.id,
+          title: b.title,
+          sub_title: b.subTitle || '',
+          author: b.author || 'EbookPe',
+          category: b.category || 'all',
+          category_name: b.categoryName || 'Ebook',
+          price: b.price || 0,
+          original_price: b.originalPrice || 0,
+          badge: b.badge || '',
+          pages: b.pages || 180,
+          format: b.format || 'PDF + EPUB',
+          status: b.status || 'active',
+          rating: b.rating || 5.0,
+          reviews_count: b.reviewsCount || 0,
+          sales_count: b.salesCount || 0,
+          short_desc: b.shortDesc || '',
+          full_desc: b.fullDesc || '',
+          toc: b.toc || [],
+          sample_excerpt: b.sampleExcerpt || '',
+          download_url: b.downloadUrl || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
+          cover_style: b.coverStyle || 'cover-1',
+          cover_image: b.coverImage || '',
+          updated_at: new Date().toISOString()
+        };
+        await this.request('books', {
+          method: 'POST',
+          prefer: 'resolution=merge-duplicates,return=representation',
+          body: payload
+        });
+      } catch (e) {
+        console.warn('[Supabase] Lưu sách lên Cloud:', e.message);
+      }
+    }
+
+    /**
+     * Xóa Sách khỏi Supabase Cloud
+     */
+    static async deleteBook(id) {
+      if (!id) return;
+      try {
+        await this.request(`books?id=eq.${encodeURIComponent(id)}`, {
+          method: 'DELETE'
+        });
+      } catch (e) {
+        console.warn('[Supabase] Xóa sách khỏi Cloud:', e.message);
+      }
+    }
+
+    /**
+     * Lưu/Cập nhật Combo lên Supabase Cloud
+     */
+    static async saveCombo(c) {
+      if (!c || !c.id) return;
+      try {
+        const payload = {
+          id: c.id,
+          title: c.title,
+          sub_title: c.subTitle || '',
+          tag: c.tag || 'Ưu đãi',
+          discount_badge: c.discountBadge || '',
+          price: c.price || 0,
+          original_price: c.originalPrice || 0,
+          popular: !!c.popular,
+          status: c.status || 'active',
+          book_ids: c.bookIds || [],
+          bonus_list: c.bonusList || [],
+          download_url: c.downloadUrl || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
+          updated_at: new Date().toISOString()
+        };
+        await this.request('combos', {
+          method: 'POST',
+          prefer: 'resolution=merge-duplicates,return=representation',
+          body: payload
+        });
+      } catch (e) {
+        console.warn('[Supabase] Lưu combo lên Cloud:', e.message);
+      }
+    }
+
+    /**
+     * Xóa Combo khỏi Supabase Cloud
+     */
+    static async deleteCombo(id) {
+      if (!id) return;
+      try {
+        await this.request(`combos?id=eq.${encodeURIComponent(id)}`, {
+          method: 'DELETE'
+        });
+      } catch (e) {
+        console.warn('[Supabase] Xóa combo khỏi Cloud:', e.message);
       }
     }
 
@@ -126,14 +288,15 @@
           payment_method: order.paymentMethod || 'VietQR',
           status: order.status || 'completed',
           items: order.items || [],
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         };
 
         const client = this.getClient();
         if (client) {
           const { data, error } = await client.from('orders').upsert(payload);
           if (error) throw error;
-          console.log('[Supabase] Đã lưu đơn hàng lên Cloud thành công:', order.orderId);
+          console.log('[Supabase] Đã lưu đơn hàng lên Cloud:', order.orderId);
           return data;
         }
 
@@ -142,7 +305,7 @@
           prefer: 'resolution=merge-duplicates,return=representation',
           body: payload
         });
-        console.log('[Supabase] Đã lưu đơn hàng REST API thành công:', order.orderId);
+        console.log('[Supabase] Đã lưu đơn hàng REST API:', order.orderId);
         return data;
       } catch (err) {
         console.warn('[Supabase] Lưu đơn hàng thất bại (đã lưu dự phòng LocalStorage):', err.message);
@@ -155,51 +318,34 @@
      */
     static async getOrders() {
       try {
-        const client = this.getClient();
-        if (client) {
-          const { data, error } = await client.from('orders').select('*').order('created_at', { ascending: false });
-          if (error) throw error;
-          return (data || []).map(this.mapOrderFromSupabase);
-        }
-
-        const data = await this.request('orders?select=*&order=created_at.desc');
-        return (data || []).map(this.mapOrderFromSupabase);
+        const rows = await this.request('orders?select=*&order=created_at.desc');
+        return (rows || []).map(r => ({
+          orderId: r.order_id || r.id,
+          customerName: r.customer_name,
+          customerEmail: r.customer_email,
+          customerPhone: r.customer_phone,
+          totalAmount: parseFloat(r.total_amount || 0),
+          paymentMethod: r.payment_method,
+          status: r.status || 'completed',
+          items: r.items || [],
+          orderDate: r.created_at ? new Date(r.created_at).toLocaleString('vi-VN') : new Date().toLocaleString('vi-VN'),
+          createdAt: r.created_at
+        }));
       } catch (err) {
-        console.warn('[Supabase] Tải đơn hàng từ Cloud không thành công:', err.message);
+        console.warn('[Supabase] Tải đơn hàng:', err.message);
         return null;
       }
     }
 
-    static mapOrderFromSupabase(row) {
-      return {
-        orderId: row.order_id || row.id,
-        customerName: row.customer_name,
-        customerEmail: row.customer_email,
-        customerPhone: row.customer_phone,
-        totalAmount: parseFloat(row.total_amount || 0),
-        payment_method: row.payment_method,
-        status: row.status || 'completed',
-        items: row.items || [],
-        orderDate: row.created_at ? new Date(row.created_at).toLocaleString('vi-VN') : new Date().toLocaleString('vi-VN'),
-        createdAt: row.created_at
-      };
-    }
-
     /**
-     * Đồng bộ toàn bộ dữ liệu hiện tại (Sách, Combo, Đơn hàng, Cài đặt) lên Supabase
+     * Đồng bộ toàn bộ dữ liệu hiện tại lên Supabase Cloud
      */
     static async syncAllToSupabase() {
       if (!window.EbookDB) {
         throw new Error('EbookDB chưa sẵn sàng');
       }
 
-      const results = {
-        ordersCount: 0,
-        booksCount: 0,
-        combosCount: 0,
-        settingsSaved: false,
-        errors: []
-      };
+      const results = { ordersCount: 0, booksCount: 0, combosCount: 0, settingsSaved: false, errors: [] };
 
       // 1. Đồng bộ Đơn hàng
       try {
@@ -216,35 +362,7 @@
       try {
         const books = window.EbookDB.getBooks();
         for (const b of books) {
-          const payload = {
-            id: b.id,
-            title: b.title,
-            sub_title: b.subTitle || '',
-            author: b.author || '',
-            category: b.category || 'all',
-            category_name: b.categoryName || '',
-            price: b.price || 0,
-            original_price: b.originalPrice || 0,
-            badge: b.badge || '',
-            pages: b.pages || 100,
-            format: b.format || 'PDF + EPUB',
-            status: b.status || 'active',
-            rating: b.rating || 5.0,
-            reviews_count: b.reviewsCount || 0,
-            sales_count: b.salesCount || 0,
-            short_desc: b.shortDesc || '',
-            full_desc: b.fullDesc || '',
-            toc: b.toc || [],
-            sample_excerpt: b.sampleExcerpt || '',
-            download_url: b.downloadUrl || '',
-            cover_style: b.coverStyle || 'cover-1',
-            cover_image: b.coverImage || ''
-          };
-          await this.request('books', {
-            method: 'POST',
-            prefer: 'resolution=merge-duplicates,return=representation',
-            body: payload
-          });
+          await this.saveBook(b);
         }
         results.booksCount = books.length;
       } catch (e) {
@@ -255,25 +373,7 @@
       try {
         const combos = window.EbookDB.getCombos();
         for (const c of combos) {
-          const payload = {
-            id: c.id,
-            title: c.title,
-            sub_title: c.subTitle || '',
-            tag: c.tag || '',
-            discount_badge: c.discountBadge || '',
-            price: c.price || 0,
-            original_price: c.originalPrice || 0,
-            popular: !!c.popular,
-            status: c.status || 'active',
-            book_ids: c.bookIds || [],
-            bonus_list: c.bonusList || [],
-            download_url: c.downloadUrl || ''
-          };
-          await this.request('combos', {
-            method: 'POST',
-            prefer: 'resolution=merge-duplicates,return=representation',
-            body: payload
-          });
+          await this.saveCombo(c);
         }
         results.combosCount = combos.length;
       } catch (e) {
@@ -288,7 +388,18 @@
           prefer: 'resolution=merge-duplicates,return=representation',
           body: {
             id: 'main_settings',
-            data: settings,
+            store_name: settings.storeName || 'EbookPe',
+            store_slogan: settings.storeSlogan || '',
+            bank_code: settings.bankCode || 'MB',
+            bank_name: settings.bankName || 'MBBank (Quân Đội)',
+            account_number: settings.accountNumber || '2456987654',
+            account_name: settings.accountName || 'PHAN QUOC LOC',
+            transfer_prefix: settings.transferPrefix || 'EBPE',
+            hotline: settings.hotline || '',
+            support_email: settings.supportEmail || '',
+            supabase_url: settings.supabaseUrl || DEFAULT_CONFIG.url,
+            supabase_key: settings.supabaseKey || DEFAULT_CONFIG.key,
+            supabase_enabled: true,
             updated_at: new Date().toISOString()
           }
         });
@@ -301,100 +412,11 @@
     }
 
     /**
-     * Script SQL chuẩn hóa để khởi tạo bảng trên Supabase
+     * Script SQL khởi tạo bảng
      */
     static getSQLSchema() {
-      return `-- ========================================================
--- EbookPe - SQL Schema Khởi Tạo Bảng Cho Supabase Database
--- Hướng dẫn: Dán toàn bộ mã này vào Supabase -> SQL Editor -> Run
--- ========================================================
-
--- 1. Bảng Đơn Hàng (Orders)
-CREATE TABLE IF NOT EXISTS public.orders (
-    id TEXT PRIMARY KEY,
-    order_id TEXT NOT NULL,
-    customer_name TEXT,
-    customer_email TEXT,
-    customer_phone TEXT,
-    total_amount NUMERIC DEFAULT 0,
-    payment_method TEXT,
-    status TEXT DEFAULT 'completed',
-    items JSONB DEFAULT '[]'::jsonb,
-    created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
-);
-
--- 2. Bảng Sách Ebook (Books)
-CREATE TABLE IF NOT EXISTS public.books (
-    id TEXT PRIMARY KEY,
-    title TEXT NOT NULL,
-    sub_title TEXT,
-    author TEXT,
-    category TEXT,
-    category_name TEXT,
-    price NUMERIC DEFAULT 0,
-    original_price NUMERIC DEFAULT 0,
-    badge TEXT,
-    pages INTEGER DEFAULT 100,
-    format TEXT DEFAULT 'PDF + EPUB',
-    status TEXT DEFAULT 'active',
-    rating NUMERIC DEFAULT 5.0,
-    reviews_count INTEGER DEFAULT 0,
-    sales_count INTEGER DEFAULT 0,
-    short_desc TEXT,
-    full_desc TEXT,
-    toc JSONB DEFAULT '[]'::jsonb,
-    sample_excerpt TEXT,
-    download_url TEXT,
-    cover_style TEXT,
-    cover_image TEXT,
-    created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()),
-    updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now())
-);
-
--- 3. Bảng Combo Tiết Kiệm (Combos)
-CREATE TABLE IF NOT EXISTS public.combos (
-    id TEXT PRIMARY KEY,
-    title TEXT NOT NULL,
-    sub_title TEXT,
-    tag TEXT,
-    discount_badge TEXT,
-    price NUMERIC DEFAULT 0,
-    original_price NUMERIC DEFAULT 0,
-    popular BOOLEAN DEFAULT false,
-    status TEXT DEFAULT 'active',
-    book_ids JSONB DEFAULT '[]'::jsonb,
-    bonus_list JSONB DEFAULT '[]'::jsonb,
-    download_url TEXT,
-    created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now())
-);
-
--- 4. Bảng Cài Đặt Shop (Settings)
-CREATE TABLE IF NOT EXISTS public.settings (
-    id TEXT PRIMARY KEY,
-    data JSONB NOT NULL,
-    updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now())
-);
-
--- 5. Bật Row Level Security (RLS) & Cấp Quyền Đọc/Ghi Cho Anon Key
-ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.books ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.combos ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.settings ENABLE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS "Cho phep doc orders" ON public.orders;
-CREATE POLICY "Cho phep doc orders" ON public.orders FOR SELECT USING (true);
-DROP POLICY IF EXISTS "Cho phep them sua orders" ON public.orders;
-CREATE POLICY "Cho phep them sua orders" ON public.orders FOR ALL USING (true);
-
-DROP POLICY IF EXISTS "Cho phep quan tri books" ON public.books;
-CREATE POLICY "Cho phep quan tri books" ON public.books FOR ALL USING (true);
-
-DROP POLICY IF EXISTS "Cho phep quan tri combos" ON public.combos;
-CREATE POLICY "Cho phep quan tri combos" ON public.combos FOR ALL USING (true);
-
-DROP POLICY IF EXISTS "Cho phep quan tri settings" ON public.settings;
-CREATE POLICY "Cho phep quan tri settings" ON public.settings FOR ALL USING (true);
-`;
+      return `-- EbookPe Supabase Schema
+-- Xem file supabase_schema.sql trong thư mục dự án để có toàn bộ script chi tiết`;
     }
   }
 

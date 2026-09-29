@@ -927,6 +927,21 @@
       updateCartCount();
       updateTotalStats();
       initLiveTicker();
+
+      // Tự động tải dữ liệu mới nhất từ Supabase Cloud Database để mọi thiết bị/Vercel đều thấy đồng bộ 100%
+      if (window.EbookSupabase) {
+        Promise.all([
+          window.EbookSupabase.fetchBooks(),
+          window.EbookSupabase.fetchCombos()
+        ]).then(([books, combos]) => {
+          if (books || combos) {
+            renderCategoryPills();
+            renderEbooks();
+            renderCombos();
+            updateTotalStats();
+          }
+        }).catch(err => console.warn('Supabase Cloud load:', err));
+      }
     });
 
     // BroadcastChannel sync: auto reload if Admin changes books or combos
