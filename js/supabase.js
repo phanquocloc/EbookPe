@@ -289,12 +289,17 @@
     static async saveBook(b) {
       if (!b || !b.id) return;
       try {
-        const isFeat = !!(b.isFeatured || b.featured || (b.badge && (b.badge.includes('NỔI BẬT') || b.badge.includes('⭐') || b.badge.includes('HOT'))));
+        const isFeat = b.isFeatured !== undefined 
+          ? !!b.isFeatured 
+          : !!(b.featured || (b.badge && (b.badge.includes('⭐') || b.badge.includes('NỔI BẬT'))));
+
         let badgeVal = b.badge || '';
-        if (isFeat && !badgeVal.includes('NỔI BẬT') && !badgeVal.includes('⭐')) {
-          badgeVal = badgeVal ? `⭐ ${badgeVal}` : '⭐ NỔI BẬT';
-        } else if (!isFeat && badgeVal) {
-          badgeVal = badgeVal.replace(/⭐\s*/g, '').replace(/NỔI BẬT/g, '').trim();
+        if (isFeat) {
+          if (!badgeVal.includes('⭐') && !badgeVal.includes('NỔI BẬT')) {
+            badgeVal = badgeVal ? `⭐ ${badgeVal}` : '⭐ NỔI BẬT';
+          }
+        } else {
+          badgeVal = badgeVal.replace(/⭐\s*/g, '').replace(/NỔI BẬT/g, '').replace(/HOT/g, '').trim();
         }
 
         const payload = {
@@ -314,7 +319,7 @@
           sales_count: parseInt(b.salesCount || 0),
           short_desc: b.shortDesc || '',
           full_desc: b.fullDesc || '',
-          toc: b.toc || [],
+          toc: Array.isArray(b.toc) ? b.toc : (b.toc ? [b.toc] : []),
           sample_excerpt: b.sampleExcerpt || '',
           download_url: b.downloadUrl || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
           cover_style: b.coverStyle || 'cover-1',

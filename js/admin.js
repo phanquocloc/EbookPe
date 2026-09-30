@@ -680,14 +680,14 @@ document.addEventListener('DOMContentLoaded', () => {
   window.adminToggleFeaturedBook = async function(bookId) {
     const book = EbookDB.getBookById(bookId);
     if (book) {
-      const isCurrentlyFeatured = !!(book.isFeatured || book.featured || (book.badge && (book.badge.includes('⭐') || book.badge.includes('NỔI BẬT') || book.badge.includes('HOT'))));
+      const isCurrentlyFeatured = !!(book.isFeatured || (book.badge && (book.badge.includes('⭐') || book.badge.includes('NỔI BẬT'))));
       const nextFeatured = !isCurrentlyFeatured;
       book.isFeatured = nextFeatured;
       book.featured = nextFeatured;
       if (nextFeatured) {
         book.badge = book.badge ? (book.badge.includes('⭐') ? book.badge : `⭐ ${book.badge}`) : '⭐ NỔI BẬT';
       } else {
-        book.badge = (book.badge || '').replace(/⭐\s*/g, '').replace(/NỔI BẬT/g, '').trim();
+        book.badge = (book.badge || '').replace(/⭐\s*/g, '').replace(/NỔI BẬT/g, '').replace(/HOT/g, '').trim();
       }
       const updated = EbookDB.saveBook(book);
       renderBooksTable();
