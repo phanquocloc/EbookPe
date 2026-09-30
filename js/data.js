@@ -546,12 +546,15 @@ const DEFAULT_COMBOS = [
     originalPrice: 450000,
     popular: false,
     status: 'active',
-    bookIds: ['ebk-khoi-nghiep-0', 'ebk-content-marketing', 'ebk-quan-tri-tai-chinh'],
+    bookIds: ['ebk-munhoetc', 'ebk-mungncot', 'ebk-munfi529'],
+    bookNames: [
+      'KHỞI NGHIỆP VỚI 2 TRIỆU – Kinh Doanh Đồ Si (Secondhand) Online',
+      'KHỞI NGHIỆP VỚI 1 TRIỆU – Bán Đồ Ăn Vặt Tự Làm',
+      'BÍ QUYẾT TÌM Ý TƯỞNG KINH DOANH KHÔNG CẠNH TRANH'
+    ],
     bonusList: [
-      'Ebook: Khởi Nghiệp Tinh Gọn Từ Số 0',
-      'Ebook: Content Khác Biệt Thu Hút Triệu View',
-      'Ebook: Quản Trị Tài Chính Cá Nhân & Dòng Tiền',
-      'Bonus Độc Quyền: Notion Business Roadmap Template'
+      'Bonus Độc Quyền: Notion Business Roadmap Template 2026',
+      'Checklist hành động 30 ngày từng bước từ con số 0'
     ],
     downloadUrl: 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing'
   },
@@ -565,9 +568,15 @@ const DEFAULT_COMBOS = [
     originalPrice: 1150000,
     popular: true,
     status: 'active',
-    bookIds: ['ebk-ai-automation', 'ebk-solo-business', 'ebk-khoi-nghiep-0', 'ebk-content-marketing', 'ebk-tam-ly-hoc-ve-tien'],
+    bookIds: ['ebk-mungcbwc', 'ebk-mung9v7n', 'ebk-munfnq5k', 'ebk-munflmd5', 'ebk-mung57o8'],
+    bookNames: [
+      'LÀM PODCAST BẰNG AI – Xây Dựng Kênh Audio & Kiếm Tiền',
+      'DỊCH THUẬT VỚI AI – Tự Động Hóa Dịch Thuật Đa Ngôn Ngữ',
+      'THIẾT KẾ TEMPLATE NOTION & CANVA ĐỂ BÁN TRÊN GUMROAD',
+      'EMAIL MARKETING AUTOMATION CHO SOLO BUSINESS',
+      'XÂY DỰNG GROUP CỘNG ĐỒNG 100K THÀNH VIÊN'
+    ],
     bonusList: [
-      'Toàn bộ 5 Ebook chủ lực về AI, Solopreneur & Phễu Bán Hàng',
       'Kho 500+ Prompt ChatGPT & Claude độc quyền kinh doanh',
       'Bộ Swipe File Email Marketing 100+ mẫu chuyển đổi cao',
       'Cập nhật trọn đời khi có phiên bản sách và template mới'
@@ -584,12 +593,15 @@ const DEFAULT_COMBOS = [
     originalPrice: 380000,
     popular: false,
     status: 'active',
-    bookIds: ['ebk-quan-tri-tai-chinh', 'ebk-tam-ly-hoc-ve-tien', 'ebk-khoi-nghiep-0'],
+    bookIds: ['ebk-munfvflz', 'ebk-munfpx3o', 'ebk-muneffsi'],
+    bookNames: [
+      'LẬP KẾ HOẠCH TÀI CHÍNH CÁ NHÂN & ĐẦU TƯ AN TOÀN',
+      'QUẢN TRỊ THỜI GIAN THEO PHƯƠNG PHÁP TIME-BLOCKING',
+      'KỸ NĂNG ĐÀM PHÁN & CHỐT DEAL CHO FREELANCER'
+    ],
     bonusList: [
-      'Ebook: Quản Trị Tài Chính Cá Nhân & Chiến Lược Dòng Tiền',
-      'Ebook: Tâm Lý Học Về Tiền & Quyết Định Đầu Tư',
-      'Ebook: Khởi Nghiệp Tinh Gọn Từ Số 0',
-      'Bonus Độc Quyền: File Excel Tự Động Tính Quỹ Tự Do Tài Chính'
+      'Bonus Độc Quyền: File Excel Tự Động Tính Quỹ Tự Do Tài Chính',
+      'Bộ câu hỏi tự đánh giá sức khỏe tài chính cá nhân'
     ],
     downloadUrl: 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing'
   }
@@ -779,14 +791,22 @@ class EbookDB {
       const data = localStorage.getItem(STORAGE_KEYS.COMBOS);
       if (data === null) {
         localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(DEFAULT_COMBOS));
+        window._cloudCombosCache = DEFAULT_COMBOS.slice();
         return DEFAULT_COMBOS;
       }
       let parsed = JSON.parse(data);
-      if (Array.isArray(parsed)) {
+      if (Array.isArray(parsed) && parsed.length > 0) {
         let changed = false;
         parsed = parsed.map(c => {
           if (!c.downloadUrl || c.downloadUrl === '#' || c.downloadUrl.includes('example')) {
             c.downloadUrl = REAL_DRIVE_URL;
+            changed = true;
+          }
+          const def = DEFAULT_COMBOS.find(d => d.id === c.id);
+          if (def && (!c.bookIds || c.bookIds.length === 0 || (c.bookIds[0] && c.bookIds[0].includes('ebk-khoi-nghiep-0')))) {
+            c.bookIds = def.bookIds;
+            c.bookNames = def.bookNames;
+            c.bonusList = def.bonusList;
             changed = true;
           }
           return c;
@@ -794,10 +814,14 @@ class EbookDB {
         if (changed) {
           localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(parsed));
         }
+        window._cloudCombosCache = parsed;
         return parsed;
       }
+      localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(DEFAULT_COMBOS));
+      window._cloudCombosCache = DEFAULT_COMBOS.slice();
       return DEFAULT_COMBOS;
     } catch (e) {
+      window._cloudCombosCache = DEFAULT_COMBOS.slice();
       return DEFAULT_COMBOS;
     }
   }

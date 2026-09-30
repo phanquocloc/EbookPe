@@ -745,6 +745,64 @@
   </div>
 
   <!-- ==========================================
+       MODAL: CHI TIẾT GÓI COMBO & ĐỌC THỬ
+       ========================================== -->
+  <div class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" id="combo-details-modal">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-4 relative max-h-[90vh] overflow-y-auto">
+      <button class="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors" onclick="closeComboDetailsModal()">
+        <span class="material-symbols-outlined text-[22px]">close</span>
+      </button>
+
+      <div>
+        <span id="combo-modal-badge" class="px-2.5 py-0.5 rounded-md bg-secondary-fixed text-secondary text-[11px] font-bold uppercase tracking-wider">Combo Tiết Kiệm</span>
+        <h3 class="text-xl sm:text-2xl font-extrabold text-on-surface mt-1" id="combo-modal-title">Tên Gói Combo</h3>
+        <p class="text-xs sm:text-sm text-on-surface-variant mt-1" id="combo-modal-subtitle">Mô tả gói combo...</p>
+      </div>
+
+      <div class="p-4 bg-primary-fixed/30 rounded-2xl border border-primary-fixed flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <div class="text-xs text-slate-500 font-medium">Giá trọn bộ combo:</div>
+          <div class="flex items-baseline gap-2">
+            <span class="text-2xl sm:text-3xl font-black text-secondary-container" id="combo-modal-price">0đ</span>
+            <span class="text-xs sm:text-sm text-slate-400 line-through" id="combo-modal-original-price">0đ</span>
+          </div>
+        </div>
+        <div id="combo-modal-savings" class="px-3 py-1 rounded-full bg-secondary text-white font-extrabold text-xs shadow-sm">
+          Tiết kiệm
+        </div>
+      </div>
+
+      <div>
+        <div class="font-extrabold text-sm text-slate-800 mb-2 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-primary text-[18px]">library_books</span>
+          Danh Sách Các Cuốn Ebook Thuộc Gói Này:
+        </div>
+        <div id="combo-modal-books-list" class="space-y-2.5">
+          <!-- Render dynamic book cards in combo -->
+        </div>
+      </div>
+
+      <div id="combo-modal-bonus-wrap" class="p-4 bg-amber-50/80 rounded-2xl border border-amber-100 text-xs text-amber-950 space-y-1.5">
+        <div class="font-bold flex items-center gap-1">
+          <span class="material-symbols-outlined text-[16px] text-amber-600">redeem</span> Quà Tặng &amp; Tài Nguyên Kèm Theo:
+        </div>
+        <ul id="combo-modal-bonus-list" class="space-y-1 pl-1 list-disc list-inside text-slate-700">
+        </ul>
+      </div>
+
+      <div class="flex gap-3 pt-3">
+        <button class="flex-1 py-3.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-colors" onclick="closeComboDetailsModal()">
+          Đóng lại
+        </button>
+        <button id="combo-modal-btn-buy" class="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-secondary-container to-secondary text-white font-bold text-sm shadow-md hover:opacity-95 transition-all flex items-center justify-center gap-1.5">
+          <span class="material-symbols-outlined text-[18px]">bolt</span>
+          <span>Mua Ngay Gói Combo Này</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
        MODAL 2: QUICK BUY / VIETQR PAYMENT
        ========================================== -->
   <div class="fixed inset-0 z-50 hidden bg-slate-900/65 backdrop-blur-sm flex items-center justify-center p-4" id="checkout-modal">
@@ -913,8 +971,8 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase.js?v=20260930_v13"></script>
-  <script src="js/data.js?v=20260930_v13"></script>
+  <script src="js/supabase.js?v=20260930_v14"></script>
+  <script src="js/data.js?v=20260930_v14"></script>
   <script>
     // Phím tắt Ctrl + Shift + L (hoặc Cmd + Shift + L, Ctrl + Shift + A) để mở trang Admin
     window.addEventListener('keydown', function(e) {
@@ -1319,28 +1377,73 @@
         return;
       }
 
+      const allBooks = window.EbookDB.getBooks();
+
       container.innerHTML = combos.map(combo => {
-        const isPopular = combo.popular || (combo.tag && combo.tag.includes('78%')) || (combo.tag && combo.tag.includes('VIP'));
+        const isPopular = combo.popular || (combo.tag && (combo.tag.includes('78%') || combo.tag.includes('VIP') || combo.tag.includes('Best')));
         
+        // Resolve books inside combo
+        let booksInCombo = [];
+        if (combo.bookIds && Array.isArray(combo.bookIds) && combo.bookIds.length > 0) {
+          booksInCombo = combo.bookIds.map(bId => allBooks.find(b => b.id === bId)).filter(Boolean);
+        }
+        if (booksInCombo.length === 0 && combo.bookNames && Array.isArray(combo.bookNames)) {
+          booksInCombo = combo.bookNames.map((name, i) => allBooks.find(b => b.title === name) || { id: 'bk-name-' + i, title: name });
+        }
+        if (booksInCombo.length === 0) {
+          booksInCombo = allBooks.slice(0, 3);
+        }
+
+        // Books listing HTML
+        const booksListHtml = `
+          <div class="my-4 p-3.5 bg-slate-50/90 rounded-2xl border border-slate-200/80 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-primary text-[17px]">auto_stories</span>
+                Gồm ${booksInCombo.length} Ebook Bản Quyền:
+              </span>
+              <button onclick="openComboDetailsModal('${combo.id}')" class="text-[11px] font-bold text-primary hover:text-primary-container transition-colors flex items-center gap-0.5">
+                <span>Xem tất cả</span>
+                <span class="material-symbols-outlined text-[13px]">arrow_forward</span>
+              </button>
+            </div>
+            <div class="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+              ${booksInCombo.map((book, idx) => `
+                <div class="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200/70 shadow-xs text-xs group hover:border-primary/40 transition-colors">
+                  <div class="flex items-center gap-2 min-w-0 pr-2">
+                    <span class="w-5 h-5 rounded-full bg-primary-fixed text-primary font-bold text-[10px] flex items-center justify-center shrink-0">${idx + 1}</span>
+                    <span class="font-bold text-slate-800 truncate" title="${book.title}">${book.title}</span>
+                  </div>
+                  ${book.id && !book.id.startsWith('bk-name-') ? `
+                    <button onclick="event.stopPropagation(); openPreviewModal('${book.id}')" class="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-primary hover:text-white text-slate-600 text-[10px] font-bold shrink-0 transition-colors flex items-center gap-0.5">
+                      <span class="material-symbols-outlined text-[12px]">visibility</span>
+                      <span>Đọc thử</span>
+                    </button>
+                  ` : ''}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+
+        // Extra Bonuses HTML
         let bonusItemsHtml = '';
-        if (combo.bonusList && Array.isArray(combo.bonusList)) {
-          bonusItemsHtml = combo.bonusList.map(item => `
-            <li class="flex items-start gap-2 text-xs sm:text-sm text-on-surface-variant">
-              <span class="material-symbols-outlined text-primary text-[18px] mt-0.5 flex-shrink-0">check_circle</span>
-              <span class="leading-relaxed">${item}</span>
-            </li>
-          `).join('');
-        } else if (combo.bookIds && Array.isArray(combo.bookIds)) {
-          const allBooks = window.EbookDB.getBooks();
-          bonusItemsHtml = combo.bookIds.map(bId => {
-            const b = allBooks.find(item => item.id === bId);
-            return `
-              <li class="flex items-start gap-2 text-xs sm:text-sm text-on-surface-variant">
-                <span class="material-symbols-outlined text-primary text-[18px] mt-0.5 flex-shrink-0">check_circle</span>
-                <span class="leading-relaxed">Ebook: ${b ? b.title : bId}</span>
-              </li>
-            `;
-          }).join('');
+        if (combo.bonusList && Array.isArray(combo.bonusList) && combo.bonusList.length > 0) {
+          bonusItemsHtml = `
+            <div class="mb-5 space-y-1.5 pt-1">
+              <div class="text-[11px] font-bold text-amber-900 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[15px] text-amber-600">redeem</span> Quà tặng &amp; Tài nguyên kèm theo:
+              </div>
+              <ul class="space-y-1.5">
+                ${combo.bonusList.map(item => `
+                  <li class="flex items-start gap-1.5 text-xs text-slate-600">
+                    <span class="material-symbols-outlined text-emerald-600 text-[16px] shrink-0">check_circle</span>
+                    <span class="leading-tight">${item}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+          `;
         }
 
         if (isPopular) {
@@ -1359,20 +1462,25 @@
                 <h3 class="text-xl font-extrabold text-on-surface mt-4">${combo.title}</h3>
                 <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">${combo.subTitle || 'Bộ cẩm nang toàn diện tối tân'}</p>
 
-                <div class="flex items-baseline gap-2.5 my-5">
+                <div class="flex items-baseline gap-2.5 my-4">
                   <span class="text-3xl font-black text-secondary-container">${window.EbookDB.formatVND(combo.price)}</span>
                   ${combo.originalPrice ? `<span class="text-sm text-outline line-through">${window.EbookDB.formatVND(combo.originalPrice)}</span>` : ''}
                 </div>
 
-                <ul class="space-y-3 mb-6">
-                  ${bonusItemsHtml}
-                </ul>
+                ${booksListHtml}
+                ${bonusItemsHtml}
               </div>
 
-              <button class="w-full py-4 rounded-2xl bg-gradient-to-r from-secondary-container to-secondary text-white font-bold text-sm hover:opacity-95 transition-all shadow-[0_10px_20px_-5px_rgba(249,115,22,0.4)] flex items-center justify-center gap-1.5" onclick="handleQuickBuyCombo('${combo.id}')">
-                <span class="material-symbols-outlined text-[18px]">bolt</span>
-                <span>Sở Hữu Gói VIP Này (-78%)</span>
-              </button>
+              <div class="space-y-2 pt-2">
+                <button class="w-full py-4 rounded-2xl bg-gradient-to-r from-secondary-container to-secondary text-white font-bold text-sm hover:opacity-95 transition-all shadow-[0_10px_20px_-5px_rgba(249,115,22,0.4)] flex items-center justify-center gap-1.5" onclick="handleQuickBuyCombo('${combo.id}')">
+                  <span class="material-symbols-outlined text-[18px]">bolt</span>
+                  <span>Sở Hữu Trọn Bộ VIP Này (${window.EbookDB.formatVND(combo.price)})</span>
+                </button>
+                <button class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors flex items-center justify-center gap-1" onclick="openComboDetailsModal('${combo.id}')">
+                  <span class="material-symbols-outlined text-[15px]">info</span>
+                  <span>Xem Chi Tiết &amp; Đọc Thử Toàn Bộ</span>
+                </button>
+              </div>
             </div>
           `;
         }
@@ -1388,22 +1496,134 @@
               <h3 class="text-xl font-extrabold text-on-surface mt-4">${combo.title}</h3>
               <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">${combo.subTitle || 'Lộ trình thực thi an toàn'}</p>
 
-              <div class="flex items-baseline gap-2.5 my-5">
+              <div class="flex items-baseline gap-2.5 my-4">
                 <span class="text-2xl font-extrabold text-primary">${window.EbookDB.formatVND(combo.price)}</span>
                 ${combo.originalPrice ? `<span class="text-sm text-outline line-through">${window.EbookDB.formatVND(combo.originalPrice)}</span>` : ''}
               </div>
 
-              <ul class="space-y-3 mb-6">
-                ${bonusItemsHtml}
-              </ul>
+              ${booksListHtml}
+              ${bonusItemsHtml}
             </div>
 
-            <button class="w-full py-3.5 rounded-2xl bg-surface-container text-primary font-bold text-sm hover:bg-primary-container hover:text-white transition-all" onclick="handleQuickBuyCombo('${combo.id}')">
-              Mua Combo Này
-            </button>
+            <div class="space-y-2 pt-2">
+              <button class="w-full py-3.5 rounded-2xl bg-surface-container text-primary font-bold text-sm hover:bg-primary-container hover:text-white transition-all flex items-center justify-center gap-1.5" onclick="handleQuickBuyCombo('${combo.id}')">
+                <span class="material-symbols-outlined text-[18px]">shopping_cart</span>
+                <span>Mua Combo Này (${window.EbookDB.formatVND(combo.price)})</span>
+              </button>
+              <button class="w-full py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 font-bold text-xs transition-colors flex items-center justify-center gap-1" onclick="openComboDetailsModal('${combo.id}')">
+                <span class="material-symbols-outlined text-[15px]">info</span>
+                <span>Xem Chi Tiết Combo</span>
+              </button>
+            </div>
           </div>
         `;
       }).join('');
+    }
+
+    // Modal: Chi Tiết Gói Combo & Đọc Thử Từng Cuốn Sách
+    function openComboDetailsModal(comboId) {
+      const combo = window.EbookDB ? window.EbookDB.getComboById(comboId) : null;
+      if (!combo) return;
+
+      const allBooks = window.EbookDB.getBooks();
+      let booksInCombo = [];
+      if (combo.bookIds && Array.isArray(combo.bookIds) && combo.bookIds.length > 0) {
+        booksInCombo = combo.bookIds.map(bId => allBooks.find(b => b.id === bId)).filter(Boolean);
+      }
+      if (booksInCombo.length === 0 && combo.bookNames && Array.isArray(combo.bookNames)) {
+        booksInCombo = combo.bookNames.map((name, i) => allBooks.find(b => b.title === name) || { id: 'temp-' + i, title: name, author: 'EbookPe', pages: 150, category: 'Kinh doanh' });
+      }
+      if (booksInCombo.length === 0) {
+        booksInCombo = allBooks.slice(0, 3);
+      }
+
+      const badgeEl = document.getElementById('combo-modal-badge');
+      if (badgeEl) badgeEl.innerText = combo.tag || 'Combo Tiết Kiệm';
+
+      const titleEl = document.getElementById('combo-modal-title');
+      if (titleEl) titleEl.innerText = combo.title;
+
+      const subEl = document.getElementById('combo-modal-subtitle');
+      if (subEl) subEl.innerText = combo.subTitle || 'Gói combo tuyển chọn các ebook thực chiến';
+
+      const priceEl = document.getElementById('combo-modal-price');
+      if (priceEl) priceEl.innerText = window.EbookDB.formatVND(combo.price);
+
+      const origPriceEl = document.getElementById('combo-modal-original-price');
+      if (origPriceEl) {
+        if (combo.originalPrice && combo.originalPrice > combo.price) {
+          origPriceEl.innerText = window.EbookDB.formatVND(combo.originalPrice);
+          origPriceEl.classList.remove('hidden');
+        } else {
+          origPriceEl.classList.add('hidden');
+        }
+      }
+
+      const savingsEl = document.getElementById('combo-modal-savings');
+      if (savingsEl) {
+        if (combo.originalPrice && combo.originalPrice > combo.price) {
+          const saveAmt = combo.originalPrice - combo.price;
+          savingsEl.innerText = `Tiết kiệm ${window.EbookDB.formatVND(saveAmt)} (${combo.discountBadge || 'SIÊU HỜI'})`;
+          savingsEl.classList.remove('hidden');
+        } else {
+          savingsEl.classList.add('hidden');
+        }
+      }
+
+      // Books in combo list
+      const listContainer = document.getElementById('combo-modal-books-list');
+      if (listContainer) {
+        listContainer.innerHTML = booksInCombo.map((b, idx) => `
+          <div class="p-3 bg-slate-50 hover:bg-slate-100/90 rounded-2xl border border-slate-200/80 flex items-center justify-between gap-3 transition-colors">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-8 h-8 rounded-xl bg-primary-fixed text-primary font-black text-xs flex items-center justify-center shrink-0">
+                ${idx + 1}
+              </div>
+              <div class="min-w-0">
+                <h4 class="font-extrabold text-xs sm:text-sm text-slate-800 truncate" title="${b.title}">${b.title}</h4>
+                <p class="text-[11px] text-slate-500 truncate">${b.author || 'EbookPe'} · ${b.pages || 180} trang · PDF bản quyền</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              ${b.id && !b.id.startsWith('temp-') ? `
+                <button onclick="openPreviewModal('${b.id}')" class="px-2.5 py-1.5 rounded-xl bg-white hover:bg-primary hover:text-white text-primary border border-primary/20 text-xs font-bold transition-all flex items-center gap-1 shadow-sm">
+                  <span class="material-symbols-outlined text-[14px]">visibility</span>
+                  <span>Đọc thử</span>
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Bonus list
+      const bonusWrap = document.getElementById('combo-modal-bonus-wrap');
+      const bonusList = document.getElementById('combo-modal-bonus-list');
+      if (bonusWrap && bonusList) {
+        if (combo.bonusList && combo.bonusList.length > 0) {
+          bonusList.innerHTML = combo.bonusList.map(item => `<li>${item}</li>`).join('');
+          bonusWrap.classList.remove('hidden');
+        } else {
+          bonusWrap.classList.add('hidden');
+        }
+      }
+
+      // Buy button
+      const buyBtn = document.getElementById('combo-modal-btn-buy');
+      if (buyBtn) {
+        buyBtn.onclick = () => {
+          closeComboDetailsModal();
+          handleQuickBuyCombo(combo.id);
+        };
+      }
+
+      const modal = document.getElementById('combo-details-modal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeComboDetailsModal() {
+      const modal = document.getElementById('combo-details-modal');
+      if (modal) modal.classList.add('hidden');
     }
 
     // Search Box live input
