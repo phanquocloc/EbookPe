@@ -1710,15 +1710,15 @@
         qrImg.classList.remove('hidden');
       };
 
-      const name = document.getElementById('checkout-cust-name')?.value.trim() || 'Khách Hàng (Đang chờ)';
-      const email = document.getElementById('checkout-cust-email')?.value.trim() || '';
-      const phone = document.getElementById('checkout-cust-phone')?.value.trim() || '';
+      const inputName = document.getElementById('checkout-cust-name')?.value.trim() || 'Khách Hàng (Đang chờ)';
+      const inputEmail = document.getElementById('checkout-cust-email')?.value.trim() || '';
+      const inputPhone = document.getElementById('checkout-cust-phone')?.value.trim() || '';
 
       currentOrder = {
         orderId: orderCode,
-        customerName: name,
-        customerEmail: email,
-        customerPhone: phone,
+        customerName: inputName,
+        customerEmail: inputEmail,
+        customerPhone: inputPhone,
         totalAmount: price,
         items: items,
         status: 'pending',
