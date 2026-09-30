@@ -1390,10 +1390,11 @@
 
       sepayPollTimer = setInterval(async () => {
         try {
-          const cleanToken = (settings.sepayApiKey || '').trim();
+          const rawToken = settings.sepayApiKey || '';
+          const cleanToken = rawToken.trim().replace(/^Bearer\s+/i, '').replace(/["']/g, '');
           if (!cleanToken) return;
 
-          // Fetch via local proxy or direct
+          // Fetch via local proxy, direct API or CORS proxy
           let response = null;
           try {
             response = await fetch(`/api/sepay-proxy?token=${encodeURIComponent(cleanToken)}&limit=20`);
@@ -1402,6 +1403,15 @@
           if (!response || !response.ok) {
             try {
               response = await fetch(`https://my.sepay.vn/userapi/transactions/list?limit=20`, {
+                headers: { 'Authorization': `Bearer ${cleanToken}` }
+              });
+            } catch (e) {}
+          }
+
+          if (!response || !response.ok) {
+            try {
+              const targetUrl = encodeURIComponent(`https://my.sepay.vn/userapi/transactions/list?limit=20`);
+              response = await fetch(`https://corsproxy.io/?url=${targetUrl}`, {
                 headers: { 'Authorization': `Bearer ${cleanToken}` }
               });
             } catch (e) {}
@@ -1454,9 +1464,11 @@
       }
 
       const settings = window.EbookDB ? window.EbookDB.getSettings() : {};
+      const rawToken = settings.sepayApiKey || '';
+      const cleanToken = rawToken.trim().replace(/^Bearer\s+/i, '').replace(/["']/g, '');
       
       // 1. NẾU CHƯA CẤU HÌNH SEPAY: CHỐNG GIAN LẬN - KHÔNG CHO PHÉP TỰ ĐỘNG BỎ QUA
-      if (!settings.sepayApiKey || !settings.sepayApiKey.trim()) {
+      if (!cleanToken) {
         alert(`⚠️ Hệ thống chưa kích hoạt kiểm tra thanh toán tự động (Chưa cấu hình SePay API Token trong Quản Trị).\n\n• Nếu bạn là Quản trị viên: Vui lòng vào trang Quản trị (Admin) -> Cài Đặt -> Nhập SePay API Token để kích hoạt đối soát tiền MBBank tự động.\n\n• Nếu bạn là Khách hàng: Vui lòng quét mã QR chuyển khoản đúng nội dung "${currentOrder.orderId}" và liên hệ Zalo Admin để được xác nhận.`);
         return;
       }
@@ -1471,7 +1483,6 @@
       }
 
       try {
-        const cleanToken = settings.sepayApiKey.trim();
         let response = null;
         try {
           response = await fetch(`/api/sepay-proxy?token=${encodeURIComponent(cleanToken)}&limit=30`);
@@ -1480,6 +1491,15 @@
         if (!response || !response.ok) {
           try {
             response = await fetch(`https://my.sepay.vn/userapi/transactions/list?limit=30`, {
+              headers: { 'Authorization': `Bearer ${cleanToken}` }
+            });
+          } catch (e) {}
+        }
+
+        if (!response || !response.ok) {
+          try {
+            const targetUrl = encodeURIComponent(`https://my.sepay.vn/userapi/transactions/list?limit=30`);
+            response = await fetch(`https://corsproxy.io/?url=${targetUrl}`, {
               headers: { 'Authorization': `Bearer ${cleanToken}` }
             });
           } catch (e) {}

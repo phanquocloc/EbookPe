@@ -1422,7 +1422,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Test kết nối SePay.vn
     const btnTestSepay = document.getElementById('btn-test-sepay');
     btnTestSepay?.addEventListener('click', async () => {
-      const sepayToken = document.getElementById('setting-sepay-token').value.trim();
+      const rawToken = document.getElementById('setting-sepay-token').value;
+      const sepayToken = (rawToken || '').trim().replace(/^Bearer\s+/i, '').replace(/["']/g, '');
+      
       if (!sepayToken) {
         showAdminToast('Vui lòng nhập Mã API Token SePay.vn vào ô bên trên để kiểm tra kết nối!', 'warning', { title: 'Chưa có API Token' });
         document.getElementById('setting-sepay-token')?.focus();
@@ -1440,33 +1442,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
       try {
         let data = null;
-        let viaProxy = false;
+        let viaSource = '';
+        let lastErrorMsg = '';
 
-        // 1. Thử gọi qua proxy nội bộ
+        // 1. Thử gọi qua proxy nội bộ (/api/sepay-proxy)
         try {
-          const proxyRes = await fetch(`/api/sepay-proxy?limit=5`, {
+          const proxyRes = await fetch(`/api/sepay-proxy?token=${encodeURIComponent(sepayToken)}&limit=5`, {
             headers: { 'Authorization': `Bearer ${sepayToken}` }
           });
           if (proxyRes.ok) {
             data = await proxyRes.json();
-            viaProxy = true;
+            viaSource = 'Proxy Server';
+          } else if (proxyRes.status === 401 || proxyRes.status === 403) {
+            const errJson = await proxyRes.json().catch(() => ({}));
+            throw new Error(errJson.error || 'Token SePay không hợp lệ (Mã 401 Unauthorized)');
           }
-        } catch (e) {}
+        } catch (e) {
+          if (e.message && (e.message.includes('401') || e.message.includes('Token'))) throw e;
+          lastErrorMsg = e.message;
+        }
 
-        // 2. Nếu proxy không có hoặc thất bại, gọi trực tiếp
+        // 2. Nếu proxy không có hoặc thất bại, gọi trực tiếp tới my.sepay.vn
         if (!data) {
-          const directRes = await fetch('https://my.sepay.vn/userapi/transactions/list?limit=5', {
-            headers: {
-              'Authorization': `Bearer ${sepayToken}`,
-              'Content-Type': 'application/json'
+          try {
+            const directRes = await fetch('https://my.sepay.vn/userapi/transactions/list?limit=5', {
+              headers: {
+                'Authorization': `Bearer ${sepayToken}`,
+                'Content-Type': 'application/json'
+              }
+            });
+            if (directRes.ok) {
+              data = await directRes.json();
+              viaSource = 'Kết nối trực tiếp';
+            } else {
+              const errJson = await directRes.json().catch(() => ({}));
+              if (directRes.status === 401 || directRes.status === 403) {
+                throw new Error(errJson.error || 'Token SePay không chính xác hoặc đã hết hạn (Mã 401 Unauthorized)');
+              }
+              throw new Error(errJson.error || `Mã phản hồi từ SePay: ${directRes.status}`);
             }
-          });
-          if (directRes.ok) {
-            data = await directRes.json();
-          } else {
-            const errJson = await directRes.json().catch(() => null);
-            throw new Error((errJson && errJson.error) ? errJson.error : `Mã phản hồi từ SePay: ${directRes.status}`);
+          } catch (e) {
+            if (e.message && (e.message.includes('401') || e.message.includes('Token'))) throw e;
+            lastErrorMsg = e.message;
           }
+        }
+
+        // 3. Fallback qua public CORS Proxy nếu trình duyệt bị chặn CORS
+        if (!data) {
+          try {
+            const targetUrl = encodeURIComponent('https://my.sepay.vn/userapi/transactions/list?limit=5');
+            const corsRes = await fetch(`https://corsproxy.io/?url=${targetUrl}`, {
+              headers: { 'Authorization': `Bearer ${sepayToken}` }
+            });
+            if (corsRes.ok) {
+              data = await corsRes.json();
+              viaSource = 'CORS Gateway';
+            }
+          } catch (e) {}
         }
 
         loadingToast.close();
@@ -1474,21 +1506,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data && (data.transactions !== undefined || data.status === 200 || Array.isArray(data.messages))) {
           const txCount = Array.isArray(data.transactions) ? data.transactions.length : 0;
           showAdminToast(
-            `Xác thực Token SePay thành công! Nhận diện được ${txCount} giao dịch MBBank gần nhất qua ${viaProxy ? 'Proxy Server' : 'kết nối trực tiếp'}.`,
+            `Xác thực Token SePay thành công! Nhận diện được ${txCount} giao dịch MBBank gần nhất qua ${viaSource}.`,
             'success',
-            { title: '✅ Kết nối SePay thành công' }
+            { title: '✅ Kết nối SePay thành công', duration: 6000 }
           );
         } else if (data && data.error) {
-          showAdminToast(`Lỗi SePay: ${data.error}. Vui lòng kiểm tra lại Token.`, 'error', { title: 'Lỗi xác thực SePay' });
+          showAdminToast(`Lỗi SePay: ${data.error}. Vui lòng kiểm tra lại Token.`, 'error', { title: 'Lỗi xác thực SePay', duration: 7000 });
         } else {
-          showAdminToast('Kết nối SePay.vn thành công! Tài khoản hoạt động bình thường.', 'success', { title: '✅ Kết nối thành công' });
+          showAdminToast('Kết nối SePay.vn thành công! Tài khoản hoạt động bình thường.', 'success', { title: '✅ Kết nối thành công', duration: 6000 });
         }
       } catch (err) {
         loadingToast.close();
+        let displayError = err.message || '';
+        if (displayError.includes('Failed to fetch') || displayError.includes('NetworkError')) {
+          displayError = 'Lỗi CORS mạng trình duyệt. Vui lòng chạy web bằng `node server.js` hoặc deploy lên Vercel để gọi API SePay an toàn!';
+        }
         showAdminToast(
-          `Không thể kết nối tới SePay: ${err.message}. Vui lòng kiểm tra lại Token hoặc mạng!`,
+          `Không thể kết nối tới SePay: ${displayError}`,
           'error',
-          { title: 'Kết nối SePay thất bại' }
+          { title: 'Kết nối SePay thất bại', duration: 8000 }
         );
       } finally {
         btnTestSepay.classList.remove('btn-admin-loading');

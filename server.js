@@ -36,7 +36,10 @@ const server = http.createServer((req, res) => {
 
   // PROXY SEPAY: Giải quyết triệt để lỗi CORS "Failed to fetch" khi gọi từ trình duyệt
   if (parsedUrl.pathname === '/api/sepay-proxy') {
-    const authHeader = req.headers['authorization'] || (parsedUrl.query.token ? `Bearer ${parsedUrl.query.token}` : '');
+    let authHeader = req.headers['authorization'] || (parsedUrl.query.token ? `Bearer ${parsedUrl.query.token}` : '');
+    if (authHeader && !authHeader.startsWith('Bearer ') && !authHeader.startsWith('Apikey ')) {
+      authHeader = `Bearer ${authHeader}`;
+    }
     const limit = parsedUrl.query.limit || 30;
 
     if (!authHeader) {
