@@ -291,11 +291,12 @@ window.showAdminAlert = showAdminAlert;
   // NAVIGATION & TAB SWITCHING
   // ==========================================
   function bindNavigation() {
-    tabLinks.forEach(link => {
+    // Lắng nghe tất cả nút/link có thuộc tính data-tab (cả sidebar và các nút chuyển tab nhanh)
+    document.querySelectorAll('[data-tab]').forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
         const tab = link.dataset.tab;
-        switchTab(tab);
+        if (tab) switchTab(tab);
       });
     });
 
@@ -335,10 +336,10 @@ window.showAdminAlert = showAdminAlert;
   function switchTab(tabId) {
     adminState.currentTab = tabId;
 
-    tabLinks.forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.admin-sidebar .sidebar-link').forEach(l => l.classList.remove('active'));
     tabContents.forEach(c => c.classList.remove('active'));
 
-    const activeLink = document.querySelector(`.sidebar-link[data-tab="${tabId}"]`);
+    const activeLink = document.querySelector(`.admin-sidebar .sidebar-link[data-tab="${tabId}"]`);
     const activeContent = document.getElementById(`tab-content-${tabId}`);
 
     if (activeLink) activeLink.classList.add('active');
@@ -363,6 +364,9 @@ window.showAdminAlert = showAdminAlert;
         btnTopAddBook.innerHTML = '<span>➕</span><span>Đăng Bán Cuốn Mới</span>';
       }
     }
+
+    // Cuộn nhẹ lên đầu trang
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     // Refresh dữ liệu theo tab
     if (tabId === 'dashboard') renderDashboard();
@@ -406,7 +410,7 @@ window.showAdminAlert = showAdminAlert;
       .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
 
     const totalOrdersCount = orders.length;
-    const activeBooksCount = books.filter(b => !b.status || b.status === 'active').length;
+    const activeBooksCount = books.filter(b => b.status !== 'hidden' && b.status !== 'inactive').length;
     const totalDownloads = books.reduce((sum, b) => sum + (b.salesCount || 0), 0);
 
     // Gán vào Card
@@ -561,11 +565,11 @@ window.showAdminAlert = showAdminAlert;
       return;
     }
 
-    // Sắp xếp: Đưa sách có ⭐ Ghim Nổi Bật lên đầu danh sách quản lý
+    // Sắp xếp: Ưu tiên sách mới nhất lên đầu danh sách quản lý
     books.sort((a, b) => {
-      const aFeat = (a.isFeatured || a.featured || (a.badge && (a.badge.includes('⭐') || a.badge.includes('NỔI BẬT') || a.badge.includes('HOT')))) ? 1 : 0;
-      const bFeat = (b.isFeatured || b.featured || (b.badge && (b.badge.includes('⭐') || b.badge.includes('NỔI BẬT') || b.badge.includes('HOT')))) ? 1 : 0;
-      if (bFeat !== aFeat) return bFeat - aFeat;
+      const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      if (bTime !== aTime) return bTime - aTime;
       return 0;
     });
 
@@ -579,21 +583,15 @@ window.showAdminAlert = showAdminAlert;
         coverThumbStyle = `background: var(--${coverCls}, #2D6A4F);`;
       }
 
-      const isFeat = !!(book.isFeatured || book.featured || (book.badge && (book.badge.includes('⭐') || book.badge.includes('NỔI BẬT') || book.badge.includes('HOT'))));
-      const isHidden = (book.status === 'hidden' || book.status === 'inactive');
-
       return `
-        <tr style="${isHidden ? 'opacity: 0.65; background: #f8fafc;' : ''}">
+        <tr>
           <td>
             <div class="table-cover-thumb ${book.coverStyle || 'cover-1'}" style="${coverThumbStyle}">
               <span>${book.coverImage ? '' : '📖'}</span>
             </div>
           </td>
           <td>
-            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-              <span style="font-weight:700; color:var(--text-main); font-size:0.92rem; max-width:240px;">${book.title}</span>
-              ${isFeat ? '<span style="background:#fef3c7; color:#b45309; font-weight:800; font-size:0.7rem; padding:2px 6px; border-radius:4px; border:1px solid #fde68a;">⭐ Ghim Đầu Trang</span>' : ''}
-            </div>
+            <div style="font-weight:700; color:var(--text-main); font-size:0.92rem; max-width:280px;">${book.title}</div>
             <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">Tác giả: ${book.author || 'EbookPe'} · ${book.pages || 180} trang · ⭐ ${book.rating || 4.9}</div>
           </td>
           <td>
@@ -608,21 +606,10 @@ window.showAdminAlert = showAdminAlert;
           <td>
             <strong>${book.salesCount || 120}</strong> lượt mua
           </td>
-          <td>
-            <span class="badge-status ${isHidden ? 'hidden' : 'active'}" style="${isHidden ? 'background:#fee2e2; color:#dc2626;' : 'background:#d1fae5; color:#065f46;'}">
-              ${isHidden ? '🙈 Tạm ẩn (Ẩn trên Web)' : '✅ Đang bán'}
-            </span>
-          </td>
-          <td>
-            <div class="table-actions">
-              <button class="btn-action-icon" data-action="toggle-featured" data-id="${book.id}" title="${isFeat ? 'Bỏ ghim nổi bật' : 'Ghim nổi bật lên đầu trang web'}" style="${isFeat ? 'background:#fef3c7; color:#d97706; border-color:#f59e0b; box-shadow:0 0 0 2px rgba(245,158,11,0.25);' : ''}">
-                ⭐
-              </button>
-              <button class="btn-action-icon" data-action="edit" data-id="${book.id}" title="Chỉnh sửa thông tin">
+          <td style="text-align:right;">
+            <div class="table-actions" style="justify-content: flex-end;">
+              <button class="btn-action-icon edit" data-action="edit" data-id="${book.id}" title="Chỉnh sửa thông tin">
                 ✏️
-              </button>
-              <button class="btn-action-icon" data-action="toggle-status" data-id="${book.id}" title="${isHidden ? 'Bật hiển thị lại trên web' : 'Tạm ẩn khỏi web'}" style="${isHidden ? 'background:#fee2e2; color:#dc2626; border-color:#fca5a5;' : ''}">
-                ${isHidden ? '🙈' : '👁️'}
               </button>
               <button class="btn-action-icon delete" data-action="delete" data-id="${book.id}" title="Xóa sách">
                 🗑️
@@ -640,12 +627,8 @@ window.showAdminAlert = showAdminAlert;
         e.stopPropagation();
         const action = this.getAttribute('data-action');
         const id = this.getAttribute('data-id');
-        if (action === 'toggle-featured') {
-          window.adminToggleFeaturedBook(id);
-        } else if (action === 'edit') {
+        if (action === 'edit') {
           window.adminEditBook(id);
-        } else if (action === 'toggle-status') {
-          window.adminToggleBookStatus(id);
         } else if (action === 'delete') {
           window.adminDeleteBook(id);
         }
@@ -678,10 +661,8 @@ window.showAdminAlert = showAdminAlert;
     document.getElementById('book-category').value = 'khoi-nghiep';
     document.getElementById('book-format').value = 'PDF';
     document.getElementById('book-pages').value = '180';
-    document.getElementById('book-status').value = 'active';
     document.getElementById('book-sales-count').value = Math.floor(85 + Math.random() * 350);
     document.getElementById('book-rating').value = '4.9';
-    document.getElementById('book-is-featured').checked = false;
 
     updatePresetButtons();
     updateCoverPreview();
@@ -698,8 +679,6 @@ window.showAdminAlert = showAdminAlert;
     adminState.uploadedCoverBase64 = book.coverImage || '';
     if (bookModalTitle) bookModalTitle.textContent = `Chỉnh Sửa Ebook: ${book.title}`;
 
-    const isFeat = !!(book.isFeatured || book.featured || (book.badge && (book.badge.includes('⭐') || book.badge.includes('NỔI BẬT') || book.badge.includes('HOT'))));
-
     const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = (val !== undefined && val !== null) ? val : ''; };
     setVal('book-title', book.title);
     setVal('book-subtitle', book.subTitle);
@@ -710,11 +689,8 @@ window.showAdminAlert = showAdminAlert;
     setVal('book-badge', book.badge);
     setVal('book-pages', book.pages || 180);
     setVal('book-format', book.format || 'PDF');
-    setVal('book-status', book.status || 'active');
     setVal('book-sales-count', book.salesCount || 120);
     setVal('book-rating', book.rating || 4.9);
-    const featEl = document.getElementById('book-is-featured');
-    if (featEl) featEl.checked = isFeat;
     setVal('book-short-desc', book.shortDesc);
     setVal('book-full-desc', book.fullDesc);
     setVal('book-toc', book.toc ? book.toc.join('\n') : '');
@@ -724,44 +700,6 @@ window.showAdminAlert = showAdminAlert;
     updatePresetButtons();
     updateCoverPreview();
     if (bookModal) bookModal.classList.add('active');
-  };
-
-  // Toggle ghim nổi bật sách lên đầu
-  window.adminToggleFeaturedBook = function(bookId) {
-    const book = EbookDB.getBookById(bookId);
-    if (book) {
-      const isCurrentlyFeatured = !!(book.isFeatured || (book.badge && (book.badge.includes('⭐') || book.badge.includes('NỔI BẬT'))));
-      const nextFeatured = !isCurrentlyFeatured;
-      book.isFeatured = nextFeatured;
-      book.featured = nextFeatured;
-      if (nextFeatured) {
-        book.badge = book.badge ? (book.badge.includes('⭐') ? book.badge : `⭐ ${book.badge}`) : '⭐ NỔI BẬT';
-      } else {
-        book.badge = (book.badge || '').replace(/⭐\s*/g, '').replace(/NỔI BẬT/g, '').replace(/HOT/g, '').trim();
-      }
-      const updated = EbookDB.saveBook(book);
-      renderBooksTable();
-      renderDashboard();
-      showAdminToast(nextFeatured ? `Đã ghim cuốn "${book.title}" lên đầu gian hàng!` : `Đã bỏ ghim nổi bật cuốn "${book.title}"`, 'success');
-      if (window.EbookSupabase && typeof window.EbookSupabase.saveBook === 'function') {
-        window.EbookSupabase.saveBook(updated).catch(e => console.warn('[Admin] Sync toggle featured error:', e));
-      }
-    }
-  };
-
-  // Toggle ẩn hiện sách
-  window.adminToggleBookStatus = function(bookId) {
-    const book = EbookDB.getBookById(bookId);
-    if (book) {
-      book.status = book.status === 'active' ? 'hidden' : 'active';
-      const updated = EbookDB.saveBook(book);
-      renderBooksTable();
-      renderDashboard();
-      showAdminToast(`Đã đổi trạng thái sang "${book.status === 'active' ? 'Đang bán' : 'Tạm ẩn'}"`, 'info');
-      if (window.EbookSupabase && typeof window.EbookSupabase.saveBook === 'function') {
-        window.EbookSupabase.saveBook(updated).catch(e => console.warn('[Admin] Sync status error:', e));
-      }
-    }
   };
 
   // Xóa sách
@@ -866,13 +804,11 @@ window.showAdminAlert = showAdminAlert;
     const category = document.getElementById('book-category')?.value || 'khoi-nghiep';
     const price = parseInt(document.getElementById('book-price')?.value) || 0;
     const originalPrice = parseInt(document.getElementById('book-price-old')?.value) || 0;
-    let badge = (document.getElementById('book-badge')?.value || '').trim();
+    const badge = (document.getElementById('book-badge')?.value || '').trim();
     const pages = parseInt(document.getElementById('book-pages')?.value) || 180;
     const format = document.getElementById('book-format')?.value || 'PDF';
-    const status = document.getElementById('book-status')?.value || 'active';
     const salesCount = parseInt(document.getElementById('book-sales-count')?.value) || 120;
     const rating = parseFloat(document.getElementById('book-rating')?.value) || 4.9;
-    const isFeatured = !!document.getElementById('book-is-featured')?.checked;
     const shortDesc = (document.getElementById('book-short-desc')?.value || '').trim();
     const fullDesc = (document.getElementById('book-full-desc')?.value || '').trim();
     const tocRaw = (document.getElementById('book-toc')?.value || '').trim();
@@ -892,15 +828,6 @@ window.showAdminAlert = showAdminAlert;
     const toc = tocRaw ? tocRaw.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [];
 
     const isEdit = !!adminState.editingBookId;
-
-    if (isFeatured) {
-      if (!badge.includes('⭐') && !badge.includes('NỔI BẬT')) {
-        badge = badge ? `⭐ ${badge}` : '⭐ NỔI BẬT';
-      }
-    } else {
-      badge = badge.replace(/⭐\s*/g, '').replace(/NỔI BẬT/g, '').trim();
-    }
-
     const existingBook = isEdit ? EbookDB.getBookById(adminState.editingBookId) : null;
 
     const bookData = {
@@ -915,10 +842,9 @@ window.showAdminAlert = showAdminAlert;
       badge,
       pages,
       format,
-      status,
+      status: 'active',
       salesCount,
       rating,
-      isFeatured,
       shortDesc,
       fullDesc,
       toc,
@@ -1800,6 +1726,7 @@ window.showAdminAlert = showAdminAlert;
             showAdminToast('Khôi phục dữ liệu từ file sao lưu thành công!', 'success');
             renderDashboard();
             renderBooksTable();
+            renderCombosTable();
             renderOrdersTable();
             loadSettingsForm();
           } else {
@@ -1824,23 +1751,6 @@ window.showAdminAlert = showAdminAlert;
         renderBooksTable();
         renderDashboard();
         showAdminToast('Đã xóa toàn bộ ebook khỏi cửa hàng & Supabase Cloud!', 'success');
-      }
-    });
-
-    // Xóa tất cả Combo
-    document.getElementById('btn-clear-all-combos')?.addEventListener('click', async () => {
-      const confirmed = await showAdminConfirm({
-        title: 'Xóa Toàn Bộ Gói Combo',
-        message: 'Bạn có chắc chắn muốn xóa toàn bộ gói combo không? Trang bán hàng và Supabase Cloud sẽ được làm trống.',
-        confirmText: 'Xóa Sạch Combo',
-        cancelText: 'Hủy bỏ',
-        type: 'danger'
-      });
-      if (confirmed) {
-        EbookDB.clearAllCombos();
-        renderCombosTable();
-        renderDashboard();
-        showAdminToast('Đã xóa toàn bộ combo khỏi cửa hàng & Supabase Cloud!', 'success');
       }
     });
 
@@ -1875,6 +1785,7 @@ window.showAdminAlert = showAdminAlert;
         showAdminToast('Đã làm sạch toàn bộ kho sách và doanh thu về 0đ!', 'info');
         renderDashboard();
         renderBooksTable();
+        renderCombosTable();
         renderOrdersTable();
         loadSettingsForm();
       }

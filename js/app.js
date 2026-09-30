@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   function renderCategories() {
     if (!catStrip) return;
-    const books = EbookDB.getBooks().filter(b => !b.status || b.status === 'active');
+    const books = EbookDB.getBooks().filter(b => b.status !== 'hidden' && b.status !== 'inactive');
     
     // Đếm số lượng sách theo từng danh mục
     const counts = { all: books.length };
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderBooks() {
     if (!booksContainer) return;
 
-    let books = EbookDB.getBooks().filter(b => !b.status || b.status === 'active');
+    let books = EbookDB.getBooks().filter(b => b.status !== 'hidden' && b.status !== 'inactive');
 
     // Lọc theo Category
     if (state.selectedCategory !== 'all') {
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (state.searchQuery.trim() !== '') {
       const q = state.searchQuery.toLowerCase();
       books = books.filter(b => 
-        b.title.toLowerCase().includes(q) ||
+        b.title.toLowerCase().includes(q) || 
         (b.subTitle && b.subTitle.toLowerCase().includes(q)) ||
         (b.shortDesc && b.shortDesc.toLowerCase().includes(q)) ||
         (b.categoryName && b.categoryName.toLowerCase().includes(q)) ||
@@ -231,7 +231,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Sắp xếp
     if (state.sortBy === 'popular') {
-      books.sort((a, b) => (b.salesCount || 0) - (a.salesCount || 0));
+      books.sort((a, b) => {
+        const aFeat = (a.isFeatured === true || (a.isFeatured !== false && (a.featured || (a.badge && (a.badge.includes('NỔI BẬT') || a.badge.includes('⭐')))))) ? (a.featuredAt || 1000) : 0;
+        const bFeat = (b.isFeatured === true || (b.isFeatured !== false && (b.featured || (b.badge && (b.badge.includes('NỔI BẬT') || b.badge.includes('⭐')))))) ? (b.featuredAt || 1000) : 0;
+        if (bFeat !== aFeat) return bFeat - aFeat;
+        return (b.salesCount || 0) - (a.salesCount || 0);
+      });
     } else if (state.sortBy === 'price-asc') {
       books.sort((a, b) => a.price - b.price);
     } else if (state.sortBy === 'price-desc') {
