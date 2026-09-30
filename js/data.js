@@ -332,6 +332,11 @@ class EbookDB {
     const updated = { ...this.getSettings(), ...settings };
     localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(updated));
     this.notifyChange('SETTINGS_UPDATED', updated);
+    if (window.EbookSupabase && typeof window.EbookSupabase.saveSettings === 'function') {
+      window.EbookSupabase.saveSettings(updated).catch(err => {
+        console.warn('[EbookDB] Lỗi đồng bộ cài đặt lên Cloud:', err);
+      });
+    }
     return updated;
   }
 

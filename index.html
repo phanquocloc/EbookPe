@@ -934,9 +934,10 @@
       // Tự động tải dữ liệu mới nhất từ Supabase Cloud Database để mọi thiết bị/Vercel đều thấy đồng bộ 100%
       if (window.EbookSupabase) {
         Promise.all([
+          window.EbookSupabase.fetchSettings(),
           window.EbookSupabase.fetchBooks(),
           window.EbookSupabase.fetchCombos()
-        ]).then(([books, combos]) => {
+        ]).then(([settings, books, combos]) => {
           if (books !== null || combos !== null) {
             renderCategoryPills();
             renderEbooks();
@@ -1393,13 +1394,17 @@
           if (!cleanToken) return;
 
           // Fetch via local proxy or direct
-          let response;
+          let response = null;
           try {
             response = await fetch(`/api/sepay-proxy?token=${encodeURIComponent(cleanToken)}&limit=20`);
-          } catch (e) {
-            response = await fetch(`https://my.sepay.vn/userapi/transactions/list?limit=20`, {
-              headers: { 'Authorization': `Bearer ${cleanToken}` }
-            });
+          } catch (e) {}
+
+          if (!response || !response.ok) {
+            try {
+              response = await fetch(`https://my.sepay.vn/userapi/transactions/list?limit=20`, {
+                headers: { 'Authorization': `Bearer ${cleanToken}` }
+              });
+            } catch (e) {}
           }
 
           if (response && response.ok) {
@@ -1441,62 +1446,73 @@
     async function confirmPurchase() {
       if (!currentOrder) return;
 
-      const settings = window.EbookDB ? window.EbookDB.getSettings() : {};
-      
-      // NẾU ĐÃ CẤU HÌNH SEPAY: BẮT BUỘC KIỂM TRA GIAO DỊCH THỰC TẾ TRONG TÀI KHOẢN MBBANK
-      if (settings.sepayApiKey && settings.sepayApiKey.trim()) {
-        const btn = document.querySelector('#checkout-modal button[onclick="confirmPurchase()"]');
-        let origBtnHtml = '';
-        if (btn) {
-          origBtnHtml = btn.innerHTML;
-          btn.disabled = true;
-          btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">sync</span><span>Đang kiểm tra MBBank...</span>';
-        }
-
-        try {
-          const cleanToken = settings.sepayApiKey.trim();
-          let response;
-          try {
-            response = await fetch(`/api/sepay-proxy?token=${encodeURIComponent(cleanToken)}&limit=30`);
-          } catch (e) {
-            response = await fetch(`https://my.sepay.vn/userapi/transactions/list?limit=30`, {
-              headers: { 'Authorization': `Bearer ${cleanToken}` }
-            });
-          }
-
-          if (response && response.ok) {
-            const data = await response.json();
-            if (data && data.transactions && Array.isArray(data.transactions)) {
-              const cleanOrder = currentOrder.orderId.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-              const matched = data.transactions.find(tx => {
-                const content = (tx.transaction_content || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-                const code = (tx.code || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-                const amountIn = parseFloat(tx.amount_in || 0);
-                return (content.includes(cleanOrder) || code.includes(cleanOrder)) && amountIn >= currentOrder.totalAmount;
-              });
-
-              if (matched) {
-                if (btn) { btn.disabled = false; btn.innerHTML = origBtnHtml; }
-                executeOrderCompletion(true);
-                return;
-              } else {
-                if (btn) { btn.disabled = false; btn.innerHTML = origBtnHtml; }
-                alert(`⚠️ Hệ thống chưa nhận được tiền chuyển khoản cho mã đơn #${currentOrder.orderId} trong tài khoản MBBank.\n\nNếu bạn vừa quét mã chuyển tiền, vui lòng đợi 3 - 5 giây để ngân hàng đồng bộ giao dịch rồi bấm lại nhé!`);
-                return;
-              }
-            }
-          }
-        } catch (err) {
-          console.warn('Lỗi kiểm tra SePay:', err);
-        }
-
-        if (btn) { btn.disabled = false; btn.innerHTML = origBtnHtml; }
-        alert(`⚠️ Hệ thống chưa nhận được tiền chuyển khoản cho mã đơn #${currentOrder.orderId}.\n\nVui lòng hoàn tất chuyển khoản đúng số tiền và nội dung ${currentOrder.orderId} trước khi xác nhận.`);
+      const custEmail = document.getElementById('checkout-cust-email')?.value.trim();
+      if (!custEmail || !custEmail.includes('@')) {
+        alert('⚠️ Vui lòng nhập địa chỉ Email chính xác để nhận link tải Ebook!');
+        document.getElementById('checkout-cust-email')?.focus();
         return;
       }
 
-      // Chưa cấu hình SePay API Token -> Chế độ xác nhận trực tiếp
-      executeOrderCompletion(false);
+      const settings = window.EbookDB ? window.EbookDB.getSettings() : {};
+      
+      // 1. NẾU CHƯA CẤU HÌNH SEPAY: CHỐNG GIAN LẬN - KHÔNG CHO PHÉP TỰ ĐỘNG BỎ QUA
+      if (!settings.sepayApiKey || !settings.sepayApiKey.trim()) {
+        alert(`⚠️ Hệ thống chưa kích hoạt kiểm tra thanh toán tự động (Chưa cấu hình SePay API Token trong Quản Trị).\n\n• Nếu bạn là Quản trị viên: Vui lòng vào trang Quản trị (Admin) -> Cài Đặt -> Nhập SePay API Token để kích hoạt đối soát tiền MBBank tự động.\n\n• Nếu bạn là Khách hàng: Vui lòng quét mã QR chuyển khoản đúng nội dung "${currentOrder.orderId}" và liên hệ Zalo Admin để được xác nhận.`);
+        return;
+      }
+
+      // 2. NẾU ĐÃ CẤU HÌNH SEPAY: BẮT BUỘC KIỂM TRA GIAO DỊCH THỰC TẾ TRONG TÀI KHOẢN MBBANK
+      const btn = document.querySelector('#checkout-modal button[onclick="confirmPurchase()"]');
+      let origBtnHtml = '';
+      if (btn) {
+        origBtnHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">sync</span><span>Đang kiểm tra MBBank...</span>';
+      }
+
+      try {
+        const cleanToken = settings.sepayApiKey.trim();
+        let response = null;
+        try {
+          response = await fetch(`/api/sepay-proxy?token=${encodeURIComponent(cleanToken)}&limit=30`);
+        } catch (e) {}
+
+        if (!response || !response.ok) {
+          try {
+            response = await fetch(`https://my.sepay.vn/userapi/transactions/list?limit=30`, {
+              headers: { 'Authorization': `Bearer ${cleanToken}` }
+            });
+          } catch (e) {}
+        }
+
+        if (response && response.ok) {
+          const data = await response.json();
+          if (data && data.transactions && Array.isArray(data.transactions)) {
+            const cleanOrder = currentOrder.orderId.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            const matched = data.transactions.find(tx => {
+              const content = (tx.transaction_content || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+              const code = (tx.code || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+              const amountIn = parseFloat(tx.amount_in || 0);
+              return (content.includes(cleanOrder) || code.includes(cleanOrder)) && amountIn >= currentOrder.totalAmount;
+            });
+
+            if (matched) {
+              if (btn) { btn.disabled = false; btn.innerHTML = origBtnHtml; }
+              executeOrderCompletion(true);
+              return;
+            } else {
+              if (btn) { btn.disabled = false; btn.innerHTML = origBtnHtml; }
+              alert(`⚠️ Hệ thống chưa nhận được tiền chuyển khoản cho mã đơn #${currentOrder.orderId} trong tài khoản MBBank.\n\nNếu bạn vừa quét mã chuyển tiền, vui lòng đợi 3 - 5 giây để ngân hàng đồng bộ giao dịch rồi bấm lại nhé!`);
+              return;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Lỗi kiểm tra SePay:', err);
+      }
+
+      if (btn) { btn.disabled = false; btn.innerHTML = origBtnHtml; }
+      alert(`⚠️ Hệ thống chưa nhận được tiền chuyển khoản cho mã đơn #${currentOrder.orderId}.\n\nVui lòng hoàn tất chuyển khoản đúng số tiền và nội dung "${currentOrder.orderId}" trước khi xác nhận.`);
     }
 
     // Thực hiện hoàn tất đơn hàng, mở Modal tải sách và gửi Email

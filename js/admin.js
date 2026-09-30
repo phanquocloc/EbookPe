@@ -245,10 +245,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Tự động đồng bộ dữ liệu mới nhất từ Supabase Cloud
     if (window.EbookSupabase) {
       Promise.all([
+        window.EbookSupabase.fetchSettings(),
         window.EbookSupabase.fetchBooks(),
         window.EbookSupabase.fetchCombos(),
         window.EbookSupabase.getOrders()
-      ]).then(([books, combos, orders]) => {
+      ]).then(([settings, books, combos, orders]) => {
+        if (settings !== null) loadSettingsForm();
         if (books !== null) renderBooksTable();
         if (combos !== null) renderCombosTable();
         if (orders !== null && orders.length > 0) {
@@ -1275,36 +1277,62 @@ document.addEventListener('DOMContentLoaded', () => {
     updateVietQRPreviewLive();
   }
 
-  function bindSettingsEvents() {
-    // Form lưu cài đặt
-    document.getElementById('admin-settings-form')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const updated = {
-        bankCode: document.getElementById('setting-bank-code').value,
-        bankName: document.getElementById('setting-bank-name').value,
-        accountNumber: document.getElementById('setting-account-num').value.trim(),
-        accountName: document.getElementById('setting-account-name').value.trim().toUpperCase(),
-        transferPrefix: document.getElementById('setting-prefix').value.trim().toUpperCase(),
-        hotline: document.getElementById('setting-hotline').value.trim(),
-        supportEmail: document.getElementById('setting-email').value.trim(),
-        sepayApiKey: document.getElementById('setting-sepay-token').value.trim(),
-        emailjsServiceId: document.getElementById('setting-emailjs-service').value.trim(),
-        emailjsTemplateId: document.getElementById('setting-emailjs-template').value.trim(),
-        emailjsPublicKey: document.getElementById('setting-emailjs-public').value.trim(),
-        autoEmailEnabled: document.getElementById('setting-auto-email').checked,
-        supabaseUrl: document.getElementById('setting-supabase-url')?.value.trim() || '',
-        supabaseKey: document.getElementById('setting-supabase-key')?.value.trim() || '',
-        supabaseEnabled: document.getElementById('setting-supabase-enabled')?.checked ?? true
-      };
+  function collectSettingsFromForm() {
+    return {
+      bankCode: document.getElementById('setting-bank-code')?.value || 'MB',
+      bankName: document.getElementById('setting-bank-name')?.value || 'MBBank',
+      accountNumber: document.getElementById('setting-account-num')?.value.trim() || '',
+      accountName: (document.getElementById('setting-account-name')?.value.trim() || '').toUpperCase(),
+      transferPrefix: (document.getElementById('setting-prefix')?.value.trim() || 'EBPE').toUpperCase(),
+      hotline: document.getElementById('setting-hotline')?.value.trim() || '',
+      supportEmail: document.getElementById('setting-email')?.value.trim() || '',
+      sepayApiKey: document.getElementById('setting-sepay-token')?.value.trim() || '',
+      emailjsServiceId: document.getElementById('setting-emailjs-service')?.value.trim() || '',
+      emailjsTemplateId: document.getElementById('setting-emailjs-template')?.value.trim() || '',
+      emailjsPublicKey: document.getElementById('setting-emailjs-public')?.value.trim() || '',
+      autoEmailEnabled: document.getElementById('setting-auto-email')?.checked ?? false,
+      supabaseUrl: document.getElementById('setting-supabase-url')?.value.trim() || '',
+      supabaseKey: document.getElementById('setting-supabase-key')?.value.trim() || '',
+      supabaseEnabled: document.getElementById('setting-supabase-enabled')?.checked ?? true
+    };
+  }
 
+  let settingsAutoSaveTimer = null;
+  function triggerSettingsAutoSave() {
+    clearTimeout(settingsAutoSaveTimer);
+    settingsAutoSaveTimer = setTimeout(() => {
+      const updated = collectSettingsFromForm();
       EbookDB.saveSettings(updated);
       updateVietQRPreviewLive();
-      showAdminToast('Đã lưu cấu hình tài khoản ngân hàng, Supabase & tự động hóa!', 'success');
+      console.log('[Admin] Đã tự động lưu cài đặt vào LocalStorage & Supabase Cloud');
+    }, 400);
+  }
+
+  function bindSettingsEvents() {
+    const settingsForm = document.getElementById('admin-settings-form');
+
+    // Tự động lưu tức thì khi người dùng gõ phím hoặc thay đổi bất kỳ ô input nào (Chống mất dữ liệu khi F5)
+    settingsForm?.querySelectorAll('input, select, textarea').forEach(el => {
+      el.addEventListener('input', triggerSettingsAutoSave);
+      el.addEventListener('change', triggerSettingsAutoSave);
+    });
+
+    // Form lưu cài đặt (Khi bấm nút "Lưu Thay Đổi")
+    settingsForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      clearTimeout(settingsAutoSaveTimer);
+      const updated = collectSettingsFromForm();
+      EbookDB.saveSettings(updated);
+      updateVietQRPreviewLive();
+      showAdminToast('Đã lưu cấu hình tài khoản ngân hàng, Supabase & tự động hóa lên Cloud thành công!', 'success');
     });
 
     // Test kết nối Supabase Cloud
     const btnTestSupabase = document.getElementById('btn-test-supabase');
     btnTestSupabase?.addEventListener('click', async () => {
+      // Tự động lưu trước khi test
+      EbookDB.saveSettings(collectSettingsFromForm());
+
       const origHtml = btnTestSupabase.innerHTML;
       btnTestSupabase.classList.add('btn-admin-loading');
       btnTestSupabase.innerHTML = '<span class="btn-inline-spinner"></span> Đang kết nối...';
@@ -1343,6 +1371,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Đồng bộ toàn bộ dữ liệu lên Supabase Cloud
     const btnSyncSupabase = document.getElementById('btn-sync-supabase');
     btnSyncSupabase?.addEventListener('click', async () => {
+      // Tự động lưu trước khi đồng bộ
+      EbookDB.saveSettings(collectSettingsFromForm());
+
       const origHtml = btnSyncSupabase.innerHTML;
       btnSyncSupabase.classList.add('btn-admin-loading');
       btnSyncSupabase.innerHTML = '<span class="btn-inline-spinner"></span> Đang đồng bộ...';
@@ -1397,6 +1428,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('setting-sepay-token')?.focus();
         return;
       }
+
+      // Tự động lưu tức thì vào Database và LocalStorage
+      EbookDB.saveSettings(collectSettingsFromForm());
 
       const origHtml = btnTestSepay.innerHTML;
       btnTestSepay.classList.add('btn-admin-loading');
@@ -1474,6 +1508,9 @@ document.addEventListener('DOMContentLoaded', () => {
         showAdminToast('Vui lòng điền đủ Service ID, Template ID và Public Key của EmailJS trước khi gửi thử!', 'warning', { title: 'Thiếu cấu hình EmailJS' });
         return;
       }
+
+      // Tự động lưu cài đặt trước khi gửi thử
+      EbookDB.saveSettings(collectSettingsFromForm());
 
       const origHtml = btnTestEmail.innerHTML;
       btnTestEmail.classList.add('btn-admin-loading');

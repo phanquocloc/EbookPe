@@ -173,6 +173,96 @@
     }
 
     /**
+     * Lấy Cài đặt hệ thống từ Supabase Cloud và đồng bộ vào LocalStorage
+     */
+    static async fetchSettings() {
+      try {
+        const rows = await this.request('settings?id=eq.main_settings&select=*');
+        if (Array.isArray(rows) && rows.length > 0) {
+          const r = rows[0];
+          const raw = (r.raw_data && typeof r.raw_data === 'object') ? r.raw_data : {};
+          const current = (window.EbookDB && typeof window.EbookDB.getSettings === 'function') ? window.EbookDB.getSettings() : {};
+          
+          const mapped = {
+            ...current,
+            ...raw,
+            storeName: r.store_name ?? raw.storeName ?? current.storeName,
+            storeSlogan: r.store_slogan ?? raw.storeSlogan ?? current.storeSlogan,
+            bankCode: r.bank_code ?? raw.bankCode ?? current.bankCode,
+            bankName: r.bank_name ?? raw.bankName ?? current.bankName,
+            accountNumber: r.account_number ?? raw.accountNumber ?? current.accountNumber,
+            accountName: r.account_name ?? raw.accountName ?? current.accountName,
+            qrTemplate: r.qr_template ?? raw.qrTemplate ?? current.qrTemplate,
+            transferPrefix: r.transfer_prefix ?? raw.transferPrefix ?? current.transferPrefix,
+            hotline: r.hotline ?? raw.hotline ?? current.hotline,
+            supportEmail: r.support_email ?? raw.supportEmail ?? current.supportEmail,
+            zaloLink: r.zalo_link ?? raw.zaloLink ?? current.zaloLink,
+            guaranteeDays: r.guarantee_days ?? raw.guaranteeDays ?? current.guaranteeDays,
+            sepayApiKey: r.sepay_api_key !== undefined ? r.sepay_api_key : (raw.sepayApiKey !== undefined ? raw.sepayApiKey : current.sepayApiKey),
+            emailjsServiceId: r.emailjs_service_id !== undefined ? r.emailjs_service_id : (raw.emailjsServiceId !== undefined ? raw.emailjsServiceId : current.emailjsServiceId),
+            emailjsTemplateId: r.emailjs_template_id !== undefined ? r.emailjs_template_id : (raw.emailjsTemplateId !== undefined ? raw.emailjsTemplateId : current.emailjsTemplateId),
+            emailjsPublicKey: r.emailjs_public_key !== undefined ? r.emailjs_public_key : (raw.emailjsPublicKey !== undefined ? raw.emailjsPublicKey : current.emailjsPublicKey),
+            autoEmailEnabled: r.auto_email_enabled !== undefined ? !!r.auto_email_enabled : (raw.autoEmailEnabled !== undefined ? !!raw.autoEmailEnabled : !!current.autoEmailEnabled),
+            supabaseUrl: r.supabase_url ?? raw.supabaseUrl ?? current.supabaseUrl,
+            supabaseKey: r.supabase_key ?? raw.supabaseKey ?? current.supabaseKey,
+            supabaseEnabled: r.supabase_enabled ?? raw.supabaseEnabled ?? current.supabaseEnabled
+          };
+          localStorage.setItem('ebookpe_settings_v2', JSON.stringify(mapped));
+          if (window.EbookDB && typeof window.EbookDB.notifyChange === 'function') {
+            window.EbookDB.notifyChange('SETTINGS_UPDATED', mapped);
+          }
+          return mapped;
+        }
+      } catch (e) {
+        console.warn('[Supabase] Tải cài đặt từ Cloud:', e.message);
+      }
+      return null;
+    }
+
+    /**
+     * Lưu/Cập nhật Cài đặt hệ thống lên Supabase Cloud
+     */
+    static async saveSettings(s) {
+      if (!s || typeof s !== 'object') return;
+      try {
+        const payload = {
+          id: 'main_settings',
+          store_name: s.storeName || 'EbookPe',
+          store_slogan: s.storeSlogan || 'Nền tảng Ebook thực chiến #1 Việt Nam',
+          bank_code: s.bankCode || 'MB',
+          bank_name: s.bankName || 'MBBank (Quân Đội)',
+          account_number: s.accountNumber || '2456987654',
+          account_name: s.accountName || 'PHAN QUOC LOC',
+          qr_template: s.qrTemplate || 'compact2',
+          transfer_prefix: s.transferPrefix || 'EBPE',
+          hotline: s.hotline || '0333.399.956',
+          support_email: s.supportEmail || 'thinhloclinh@gmail.com',
+          zalo_link: s.zaloLink || 'https://zalo.me/0333399956',
+          guarantee_days: parseInt(s.guaranteeDays || 30),
+          sepay_api_key: (s.sepayApiKey || '').trim(),
+          emailjs_service_id: (s.emailjsServiceId || '').trim(),
+          emailjs_template_id: (s.emailjsTemplateId || '').trim(),
+          emailjs_public_key: (s.emailjsPublicKey || '').trim(),
+          auto_email_enabled: !!s.autoEmailEnabled,
+          supabase_url: (s.supabaseUrl || DEFAULT_CONFIG.url).trim(),
+          supabase_key: (s.supabaseKey || DEFAULT_CONFIG.key).trim(),
+          supabase_enabled: s.supabaseEnabled !== false,
+          raw_data: s,
+          updated_at: new Date().toISOString()
+        };
+
+        await this.request('settings', {
+          method: 'POST',
+          prefer: 'resolution=merge-duplicates,return=representation',
+          body: payload
+        });
+        console.log('[Supabase] Đã đồng bộ Cài Đặt lên Cloud Database thành công');
+      } catch (e) {
+        console.warn('[Supabase] Lưu cài đặt lên Cloud:', e.message);
+      }
+    }
+
+    /**
      * Lưu/Cập nhật Sách lên Supabase Cloud
      */
     static async saveBook(b) {
@@ -425,26 +515,7 @@
       // 4. Đồng bộ Cài đặt
       try {
         const settings = window.EbookDB.getSettings();
-        await this.request('settings', {
-          method: 'POST',
-          prefer: 'resolution=merge-duplicates,return=representation',
-          body: {
-            id: 'main_settings',
-            store_name: settings.storeName || 'EbookPe',
-            store_slogan: settings.storeSlogan || '',
-            bank_code: settings.bankCode || 'MB',
-            bank_name: settings.bankName || 'MBBank (Quân Đội)',
-            account_number: settings.accountNumber || '2456987654',
-            account_name: settings.accountName || 'PHAN QUOC LOC',
-            transfer_prefix: settings.transferPrefix || 'EBPE',
-            hotline: settings.hotline || '',
-            support_email: settings.supportEmail || '',
-            supabase_url: settings.supabaseUrl || DEFAULT_CONFIG.url,
-            supabase_key: settings.supabaseKey || DEFAULT_CONFIG.key,
-            supabase_enabled: true,
-            updated_at: new Date().toISOString()
-          }
-        });
+        await this.saveSettings(settings);
         results.settingsSaved = true;
       } catch (e) {
         results.errors.push(`Cài đặt: ${e.message}`);
