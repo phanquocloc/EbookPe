@@ -259,7 +259,6 @@ window.showAdminAlert = showAdminAlert;
     bindComboFormEvents();
     bindSettingsEvents();
     bindSyncEvents();
-    bindGlobalActionDelegation();
     initSecurityTab();
     bindLogoutButtons();
 
@@ -2073,34 +2072,6 @@ window.showAdminAlert = showAdminAlert;
         `).join('');
       }
     }
-  }
-
-  // Lắng nghe sự kiện click ủy quyền toàn cục
-  function bindGlobalActionDelegation() {
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest('.btn-action-icon');
-      if (!btn) return;
-      const action = btn.dataset.action;
-      const id = btn.dataset.id;
-      if (!action || !id) return;
-
-      e.preventDefault();
-      e.stopPropagation();
-
-      if (action === 'toggle-featured') {
-        if (typeof window.adminToggleFeaturedBook === 'function') window.adminToggleFeaturedBook(id);
-      } else if (action === 'edit') {
-        if (typeof window.adminEditBook === 'function') window.adminEditBook(id);
-      } else if (action === 'toggle-status') {
-        if (typeof window.adminToggleBookStatus === 'function') window.adminToggleBookStatus(id);
-      } else if (action === 'delete') {
-        if (typeof window.adminDeleteBook === 'function') window.adminDeleteBook(id);
-      } else if (action === 'edit-combo') {
-        if (typeof window.editCombo === 'function') window.editCombo(id);
-      } else if (action === 'delete-combo') {
-        if (typeof window.deleteCombo === 'function') window.deleteCombo(id);
-      }
-    });
   }
 
   // Tự động khởi chạy
