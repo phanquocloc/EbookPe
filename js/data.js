@@ -537,25 +537,17 @@ const DEFAULT_BOOKS = [
 // Danh sách Combo tiết kiệm mặc định
 const DEFAULT_COMBOS = [
   {
-    id: 'combo-khoi-nghiep-tinh-gon',
+    id: 'combo-munxgo49',
     title: 'Combo Khởi Nghiệp Tinh Gọn',
     subTitle: 'Dành cho người mới bắt đầu từ con số 0 cần lộ trình an toàn',
-    tag: 'TIẾT KIỆM 60%',
-    discountBadge: '-60%',
-    price: 179000,
-    originalPrice: 450000,
+    tag: 'TIẾT KIỆM 64%',
+    discountBadge: 'Tiết kiệm 68%',
+    price: 239000,
+    originalPrice: 747000,
     popular: false,
     status: 'active',
-    bookIds: ['ebk-munhoetc', 'ebk-mungncot', 'ebk-munfi529'],
-    bookNames: [
-      'KHỞI NGHIỆP VỚI 2 TRIỆU – Kinh Doanh Đồ Si (Secondhand) Online',
-      'KHỞI NGHIỆP VỚI 1 TRIỆU – Bán Đồ Ăn Vặt Tự Làm',
-      'BÍ QUYẾT TÌM Ý TƯỞNG KINH DOANH KHÔNG CẠNH TRANH'
-    ],
-    bonusList: [
-      'Bonus Độc Quyền: Notion Business Roadmap Template 2026',
-      'Checklist hành động 30 ngày từng bước từ con số 0'
-    ],
+    bookIds: ['ebk-munx0qds', 'ebk-munwws2l', 'ebk-munwpby5'],
+    bonusList: [],
     downloadUrl: 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing'
   },
   {
@@ -563,46 +555,27 @@ const DEFAULT_COMBOS = [
     title: 'Combo Solo Business & AI Master VIP',
     subTitle: 'Trọn bộ cẩm nang & đòn bẩy tự động hóa tối tân cho Solopreneur',
     tag: 'GIẢM 78%',
-    discountBadge: '-78%',
-    price: 249000,
-    originalPrice: 1150000,
+    discountBadge: 'Tiết kiệm 71%',
+    price: 519000,
+    originalPrice: 1812000,
     popular: true,
     status: 'active',
-    bookIds: ['ebk-mungcbwc', 'ebk-mung9v7n', 'ebk-munfnq5k', 'ebk-munflmd5', 'ebk-mung57o8'],
-    bookNames: [
-      'LÀM PODCAST BẰNG AI – Xây Dựng Kênh Audio & Kiếm Tiền',
-      'DỊCH THUẬT VỚI AI – Tự Động Hóa Dịch Thuật Đa Ngôn Ngữ',
-      'THIẾT KẾ TEMPLATE NOTION & CANVA ĐỂ BÁN TRÊN GUMROAD',
-      'EMAIL MARKETING AUTOMATION CHO SOLO BUSINESS',
-      'XÂY DỰNG GROUP CỘNG ĐỒNG 100K THÀNH VIÊN'
-    ],
-    bonusList: [
-      'Kho 500+ Prompt ChatGPT & Claude độc quyền kinh doanh',
-      'Bộ Swipe File Email Marketing 100+ mẫu chuyển đổi cao',
-      'Cập nhật trọn đời khi có phiên bản sách và template mới'
-    ],
+    bookIds: ['ebk-munxabga', 'ebk-munwyru4', 'ebk-munwws2l', 'ebk-munwpby5', 'ebk-munwmxtn', 'ebk-munwj6zk', 'ebk-munvyc80', 'ebk-mung57o8'],
+    bonusList: [],
     downloadUrl: 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing'
   },
   {
-    id: 'combo-mindset-tai-chinh',
+    id: 'combo-munxsnns',
     title: 'Combo Mindset & Đột Phá Tài Chính',
     subTitle: 'Làm chủ dòng tiền cá nhân và tư duy đầu tư thực chiến',
-    tag: 'TIẾT KIỆM 58%',
-    discountBadge: '-58%',
-    price: 159000,
-    originalPrice: 380000,
+    tag: 'TIẾT KIỆM 61%',
+    discountBadge: 'Tiết kiệm 61%',
+    price: 299000,
+    originalPrice: 776000,
     popular: false,
     status: 'active',
-    bookIds: ['ebk-munfvflz', 'ebk-munfpx3o', 'ebk-muneffsi'],
-    bookNames: [
-      'LẬP KẾ HOẠCH TÀI CHÍNH CÁ NHÂN & ĐẦU TƯ AN TOÀN',
-      'QUẢN TRỊ THỜI GIAN THEO PHƯƠNG PHÁP TIME-BLOCKING',
-      'KỸ NĂNG ĐÀM PHÁN & CHỐT DEAL CHO FREELANCER'
-    ],
-    bonusList: [
-      'Bonus Độc Quyền: File Excel Tự Động Tính Quỹ Tự Do Tài Chính',
-      'Bộ câu hỏi tự đánh giá sức khỏe tài chính cá nhân'
-    ],
+    bookIds: ['ebk-munwj6zk', 'ebk-mungcbwc', 'ebk-munfnq5k', 'ebk-munflmd5'],
+    bonusList: [],
     downloadUrl: 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing'
   }
 ];
