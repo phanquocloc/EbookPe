@@ -673,32 +673,34 @@ window.showAdminAlert = showAdminAlert;
 
     const isFeat = !!(book.isFeatured || book.featured || (book.badge && (book.badge.includes('⭐') || book.badge.includes('NỔI BẬT') || book.badge.includes('HOT'))));
 
-    document.getElementById('book-title').value = book.title || '';
-    document.getElementById('book-subtitle').value = book.subTitle || '';
-    document.getElementById('book-author').value = book.author || '';
-    document.getElementById('book-category').value = book.category || 'khoi-nghiep';
-    document.getElementById('book-price').value = book.price || '';
-    document.getElementById('book-price-old').value = book.originalPrice || '';
-    document.getElementById('book-badge').value = book.badge || '';
-    document.getElementById('book-pages').value = book.pages || 180;
-    document.getElementById('book-format').value = book.format || 'PDF';
-    document.getElementById('book-status').value = book.status || 'active';
-    document.getElementById('book-sales-count').value = book.salesCount || 120;
-    document.getElementById('book-rating').value = book.rating || 4.9;
-    document.getElementById('book-is-featured').checked = isFeat;
-    document.getElementById('book-short-desc').value = book.shortDesc || '';
-    document.getElementById('book-full-desc').value = book.fullDesc || '';
-    document.getElementById('book-toc').value = book.toc ? book.toc.join('\n') : '';
-    document.getElementById('book-sample').value = book.sampleExcerpt || '';
-    document.getElementById('book-download-url').value = book.downloadUrl || '';
+    const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = (val !== undefined && val !== null) ? val : ''; };
+    setVal('book-title', book.title);
+    setVal('book-subtitle', book.subTitle);
+    setVal('book-author', book.author);
+    setVal('book-category', book.category || 'khoi-nghiep');
+    setVal('book-price', book.price);
+    setVal('book-price-old', book.originalPrice);
+    setVal('book-badge', book.badge);
+    setVal('book-pages', book.pages || 180);
+    setVal('book-format', book.format || 'PDF');
+    setVal('book-status', book.status || 'active');
+    setVal('book-sales-count', book.salesCount || 120);
+    setVal('book-rating', book.rating || 4.9);
+    const featEl = document.getElementById('book-is-featured');
+    if (featEl) featEl.checked = isFeat;
+    setVal('book-short-desc', book.shortDesc);
+    setVal('book-full-desc', book.fullDesc);
+    setVal('book-toc', book.toc ? book.toc.join('\n') : '');
+    setVal('book-sample', book.sampleExcerpt);
+    setVal('book-download-url', book.downloadUrl);
 
     updatePresetButtons();
     updateCoverPreview();
-    bookModal?.classList.add('active');
+    if (bookModal) bookModal.classList.add('active');
   };
 
   // Toggle ghim nổi bật sách lên đầu
-  window.adminToggleFeaturedBook = async function(bookId) {
+  window.adminToggleFeaturedBook = function(bookId) {
     const book = EbookDB.getBookById(bookId);
     if (book) {
       const isCurrentlyFeatured = !!(book.isFeatured || (book.badge && (book.badge.includes('⭐') || book.badge.includes('NỔI BẬT'))));
@@ -713,31 +715,25 @@ window.showAdminAlert = showAdminAlert;
       const updated = EbookDB.saveBook(book);
       renderBooksTable();
       renderDashboard();
-      if (window.EbookSupabase && typeof window.EbookSupabase.saveBook === 'function') {
-        try {
-          await window.EbookSupabase.saveBook(updated);
-        } catch (e) {
-          console.warn('[Admin] Sync toggle featured error:', e);
-        }
-      }
       showAdminToast(nextFeatured ? `Đã ghim cuốn "${book.title}" lên đầu gian hàng!` : `Đã bỏ ghim nổi bật cuốn "${book.title}"`, 'success');
+      if (window.EbookSupabase && typeof window.EbookSupabase.saveBook === 'function') {
+        window.EbookSupabase.saveBook(updated).catch(e => console.warn('[Admin] Sync toggle featured error:', e));
+      }
     }
   };
 
   // Toggle ẩn hiện sách
-  window.adminToggleBookStatus = async function(bookId) {
+  window.adminToggleBookStatus = function(bookId) {
     const book = EbookDB.getBookById(bookId);
     if (book) {
       book.status = book.status === 'active' ? 'hidden' : 'active';
       const updated = EbookDB.saveBook(book);
       renderBooksTable();
       renderDashboard();
-      if (window.EbookSupabase && typeof window.EbookSupabase.saveBook === 'function') {
-        try {
-          await window.EbookSupabase.saveBook(updated);
-        } catch (e) {}
-      }
       showAdminToast(`Đã đổi trạng thái sang "${book.status === 'active' ? 'Đang bán' : 'Tạm ẩn'}"`, 'info');
+      if (window.EbookSupabase && typeof window.EbookSupabase.saveBook === 'function') {
+        window.EbookSupabase.saveBook(updated).catch(e => console.warn('[Admin] Sync status error:', e));
+      }
     }
   };
 
@@ -2037,9 +2033,8 @@ window.showAdminAlert = showAdminAlert;
   }
 
   // Lắng nghe sự kiện click ủy quyền toàn cục
-  let isGlobalActionBusy = false;
   function bindGlobalActionDelegation() {
-    document.addEventListener('click', async (e) => {
+    document.addEventListener('click', (e) => {
       const btn = e.target.closest('.btn-action-icon');
       if (!btn) return;
       const action = btn.dataset.action;
@@ -2049,52 +2044,18 @@ window.showAdminAlert = showAdminAlert;
       e.preventDefault();
       e.stopPropagation();
 
-      if (isGlobalActionBusy) return;
-
       if (action === 'toggle-featured') {
-        if (typeof window.adminToggleFeaturedBook === 'function') {
-          isGlobalActionBusy = true;
-          try {
-            await window.adminToggleFeaturedBook(id);
-          } finally {
-            setTimeout(() => { isGlobalActionBusy = false; }, 200);
-          }
-        }
+        if (typeof window.adminToggleFeaturedBook === 'function') window.adminToggleFeaturedBook(id);
       } else if (action === 'edit') {
-        if (typeof window.adminEditBook === 'function') {
-          window.adminEditBook(id);
-        }
+        if (typeof window.adminEditBook === 'function') window.adminEditBook(id);
       } else if (action === 'toggle-status') {
-        if (typeof window.adminToggleBookStatus === 'function') {
-          isGlobalActionBusy = true;
-          try {
-            await window.adminToggleBookStatus(id);
-          } finally {
-            setTimeout(() => { isGlobalActionBusy = false; }, 200);
-          }
-        }
+        if (typeof window.adminToggleBookStatus === 'function') window.adminToggleBookStatus(id);
       } else if (action === 'delete') {
-        if (typeof window.adminDeleteBook === 'function') {
-          isGlobalActionBusy = true;
-          try {
-            await window.adminDeleteBook(id);
-          } finally {
-            setTimeout(() => { isGlobalActionBusy = false; }, 200);
-          }
-        }
+        if (typeof window.adminDeleteBook === 'function') window.adminDeleteBook(id);
       } else if (action === 'edit-combo') {
-        if (typeof window.editCombo === 'function') {
-          window.editCombo(id);
-        }
+        if (typeof window.editCombo === 'function') window.editCombo(id);
       } else if (action === 'delete-combo') {
-        if (typeof window.deleteCombo === 'function') {
-          isGlobalActionBusy = true;
-          try {
-            await window.deleteCombo(id);
-          } finally {
-            setTimeout(() => { isGlobalActionBusy = false; }, 200);
-          }
-        }
+        if (typeof window.deleteCombo === 'function') window.deleteCombo(id);
       }
     });
   }
