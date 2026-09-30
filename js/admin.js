@@ -549,8 +549,11 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           </td>
           <td>
-            <div style="font-weight:700; color:var(--text-main); font-size:0.92rem; max-width:260px;">${book.title}</div>
-            <div style="font-size:0.76rem; color:var(--text-muted);">Tác giả: ${book.author || 'EbookPe'} · ${book.pages || 180} trang</div>
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+              <span style="font-weight:700; color:var(--text-main); font-size:0.92rem; max-width:240px;">${book.title}</span>
+              ${book.isFeatured || book.featured ? '<span style="background:#fef3c7; color:#b45309; font-weight:800; font-size:0.7rem; padding:2px 6px; border-radius:4px; border:1px solid #fde68a;">⭐ Nổi Bật</span>' : ''}
+            </div>
+            <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">Tác giả: ${book.author || 'EbookPe'} · ${book.pages || 180} trang · ⭐ ${book.rating || 4.9}</div>
           </td>
           <td>
             <span style="background:#F1F5F9; padding:4px 8px; border-radius:6px; font-size:0.75rem; font-weight:600;">
@@ -562,7 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ${book.originalPrice ? `<div style="font-size:0.74rem; color:var(--text-muted); text-decoration:line-through;">${EbookDB.formatVND(book.originalPrice)}</div>` : ''}
           </td>
           <td>
-            <strong>${book.salesCount || 0}</strong> lượt mua
+            <strong>${book.salesCount || 120}</strong> lượt mua
           </td>
           <td>
             <span class="badge-status ${book.status || 'active'}">
@@ -571,6 +574,9 @@ document.addEventListener('DOMContentLoaded', () => {
           </td>
           <td>
             <div class="table-actions">
+              <button class="btn-action-icon" title="${book.isFeatured || book.featured ? 'Bỏ ghim nổi bật' : 'Ghim nổi bật lên đầu'}" onclick="window.adminToggleFeaturedBook('${book.id}')" style="${book.isFeatured || book.featured ? 'background:#fef3c7; color:#d97706;' : ''}">
+                ⭐
+              </button>
               <button class="btn-action-icon" title="Chỉnh sửa" onclick="window.adminEditBook('${book.id}')">
                 ✏️
               </button>
@@ -613,6 +619,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('book-format').value = 'PDF';
     document.getElementById('book-pages').value = '180';
     document.getElementById('book-status').value = 'active';
+    document.getElementById('book-sales-count').value = Math.floor(85 + Math.random() * 350);
+    document.getElementById('book-rating').value = '4.9';
+    document.getElementById('book-is-featured').checked = false;
 
     updatePresetButtons();
     updateCoverPreview();
@@ -640,6 +649,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('book-pages').value = book.pages || 180;
     document.getElementById('book-format').value = book.format || 'PDF';
     document.getElementById('book-status').value = book.status || 'active';
+    document.getElementById('book-sales-count').value = book.salesCount || 120;
+    document.getElementById('book-rating').value = book.rating || 4.9;
+    document.getElementById('book-is-featured').checked = !!(book.isFeatured || book.featured);
     document.getElementById('book-short-desc').value = book.shortDesc || '';
     document.getElementById('book-full-desc').value = book.fullDesc || '';
     document.getElementById('book-toc').value = book.toc ? book.toc.join('\n') : '';
@@ -649,6 +661,18 @@ document.addEventListener('DOMContentLoaded', () => {
     updatePresetButtons();
     updateCoverPreview();
     bookModal?.classList.add('active');
+  };
+
+  // Toggle ghim nổi bật sách lên đầu
+  window.adminToggleFeaturedBook = function(bookId) {
+    const book = EbookDB.getBookById(bookId);
+    if (book) {
+      book.isFeatured = !(book.isFeatured || book.featured);
+      book.featured = book.isFeatured;
+      EbookDB.saveBook(book);
+      renderBooksTable();
+      showAdminToast(book.isFeatured ? `Đã ghim cuốn "${book.title}" lên đầu trang chủ!` : `Đã bỏ ghim nổi bật cuốn "${book.title}"`, 'success');
+    }
   };
 
   // Toggle ẩn hiện sách
@@ -768,6 +792,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const pages = parseInt(document.getElementById('book-pages').value) || 180;
     const format = document.getElementById('book-format').value;
     const status = document.getElementById('book-status').value;
+    const salesCount = parseInt(document.getElementById('book-sales-count').value) || 120;
+    const rating = parseFloat(document.getElementById('book-rating').value) || 4.9;
+    const isFeatured = document.getElementById('book-is-featured').checked;
     const shortDesc = document.getElementById('book-short-desc').value.trim();
     const fullDesc = document.getElementById('book-full-desc').value.trim();
     const tocRaw = document.getElementById('book-toc').value.trim();
@@ -799,11 +826,14 @@ document.addEventListener('DOMContentLoaded', () => {
       pages,
       format,
       status,
+      salesCount,
+      rating,
+      isFeatured,
       shortDesc,
       fullDesc,
       toc,
       sampleExcerpt,
-      downloadUrl: downloadUrl || 'https://example.com/ebook-download.pdf',
+      downloadUrl: downloadUrl || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
       coverStyle: adminState.selectedCoverStyle,
       coverImage: adminState.uploadedCoverBase64
     };

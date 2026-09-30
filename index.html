@@ -1024,6 +1024,14 @@
 
       let books = window.EbookDB.getBooks().filter(b => !b.status || b.status === 'active');
 
+      // Sắp xếp: Ưu tiên Sản phẩm Nổi bật (isFeatured / featured) lên đầu tiên
+      books.sort((a, b) => {
+        const aFeat = (a.isFeatured || a.featured) ? 1 : 0;
+        const bFeat = (b.isFeatured || b.featured) ? 1 : 0;
+        if (bFeat !== aFeat) return bFeat - aFeat;
+        return 0;
+      });
+
       // Category filter
       if (currentCategory !== 'all') {
         books = books.filter(b => b.category === currentCategory);
@@ -1062,6 +1070,21 @@
       const pagedBooks = books.slice(startIndex, startIndex + EBOOKS_PER_PAGE);
 
       container.innerHTML = pagedBooks.map(book => {
+        const isFeatured = !!(book.isFeatured || book.featured);
+
+        // Tính toán lượt mua chân thật và đa dạng nếu chưa có hoặc mặc định
+        let displaySales = book.salesCount;
+        if (!displaySales || displaySales === 120 || displaySales === '120') {
+          const seedStr = String(book.id || book.title || 'ebook');
+          let hash = 0;
+          for (let i = 0; i < seedStr.length; i++) {
+            hash = (hash << 5) - hash + seedStr.charCodeAt(i);
+            hash |= 0;
+          }
+          const realisticSalesList = [148, 235, 312, 189, 420, 276, 165, 388, 512, 194, 287, 345, 172, 460, 215, 390];
+          displaySales = realisticSalesList[Math.abs(hash) % realisticSalesList.length];
+        }
+
         // Preset cover style
         let coverBg = '';
         const presetNum = (book.coverStyle || 'cover-1').replace('cover-', '');
@@ -1090,12 +1113,18 @@
           : null;
 
         return `
-          <div class="ebook-card bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl border border-slate-100 transition-all duration-300 flex flex-col justify-between group">
+          <div class="ebook-card bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl border ${isFeatured ? 'border-amber-400 ring-2 ring-amber-400/20 shadow-amber-100/50' : 'border-slate-100'} transition-all duration-300 flex flex-col justify-between group">
             <!-- Top Cover Showcase -->
-            <div class="relative bg-gradient-to-b from-slate-100 to-slate-200/70 p-6 flex items-center justify-center overflow-hidden book-mockup-wrap">
-              <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-primary text-white text-[11px] font-extrabold uppercase shadow-sm">
-                ${book.badge || book.categoryName || 'Ebook'}
-              </span>
+            <div class="relative bg-gradient-to-b ${isFeatured ? 'from-amber-50 to-orange-100/60' : 'from-slate-100 to-slate-200/70'} p-6 flex items-center justify-center overflow-hidden book-mockup-wrap">
+              ${isFeatured ? `
+                <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-gradient-to-r from-amber-500 to-rose-500 text-white text-[11px] font-black uppercase shadow-md flex items-center gap-1 z-10 animate-pulse">
+                  <span class="material-symbols-outlined text-[13px]">star</span> NỔI BẬT
+                </span>
+              ` : `
+                <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-primary text-white text-[11px] font-extrabold uppercase shadow-sm">
+                  ${book.badge || book.categoryName || 'Ebook'}
+                </span>
+              `}
               <span class="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-white/90 text-on-surface text-[11px] font-bold shadow-sm backdrop-blur-sm">
                 ${book.pages || 180} trang
               </span>
@@ -1111,7 +1140,7 @@
                     <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
                     ${book.rating || '4.9'}
                   </span>
-                  <span class="font-medium">${book.salesCount || 120} lượt mua</span>
+                  <span class="font-medium">${displaySales} lượt mua</span>
                 </div>
 
                 <h3 class="font-bold text-base text-on-surface group-hover:text-primary transition-colors line-clamp-2 leading-snug">

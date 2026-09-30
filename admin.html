@@ -666,6 +666,28 @@
                 </div>
               </div>
 
+              <div class="form-grid-2">
+                <div class="admin-form-group">
+                  <label for="book-sales-count">Lượt Mua Hiển Thị:</label>
+                  <input type="number" id="book-sales-count" placeholder="Ví dụ: 185">
+                </div>
+                <div class="admin-form-group">
+                  <label for="book-rating">Đánh Giá Sao (Rating):</label>
+                  <input type="number" id="book-rating" step="0.1" min="1" max="5" value="4.9" placeholder="4.9">
+                </div>
+              </div>
+
+              <!-- Checkbox Sản Phẩm Nổi Bật -->
+              <div class="admin-form-group" style="background:#fef3c7; padding:12px 14px; border-radius:10px; border:1.5px solid #fde68a; margin-bottom:14px;">
+                <label style="display:flex; align-items:center; gap:8px; font-size:0.86rem; font-weight:700; color:#92400e; cursor:pointer;">
+                  <input type="checkbox" id="book-is-featured" style="width:18px; height:18px; accent-color:#d97706;">
+                  <span>⭐ Ghim Sản Phẩm Nổi Bật (Ưu tiên lên đầu gian hàng)</span>
+                </label>
+                <span style="font-size:0.75rem; color:#b45309; display:block; margin-top:4px; margin-left:26px;">
+                  Sách nổi bật sẽ luôn được tự động sắp xếp lên vị trí đầu tiên của trang chủ.
+                </span>
+              </div>
+
               <div class="admin-form-group">
                 <label for="book-status">Trạng Thái Hiển Thị:</label>
                 <select id="book-status">

@@ -131,7 +131,8 @@
             sampleExcerpt: r.sample_excerpt || '',
             downloadUrl: r.download_url || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
             coverStyle: r.cover_style || 'cover-1',
-            coverImage: r.cover_image || ''
+            coverImage: r.cover_image || '',
+            isFeatured: !!r.is_featured
           }));
           localStorage.setItem('ebookpe_books_v2', JSON.stringify(mapped));
           return mapped;
@@ -251,7 +252,7 @@
           updated_at: new Date().toISOString()
         };
 
-        await this.request('settings', {
+        await this.request('settings?on_conflict=id', {
           method: 'POST',
           prefer: 'resolution=merge-duplicates,return=representation',
           body: payload
@@ -291,9 +292,10 @@
           download_url: b.downloadUrl || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
           cover_style: b.coverStyle || 'cover-1',
           cover_image: b.coverImage || '',
+          is_featured: !!(b.isFeatured || b.featured),
           updated_at: new Date().toISOString()
         };
-        await this.request('books', {
+        await this.request('books?on_conflict=id', {
           method: 'POST',
           prefer: 'resolution=merge-duplicates,return=representation',
           body: payload
@@ -352,7 +354,7 @@
           download_url: c.downloadUrl || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
           updated_at: new Date().toISOString()
         };
-        await this.request('combos', {
+        await this.request('combos?on_conflict=id', {
           method: 'POST',
           prefer: 'resolution=merge-duplicates,return=representation',
           body: payload
@@ -432,7 +434,7 @@
           return data;
         }
 
-        const data = await this.request('orders', {
+        const data = await this.request('orders?on_conflict=id', {
           method: 'POST',
           prefer: 'resolution=merge-duplicates,return=representation',
           body: payload
