@@ -912,7 +912,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 booksInCombo = EbookDB.getBooks().slice(0, 3);
               }
 
-              const DEFAULT_DRIVE_URL = 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing';
+              const DEFAULT_DRIVE_URL = '';
 
               booksInCombo.forEach(b => {
                 let bUrl = (b.downloadUrl || '').trim();
