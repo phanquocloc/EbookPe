@@ -322,6 +322,11 @@
             <p class="text-sm text-on-surface-variant mt-1">Thử đổi từ khóa tìm kiếm hoặc chọn danh mục "Tất cả".</p>
           </div>
 
+          <!-- Dynamic Pagination (Phân trang đẹp & hiện đại) -->
+          <div id="ebook-pagination" class="mt-12 flex items-center justify-center gap-3 sm:gap-4 flex-wrap">
+            <!-- Render dynamically from JS: [Trước] [1] [2] [3] ... [Sau] -->
+          </div>
+
         </div>
       </section>
 
@@ -919,6 +924,8 @@
     let currentCategory = 'all';
     let currentSearchTerm = '';
     let currentOrder = null;
+    let currentEbookPage = 1;
+    const EBOOKS_PER_PAGE = 6;
 
     // Initialize App on DOMContentLoaded
     document.addEventListener('DOMContentLoaded', () => {
@@ -998,6 +1005,7 @@
 
     function selectCategory(catId, btnEl) {
       currentCategory = catId;
+      currentEbookPage = 1;
       document.querySelectorAll('.category-pill-btn').forEach(b => {
         b.className = 'category-pill-btn px-4 py-2 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-all bg-white text-on-surface-variant hover:text-on-surface border border-slate-200/80 shadow-sm';
       });
@@ -1007,10 +1015,11 @@
       renderEbooks();
     }
 
-    // Render Ebook Cards
+    // Render Ebook Cards kèm Phân Trang
     function renderEbooks() {
       const container = document.getElementById('ebook-cards-grid');
       const noBooksMsg = document.getElementById('no-books-msg');
+      const paginationContainer = document.getElementById('ebook-pagination');
       if (!container || !window.EbookDB) return;
 
       let books = window.EbookDB.getBooks().filter(b => !b.status || b.status === 'active');
@@ -1034,11 +1043,25 @@
       if (books.length === 0) {
         container.innerHTML = '';
         noBooksMsg?.classList.remove('hidden');
+        if (paginationContainer) paginationContainer.innerHTML = '';
         return;
       }
       noBooksMsg?.classList.add('hidden');
 
-      container.innerHTML = books.map(book => {
+      // Tính toán phân trang
+      const totalBooks = books.length;
+      const totalPages = Math.ceil(totalBooks / EBOOKS_PER_PAGE) || 1;
+      if (currentEbookPage > totalPages) {
+        currentEbookPage = totalPages;
+      }
+      if (currentEbookPage < 1) {
+        currentEbookPage = 1;
+      }
+
+      const startIndex = (currentEbookPage - 1) * EBOOKS_PER_PAGE;
+      const pagedBooks = books.slice(startIndex, startIndex + EBOOKS_PER_PAGE);
+
+      container.innerHTML = pagedBooks.map(book => {
         // Preset cover style
         let coverBg = '';
         const presetNum = (book.coverStyle || 'cover-1').replace('cover-', '');
@@ -1122,6 +1145,99 @@
           </div>
         `;
       }).join('');
+
+      // Render bộ điều khiển phân trang
+      renderPagination(totalPages, totalBooks);
+    }
+
+    // Render Bộ Nút Phân Trang (Chuẩn thiết kế tím hiện đại)
+    function renderPagination(totalPages, totalBooks) {
+      const container = document.getElementById('ebook-pagination');
+      if (!container) return;
+
+      if (totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+      }
+
+      let html = '';
+
+      // Nút "Trước" (Previous)
+      if (currentEbookPage > 1) {
+        html += `
+          <button onclick="goToEbookPage(${currentEbookPage - 1})" class="px-3.5 py-2 h-10 rounded-2xl text-xs sm:text-sm font-bold text-slate-700 hover:text-purple-600 hover:bg-purple-50 transition-all flex items-center gap-1">
+            <span>Trước</span>
+          </button>
+        `;
+      }
+
+      // Danh sách số trang thông minh
+      const pages = [];
+      if (totalPages <= 7) {
+        for (let i = 1; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        if (currentEbookPage > 3) pages.push('...');
+        
+        let start = Math.max(2, currentEbookPage - 1);
+        let end = Math.min(totalPages - 1, currentEbookPage + 1);
+        
+        if (currentEbookPage <= 3) {
+          start = 2;
+          end = 4;
+        } else if (currentEbookPage >= totalPages - 2) {
+          start = totalPages - 3;
+          end = totalPages - 1;
+        }
+        
+        for (let i = start; i <= end; i++) pages.push(i);
+        
+        if (currentEbookPage < totalPages - 2) pages.push('...');
+        pages.push(totalPages);
+      }
+
+      // Render các nút số trang
+      pages.forEach(p => {
+        if (p === '...') {
+          html += `<span class="w-10 h-10 flex items-center justify-center text-slate-400 font-bold">...</span>`;
+        } else {
+          const isActive = p === currentEbookPage;
+          if (isActive) {
+            html += `
+              <button class="w-10 h-10 rounded-2xl bg-purple-600 text-white font-black text-sm shadow-md shadow-purple-500/30 flex items-center justify-center transition-all scale-105 pointer-events-none">
+                ${p}
+              </button>
+            `;
+          } else {
+            html += `
+              <button onclick="goToEbookPage(${p})" class="w-10 h-10 rounded-2xl text-slate-700 hover:text-purple-600 hover:bg-purple-50 font-bold text-sm transition-all flex items-center justify-center">
+                ${p}
+              </button>
+            `;
+          }
+        }
+      });
+
+      // Nút "Sau" (Next)
+      if (currentEbookPage < totalPages) {
+        html += `
+          <button onclick="goToEbookPage(${currentEbookPage + 1})" class="px-3.5 py-2 h-10 rounded-2xl text-xs sm:text-sm font-bold text-slate-700 hover:text-purple-600 hover:bg-purple-50 transition-all flex items-center gap-1">
+            <span>Sau</span>
+          </button>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    // Chuyển trang và cuộn mượt lên đầu danh sách sách
+    function goToEbookPage(page) {
+      currentEbookPage = page;
+      renderEbooks();
+      const section = document.getElementById('kho-ebook');
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
 
     // Render Combos
@@ -1236,6 +1352,7 @@
         if (!input) return;
         input.addEventListener('input', (e) => {
           currentSearchTerm = e.target.value;
+          currentEbookPage = 1;
           renderEbooks();
         });
       });
