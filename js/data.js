@@ -608,7 +608,14 @@ class EbookDB {
         return DEFAULT_BOOKS;
       }
       let parsed = JSON.parse(data);
-      if (Array.isArray(parsed)) {
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        // Tự động nâng cấp dữ liệu nếu thiết bị đang lưu bản cũ (ít hơn 12 cuốn hoặc chứa sách mẫu cũ)
+        const hasOldSeed = parsed.some(b => b.id === 'ebk-khoi-nghiep-0' || b.id === 'ebk-ai-automation');
+        if (hasOldSeed || parsed.length < DEFAULT_BOOKS.length) {
+          localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(DEFAULT_BOOKS));
+          return DEFAULT_BOOKS;
+        }
+
         let changed = false;
         parsed = parsed.map(b => {
           if (!b.downloadUrl || b.downloadUrl === '#' || b.downloadUrl.includes('example')) {
@@ -622,6 +629,7 @@ class EbookDB {
         }
         return parsed;
       }
+      localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(DEFAULT_BOOKS));
       return DEFAULT_BOOKS;
     } catch (e) {
       return DEFAULT_BOOKS;
