@@ -363,6 +363,11 @@ document.addEventListener('DOMContentLoaded', () => {
           renderOrdersTable();
         } else if (event.data.type === 'COMBOS_UPDATED') {
           renderCombosTable();
+        } else if (event.data.type === 'BOOKS_UPDATED') {
+          renderDashboard();
+          renderBooksTable();
+        } else if (event.data.type === 'SETTINGS_UPDATED') {
+          loadSettingsForm();
         }
       };
     }
@@ -738,6 +743,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function closeBookModal() {
     bookModal?.classList.remove('active');
+    adminState.editingBookId = null;
   }
 
   // Live Cover Preview & Events
@@ -810,24 +816,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function handleSaveBook() {
-    const title = document.getElementById('book-title').value.trim();
-    const subTitle = document.getElementById('book-subtitle').value.trim();
-    const author = document.getElementById('book-author').value.trim();
-    const category = document.getElementById('book-category').value;
-    const price = parseInt(document.getElementById('book-price').value) || 0;
-    const originalPrice = parseInt(document.getElementById('book-price-old').value) || 0;
-    let badge = document.getElementById('book-badge').value.trim();
-    const pages = parseInt(document.getElementById('book-pages').value) || 180;
-    const format = document.getElementById('book-format').value;
-    const status = document.getElementById('book-status').value;
-    const salesCount = parseInt(document.getElementById('book-sales-count').value) || 120;
-    const rating = parseFloat(document.getElementById('book-rating').value) || 4.9;
-    const isFeatured = document.getElementById('book-is-featured').checked;
-    const shortDesc = document.getElementById('book-short-desc').value.trim();
-    const fullDesc = document.getElementById('book-full-desc').value.trim();
-    const tocRaw = document.getElementById('book-toc').value.trim();
-    const sampleExcerpt = document.getElementById('book-sample').value.trim();
-    const downloadUrl = document.getElementById('book-download-url').value.trim();
+    const title = (document.getElementById('book-title')?.value || '').trim();
+    const subTitle = (document.getElementById('book-subtitle')?.value || '').trim();
+    const author = (document.getElementById('book-author')?.value || '').trim();
+    const category = document.getElementById('book-category')?.value || 'khoi-nghiep';
+    const price = parseInt(document.getElementById('book-price')?.value) || 0;
+    const originalPrice = parseInt(document.getElementById('book-price-old')?.value) || 0;
+    let badge = (document.getElementById('book-badge')?.value || '').trim();
+    const pages = parseInt(document.getElementById('book-pages')?.value) || 180;
+    const format = document.getElementById('book-format')?.value || 'PDF';
+    const status = document.getElementById('book-status')?.value || 'active';
+    const salesCount = parseInt(document.getElementById('book-sales-count')?.value) || 120;
+    const rating = parseFloat(document.getElementById('book-rating')?.value) || 4.9;
+    const isFeatured = !!document.getElementById('book-is-featured')?.checked;
+    const shortDesc = (document.getElementById('book-short-desc')?.value || '').trim();
+    const fullDesc = (document.getElementById('book-full-desc')?.value || '').trim();
+    const tocRaw = (document.getElementById('book-toc')?.value || '').trim();
+    const sampleExcerpt = (document.getElementById('book-sample')?.value || '').trim();
+    const downloadUrl = (document.getElementById('book-download-url')?.value || '').trim();
 
     if (!title || price <= 0) {
       showAdminToast('Vui lòng nhập Tên sách và Giá bán hợp lệ!', 'warning', { title: 'Thiếu thông tin' });
