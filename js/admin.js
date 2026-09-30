@@ -771,6 +771,13 @@ window.showAdminAlert = showAdminAlert;
       e.preventDefault();
       handleSaveBook();
     });
+
+    document.getElementById('btn-save-book')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      handleSaveBook();
+    });
+
+    window.adminSubmitBookForm = handleSaveBook;
   }
 
   function updateCoverPreview() {
@@ -798,12 +805,18 @@ window.showAdminAlert = showAdminAlert;
   }
 
   async function handleSaveBook() {
-    const title = (document.getElementById('book-title')?.value || '').trim();
+    const titleEl = document.getElementById('book-title');
+    const title = (titleEl?.value || '').trim();
     const subTitle = (document.getElementById('book-subtitle')?.value || '').trim();
-    const author = (document.getElementById('book-author')?.value || '').trim();
+    const author = (document.getElementById('book-author')?.value || 'EbookPe').trim();
     const category = document.getElementById('book-category')?.value || 'khoi-nghiep';
-    const price = parseInt(document.getElementById('book-price')?.value) || 0;
-    const originalPrice = parseInt(document.getElementById('book-price-old')?.value) || 0;
+    
+    const rawPrice = document.getElementById('book-price')?.value;
+    const price = parseInt(String(rawPrice || '').replace(/\D/g, '')) || 0;
+    
+    const rawOldPrice = document.getElementById('book-price-old')?.value;
+    const originalPrice = parseInt(String(rawOldPrice || '').replace(/\D/g, '')) || 0;
+
     const badge = (document.getElementById('book-badge')?.value || '').trim();
     const pages = parseInt(document.getElementById('book-pages')?.value) || 180;
     const format = document.getElementById('book-format')?.value || 'PDF';
@@ -815,8 +828,15 @@ window.showAdminAlert = showAdminAlert;
     const sampleExcerpt = (document.getElementById('book-sample')?.value || '').trim();
     const downloadUrl = (document.getElementById('book-download-url')?.value || '').trim();
 
-    if (!title || price <= 0) {
-      showAdminToast('Vui lòng nhập Tên sách và Giá bán hợp lệ!', 'warning', { title: 'Thiếu thông tin' });
+    if (!title) {
+      showAdminToast('Vui lòng nhập Tên cuốn Ebook!', 'warning', { title: 'Thiếu tên sách' });
+      titleEl?.focus();
+      return;
+    }
+
+    if (price <= 0) {
+      showAdminToast('Vui lòng nhập Giá bán hợp lệ (lớn hơn 0đ)!', 'warning', { title: 'Thiếu giá bán' });
+      document.getElementById('book-price')?.focus();
       return;
     }
 
@@ -845,8 +865,8 @@ window.showAdminAlert = showAdminAlert;
       status: 'active',
       salesCount,
       rating,
-      shortDesc,
-      fullDesc,
+      shortDesc: shortDesc || title,
+      fullDesc: fullDesc || shortDesc || title,
       toc,
       sampleExcerpt,
       downloadUrl: downloadUrl || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
