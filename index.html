@@ -1710,13 +1710,27 @@
         qrImg.classList.remove('hidden');
       };
 
+      const name = document.getElementById('checkout-cust-name')?.value.trim() || 'Khách Hàng (Đang chờ)';
+      const email = document.getElementById('checkout-cust-email')?.value.trim() || '';
+      const phone = document.getElementById('checkout-cust-phone')?.value.trim() || '';
+
       currentOrder = {
         orderId: orderCode,
+        customerName: name,
+        customerEmail: email,
+        customerPhone: phone,
         totalAmount: price,
-        items: items
+        items: items,
+        status: 'pending',
+        createdAt: new Date().toISOString()
       };
 
-      // Start automatic payment detection (SePay / MBBank)
+      // Tạo đơn hàng pending trước để backend có thể check được
+      if (window.EbookDB && typeof window.EbookDB.createOrder === 'function') {
+        window.EbookDB.createOrder(currentOrder);
+      }
+
+      // Start automatic payment detection (SePay / MBBank) qua Vercel Backend
       startSePayPolling(orderCode, price);
 
       document.getElementById('checkout-modal').classList.remove('hidden');
@@ -1881,7 +1895,25 @@
       };
 
       if (window.EbookDB) {
-        window.EbookDB.createOrder(completedOrder);
+        // Cập nhật thông tin khách hàng vào DB nếu họ có gõ thêm
+        const orders = window.EbookDB.getOrders();
+        const existingOrderIndex = orders.findIndex(o => o.orderId === currentOrder.orderId);
+        
+        if (existingOrderIndex >= 0) {
+            orders[existingOrderIndex].customerName = custName;
+            orders[existingOrderIndex].customerEmail = custEmail;
+            orders[existingOrderIndex].customerPhone = custPhone;
+            orders[existingOrderIndex].status = 'completed';
+            
+            // Lưu lại LocalStorage
+            localStorage.setItem('ebookpe_orders', JSON.stringify(orders));
+            window.EbookDB.notifyChange('ORDERS_UPDATED', { orders });
+
+            // Đồng bộ lên Supabase
+            if (typeof window.EbookSupabase !== 'undefined' && typeof window.EbookSupabase.saveOrder === 'function') {
+                window.EbookSupabase.saveOrder(orders[existingOrderIndex]);
+            }
+        }
       }
 
       closeCheckoutModal();

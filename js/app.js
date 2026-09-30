@@ -1140,8 +1140,7 @@ document.addEventListener('DOMContentLoaded', () => {
               booksInCombo = combo.bookIds.map(bId => EbookDB.getBookById(bId)).filter(Boolean);
             }
             
-            let comboDl = (combo.downloadUrl || '').trim();
-            if (comboDl.startsWith('drive.google.com')) comboDl = 'https://' + comboDl;
+            
 
             return `
               <div style="padding:14px; background:#f0fdf4; border-radius:10px; border:1.5px solid #86efac; margin-bottom:14px;">
@@ -1154,8 +1153,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div style="display:flex; flex-direction:column; gap:6px;">
                   ${booksInCombo.map(b => {
-                    let bDl = (b.downloadUrl || '').trim();
-                    if (bDl.startsWith('drive.google.com')) bDl = 'https://' + bDl;
+                    const secureLinks = window.EbookDB.getSecureLinks() || {}; let bDl = secureLinks[b.id] ? secureLinks[b.id].url : '';
                     return `
                       <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:#fff; border-radius:6px; border:1px solid #e2e8f0; flex-wrap:wrap; gap:6px;">
                         <div style="flex:1; min-width:200px;">
@@ -1181,8 +1179,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Single book
         const book = EbookDB.getBookById(item.id);
         const title = item.title || book?.title || 'Ebook';
-        let downloadUrl = (book?.downloadUrl || item.downloadUrl || '').trim();
-        if (downloadUrl.startsWith('drive.google.com')) downloadUrl = 'https://' + downloadUrl;
+        const secureLinks = window.EbookDB.getSecureLinks() || {}; let downloadUrl = secureLinks[item.id] ? secureLinks[item.id].url : '';
 
         return `
           <div style="display:flex; align-items:center; justify-content:space-between; padding:14px; background:#fff; border-radius:10px; border:1.5px solid var(--border); margin-bottom:10px; flex-wrap:wrap; gap:10px;">

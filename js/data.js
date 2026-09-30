@@ -885,6 +885,10 @@ class EbookDB {
   }
 
   // --- ĐƠN HÀNG ---
+  static secureLinks = null;
+  static saveSecureLinks(links) { this.secureLinks = links; }
+  static getSecureLinks() { return this.secureLinks; }
+
   static getOrders() {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.ORDERS);
