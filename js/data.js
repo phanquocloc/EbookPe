@@ -707,7 +707,20 @@ class EbookDB {
       updated = newBook;
     }
     window._cloudBooksCache = books;
-    localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(books));
+    try {
+      localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(books));
+    } catch (storageErr) {
+      console.warn('LocalStorage error while saving book:', storageErr);
+      try {
+        // If storage is full due to heavy coverImage base64, save without image payload
+        if (updated.coverImage && updated.coverImage.length > 50000) {
+          const fallbackBooks = books.map(b => b.id === updated.id ? { ...b, coverImage: '' } : b);
+          localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(fallbackBooks));
+        }
+      } catch (err2) {
+        console.error('Critical localStorage error:', err2);
+      }
+    }
     this.notifyChange('BOOKS_UPDATED', { books });
 
     // Tự động đẩy lên Supabase Cloud
@@ -722,7 +735,11 @@ class EbookDB {
     let books = this.getBooks();
     books = books.filter(b => b.id !== id);
     window._cloudBooksCache = books;
-    localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(books));
+    try {
+      localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(books));
+    } catch (e) {
+      console.warn('LocalStorage deleteBook error:', e);
+    }
     this.notifyChange('BOOKS_UPDATED', { books });
 
     // Tự động xóa trên Supabase Cloud
@@ -735,7 +752,11 @@ class EbookDB {
 
   static clearAllBooks() {
     window._cloudBooksCache = [];
-    localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify([]));
+    try {
+      localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify([]));
+    } catch (e) {
+      console.warn('LocalStorage clearAllBooks error:', e);
+    }
     this.notifyChange('BOOKS_UPDATED', { books: [] });
 
     // Tự động xóa sạch trên Supabase Cloud
@@ -800,7 +821,11 @@ class EbookDB {
       updated = newCombo;
     }
     window._cloudCombosCache = combos;
-    localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(combos));
+    try {
+      localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(combos));
+    } catch (err) {
+      console.warn('LocalStorage saveCombo error:', err);
+    }
     this.notifyChange('COMBOS_UPDATED', { combos });
 
     // Tự động đẩy lên Supabase Cloud

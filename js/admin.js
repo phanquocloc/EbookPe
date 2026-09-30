@@ -768,13 +768,13 @@ window.showAdminAlert = showAdminAlert;
 
     // Submit form thêm / sửa sách
     bookForm?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      handleSaveBook();
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      handleSaveBook(e);
     });
 
     document.getElementById('btn-save-book')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      handleSaveBook();
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      handleSaveBook(e);
     });
 
     window.adminSubmitBookForm = handleSaveBook;
@@ -804,90 +804,100 @@ window.showAdminAlert = showAdminAlert;
     }
   }
 
-  async function handleSaveBook() {
-    const titleEl = document.getElementById('book-title');
-    const title = (titleEl?.value || '').trim();
-    const subTitle = (document.getElementById('book-subtitle')?.value || '').trim();
-    const author = (document.getElementById('book-author')?.value || 'EbookPe').trim();
-    const category = document.getElementById('book-category')?.value || 'khoi-nghiep';
-    
-    const rawPrice = document.getElementById('book-price')?.value;
-    const price = parseInt(String(rawPrice || '').replace(/\D/g, '')) || 0;
-    
-    const rawOldPrice = document.getElementById('book-price-old')?.value;
-    const originalPrice = parseInt(String(rawOldPrice || '').replace(/\D/g, '')) || 0;
-
-    const badge = (document.getElementById('book-badge')?.value || '').trim();
-    const pages = parseInt(document.getElementById('book-pages')?.value) || 180;
-    const format = document.getElementById('book-format')?.value || 'PDF';
-    const salesCount = parseInt(document.getElementById('book-sales-count')?.value) || 120;
-    const rating = parseFloat(document.getElementById('book-rating')?.value) || 4.9;
-    const shortDesc = (document.getElementById('book-short-desc')?.value || '').trim();
-    const fullDesc = (document.getElementById('book-full-desc')?.value || '').trim();
-    const tocRaw = (document.getElementById('book-toc')?.value || '').trim();
-    const sampleExcerpt = (document.getElementById('book-sample')?.value || '').trim();
-    const downloadUrl = (document.getElementById('book-download-url')?.value || '').trim();
-
-    if (!title) {
-      showAdminToast('Vui lòng nhập Tên cuốn Ebook!', 'warning', { title: 'Thiếu tên sách' });
-      titleEl?.focus();
-      return;
+  async function handleSaveBook(e) {
+    if (e && typeof e.preventDefault === 'function') {
+      e.preventDefault();
+      e.stopPropagation();
     }
 
-    if (price <= 0) {
-      showAdminToast('Vui lòng nhập Giá bán hợp lệ (lớn hơn 0đ)!', 'warning', { title: 'Thiếu giá bán' });
-      document.getElementById('book-price')?.focus();
-      return;
-    }
+    try {
+      const titleEl = document.getElementById('book-title');
+      const title = (titleEl?.value || '').trim();
+      const subTitle = (document.getElementById('book-subtitle')?.value || '').trim();
+      const author = (document.getElementById('book-author')?.value || 'EbookPe').trim();
+      const category = document.getElementById('book-category')?.value || 'khoi-nghiep';
+      
+      const rawPrice = document.getElementById('book-price')?.value;
+      const price = parseInt(String(rawPrice || '').replace(/\D/g, ''), 10) || 0;
+      
+      const rawOldPrice = document.getElementById('book-price-old')?.value;
+      const originalPrice = parseInt(String(rawOldPrice || '').replace(/\D/g, ''), 10) || 0;
 
-    // Tìm tên danh mục
-    const catObj = DEFAULT_CATEGORIES.find(c => c.id === category);
-    const categoryName = catObj ? catObj.name.replace(/^[^\s]+\s/, '') : 'Khác';
+      const badge = (document.getElementById('book-badge')?.value || '').trim();
+      const pages = parseInt(document.getElementById('book-pages')?.value, 10) || 180;
+      const format = document.getElementById('book-format')?.value || 'PDF';
+      const salesCount = parseInt(document.getElementById('book-sales-count')?.value, 10) || 120;
+      const rating = parseFloat(document.getElementById('book-rating')?.value) || 4.9;
+      const shortDesc = (document.getElementById('book-short-desc')?.value || '').trim();
+      const fullDesc = (document.getElementById('book-full-desc')?.value || '').trim();
+      const tocRaw = (document.getElementById('book-toc')?.value || '').trim();
+      const sampleExcerpt = (document.getElementById('book-sample')?.value || '').trim();
+      const downloadUrl = (document.getElementById('book-download-url')?.value || '').trim();
 
-    // Parse mục lục từ textarea (mỗi dòng 1 chương)
-    const toc = tocRaw ? tocRaw.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [];
-
-    const isEdit = !!adminState.editingBookId;
-    const existingBook = isEdit ? EbookDB.getBookById(adminState.editingBookId) : null;
-
-    const bookData = {
-      id: adminState.editingBookId || ('ebk-' + Date.now().toString(36)),
-      title,
-      subTitle,
-      author,
-      category,
-      categoryName,
-      price,
-      originalPrice,
-      badge,
-      pages,
-      format,
-      status: 'active',
-      salesCount,
-      rating,
-      shortDesc: shortDesc || title,
-      fullDesc: fullDesc || shortDesc || title,
-      toc,
-      sampleExcerpt,
-      downloadUrl: downloadUrl || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
-      coverStyle: adminState.selectedCoverStyle,
-      coverImage: adminState.uploadedCoverBase64 || (existingBook ? existingBook.coverImage : '')
-    };
-
-    const savedBook = EbookDB.saveBook(bookData);
-    closeBookModal();
-    renderBooksTable();
-    renderDashboard();
-
-    if (window.EbookSupabase && typeof window.EbookSupabase.saveBook === 'function') {
-      try {
-        await window.EbookSupabase.saveBook(savedBook);
-        showAdminToast(isEdit ? 'Cập nhật Ebook & Đồng bộ Cloud thành công!' : 'Đã thêm Ebook mới và đồng bộ lên Cloud Database!', 'success');
-      } catch (err) {
-        showAdminToast(`Đã lưu cục bộ: ${err.message}`, 'warning');
+      if (!title) {
+        showAdminToast('Vui lòng nhập Tên cuốn Ebook!', 'warning', { title: 'Thiếu tên sách' });
+        titleEl?.focus();
+        return;
       }
-    } else {
-      showAdminToast(isEdit ? 'Cập nhật Ebook thành công!' : 'Đã thêm Ebook mới lên gian hàng!', 'success');
+
+      if (price <= 0) {
+        showAdminToast('Vui lòng nhập Giá bán hợp lệ (lớn hơn 0đ)!', 'warning', { title: 'Thiếu giá bán' });
+        document.getElementById('book-price')?.focus();
+        return;
+      }
+
+      // Tìm tên danh mục
+      const catObj = DEFAULT_CATEGORIES.find(c => c.id === category);
+      const categoryName = catObj ? catObj.name.replace(/^[^\s]+\s/, '') : 'Khác';
+
+      // Parse mục lục từ textarea (mỗi dòng 1 chương)
+      const toc = tocRaw ? tocRaw.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [];
+
+      const isEdit = !!adminState.editingBookId;
+      const existingBook = isEdit ? EbookDB.getBookById(adminState.editingBookId) : null;
+
+      const bookData = {
+        id: adminState.editingBookId || ('ebk-' + Date.now().toString(36)),
+        title,
+        subTitle,
+        author,
+        category,
+        categoryName,
+        price,
+        originalPrice,
+        badge,
+        pages,
+        format,
+        status: 'active',
+        salesCount,
+        rating,
+        shortDesc: shortDesc || title,
+        fullDesc: fullDesc || shortDesc || title,
+        toc,
+        sampleExcerpt,
+        downloadUrl: downloadUrl || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
+        coverStyle: adminState.selectedCoverStyle || 'cover-1',
+        coverImage: adminState.uploadedCoverBase64 || (existingBook ? existingBook.coverImage : '')
+      };
+
+      const savedBook = EbookDB.saveBook(bookData);
+      closeBookModal();
+      renderBooksTable();
+      renderDashboard();
+
+      if (window.EbookSupabase && typeof window.EbookSupabase.saveBook === 'function') {
+        try {
+          await window.EbookSupabase.saveBook(savedBook);
+          showAdminToast(isEdit ? 'Cập nhật Ebook & Đồng bộ Cloud thành công!' : 'Đã thêm Ebook mới và đồng bộ lên Cloud Database!', 'success');
+        } catch (err) {
+          showAdminToast(`Đã lưu: ${err.message}`, 'warning');
+        }
+      } else {
+        showAdminToast(isEdit ? 'Cập nhật Ebook thành công!' : 'Đã thêm Ebook mới lên gian hàng!', 'success');
+      }
+    } catch (err) {
+      console.error('Lỗi khi lưu Ebook:', err);
+      showAdminToast('Lỗi khi lưu Ebook: ' + (err.message || err), 'error', { title: 'Lỗi Lưu Sách' });
     }
   }
 
@@ -1192,57 +1202,69 @@ window.showAdminAlert = showAdminAlert;
       autoCalculateDiscountBadge();
     });
 
+    function handleSaveCombo(e) {
+      if (e && typeof e.preventDefault === 'function') {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      try {
+        const title = (document.getElementById('combo-title')?.value || '').trim();
+        const subTitle = (document.getElementById('combo-subtitle')?.value || '').trim();
+        const tag = (document.getElementById('combo-tag')?.value || '').trim();
+        const desc = (document.getElementById('combo-desc')?.value || '').trim();
+        const price = parseInt(document.getElementById('combo-price')?.value, 10) || 0;
+        const originalPrice = parseInt(document.getElementById('combo-original-price')?.value, 10) || 0;
+        const discountBadge = (document.getElementById('combo-discount-badge')?.value || '').trim();
+        const downloadUrl = (document.getElementById('combo-download-url')?.value || '').trim();
+        const status = document.getElementById('combo-status')?.value || 'active';
+        const popular = !!document.getElementById('combo-popular')?.checked;
+
+        // Lấy danh sách ID các cuốn sách được tích chọn
+        const checkedBoxes = Array.from(comboBooksCheckboxList?.querySelectorAll('.combo-book-checkbox:checked') || []);
+        const bookIds = checkedBoxes.map(cb => cb.value);
+        const bookNames = checkedBoxes.map(cb => cb.dataset.title);
+
+        if (!title || price <= 0) {
+          showAdminToast('Vui lòng nhập Tên combo và Giá bán hợp lệ!', 'warning', { title: 'Thiếu thông tin' });
+          return;
+        }
+
+        if (bookIds.length === 0) {
+          showAdminToast('Vui lòng tích chọn ít nhất 1 cuốn Ebook để tạo Gói Combo!', 'warning', { title: 'Chưa chọn sách' });
+          return;
+        }
+
+        const comboData = {
+          id: adminState.editingComboId || undefined,
+          title,
+          subTitle,
+          tag,
+          desc,
+          price,
+          originalPrice,
+          discountBadge: discountBadge || (originalPrice > price ? `Tiết kiệm ${Math.round((1 - price / originalPrice) * 100)}%` : 'Ưu đãi'),
+          downloadUrl,
+          status,
+          popular,
+          bookIds,
+          bookNames
+        };
+
+        EbookDB.saveCombo(comboData);
+        closeComboModal();
+        renderCombosTable();
+        showAdminToast(adminState.editingComboId ? 'Cập nhật Gói Combo thành công!' : 'Đã tạo Gói Combo mới thành công!', 'success');
+      } catch (err) {
+        console.error('Lỗi khi lưu combo:', err);
+        showAdminToast('Lỗi khi lưu Combo: ' + (err.message || err), 'error', { title: 'Lỗi Lưu Combo' });
+      }
+    }
+
     // Submit form Combo
-    comboForm?.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      const title = document.getElementById('combo-title').value.trim();
-      const subTitle = document.getElementById('combo-subtitle').value.trim();
-      const tag = document.getElementById('combo-tag').value.trim();
-      const desc = document.getElementById('combo-desc').value.trim();
-      const price = parseInt(document.getElementById('combo-price').value) || 0;
-      const originalPrice = parseInt(document.getElementById('combo-original-price').value) || 0;
-      const discountBadge = document.getElementById('combo-discount-badge').value.trim();
-      const downloadUrl = document.getElementById('combo-download-url').value.trim();
-      const status = document.getElementById('combo-status').value;
-      const popular = document.getElementById('combo-popular').checked;
-
-      // Lấy danh sách ID các cuốn sách được tích chọn
-      const checkedBoxes = Array.from(comboBooksCheckboxList?.querySelectorAll('.combo-book-checkbox:checked') || []);
-      const bookIds = checkedBoxes.map(cb => cb.value);
-      const bookNames = checkedBoxes.map(cb => cb.dataset.title);
-
-      if (!title || price <= 0) {
-        showAdminToast('Vui lòng nhập Tên combo và Giá bán hợp lệ!', 'warning', { title: 'Thiếu thông tin' });
-        return;
-      }
-
-      if (bookIds.length === 0) {
-        showAdminToast('Vui lòng tích chọn ít nhất 1 cuốn Ebook để tạo Gói Combo!', 'warning', { title: 'Chưa chọn sách' });
-        return;
-      }
-
-      const comboData = {
-        id: adminState.editingComboId || undefined,
-        title,
-        subTitle,
-        tag,
-        desc,
-        price,
-        originalPrice,
-        discountBadge: discountBadge || (originalPrice > price ? `Tiết kiệm ${Math.round((1 - price / originalPrice) * 100)}%` : 'Ưu đãi'),
-        downloadUrl,
-        status,
-        popular,
-        bookIds,
-        bookNames
-      };
-
-      EbookDB.saveCombo(comboData);
-      closeComboModal();
-      renderCombosTable();
-      showAdminToast(adminState.editingComboId ? 'Cập nhật Gói Combo thành công!' : 'Đã tạo Gói Combo mới thành công!', 'success');
-    });
+    comboForm?.addEventListener('submit', handleSaveCombo);
+    document.getElementById('btn-save-combo')?.addEventListener('click', handleSaveCombo);
+    window.adminSubmitComboForm = handleSaveCombo;
 
     // Xóa tất cả combo
     document.getElementById('btn-clear-all-combos')?.addEventListener('click', async () => {

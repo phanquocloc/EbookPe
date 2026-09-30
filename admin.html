@@ -598,7 +598,7 @@
       </div>
 
       <div class="admin-modal-body">
-        <form id="admin-book-form" novalidate>
+        <form id="admin-book-form" novalidate onsubmit="event.preventDefault(); window.adminSubmitBookForm(event); return false;">
           <div class="form-grid-2">
             <!-- Cột trái: Thông tin cơ bản -->
             <div>
@@ -746,7 +746,7 @@
             <button type="button" class="btn-back-store" style="background:#E5E7EB; color:#374151;" data-close-admin-modal>
               Hủy Bỏ
             </button>
-            <button type="submit" id="btn-save-book" class="btn-admin-primary">
+            <button type="button" id="btn-save-book" class="btn-admin-primary" onclick="window.adminSubmitBookForm(event)">
               💾 Lưu Ebook Ngay
             </button>
           </div>
@@ -766,13 +766,13 @@
       </div>
 
       <div class="admin-modal-body">
-        <form id="admin-combo-form" novalidate>
+        <form id="admin-combo-form" novalidate onsubmit="event.preventDefault(); window.adminSubmitComboForm(event); return false;">
           <input type="hidden" id="combo-id">
 
           <div class="form-grid-2">
             <div class="admin-form-group">
               <label for="combo-title">Tên Gói Combo: *</label>
-              <input type="text" id="combo-title" placeholder="Ví dụ: Combo Khởi Nghiệp Bứt Phá" required>
+              <input type="text" id="combo-title" placeholder="Ví dụ: Combo Khởi Nghiệp Bứt Phá">
             </div>
 
             <div class="admin-form-group">
@@ -814,7 +814,7 @@
           <div class="form-grid-3" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:16px; margin-top:16px;">
             <div class="admin-form-group">
               <label for="combo-price">Giá Bán Combo (VNĐ): *</label>
-              <input type="number" id="combo-price" placeholder="299000" required>
+              <input type="number" id="combo-price" placeholder="299000">
             </div>
 
             <div class="admin-form-group">
@@ -854,7 +854,7 @@
             <button type="button" class="btn-back-store" style="background:#E5E7EB; color:#374151;" data-close-admin-combo-modal>
               Hủy Bỏ
             </button>
-            <button type="submit" class="btn-admin-primary">
+            <button type="button" id="btn-save-combo" class="btn-admin-primary" onclick="window.adminSubmitComboForm(event)">
               💾 Lưu Gói Combo
             </button>
           </div>
@@ -869,8 +869,8 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase.js?v=20260930_v11"></script>
-  <script src="js/data.js?v=20260930_v11"></script>
-  <script src="js/admin.js?v=20260930_v11"></script>
+  <script src="js/supabase.js?v=20260930_v12"></script>
+  <script src="js/data.js?v=20260930_v12"></script>
+  <script src="js/admin.js?v=20260930_v12"></script>
 </body>
 </html>
