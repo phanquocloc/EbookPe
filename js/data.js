@@ -657,6 +657,7 @@ class EbookDB {
       const data = localStorage.getItem(STORAGE_KEYS.BOOKS);
       if (data === null) {
         localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(DEFAULT_BOOKS));
+        window._cloudBooksCache = DEFAULT_BOOKS.slice();
         return DEFAULT_BOOKS;
       }
       let parsed = JSON.parse(data);
@@ -672,11 +673,14 @@ class EbookDB {
         if (changed) {
           localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(parsed));
         }
+        window._cloudBooksCache = parsed;
         return parsed;
       }
       localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(DEFAULT_BOOKS));
+      window._cloudBooksCache = DEFAULT_BOOKS.slice();
       return DEFAULT_BOOKS;
     } catch (e) {
+      window._cloudBooksCache = DEFAULT_BOOKS.slice();
       return DEFAULT_BOOKS;
     }
   }
@@ -1036,3 +1040,21 @@ class EbookDB {
 // Gán biến toàn cục để các script khác sử dụng dễ dàng
 window.EbookDB = EbookDB;
 window.DEFAULT_CATEGORIES = DEFAULT_CATEGORIES;
+
+// Khởi tạo cache ngay lập tức từ LocalStorage để không bị trễ khi tải trang
+try {
+  const initBooksRaw = localStorage.getItem(STORAGE_KEYS.BOOKS);
+  if (initBooksRaw) {
+    const initBooks = JSON.parse(initBooksRaw);
+    if (Array.isArray(initBooks) && initBooks.length > 0) {
+      window._cloudBooksCache = initBooks;
+    }
+  }
+  const initCombosRaw = localStorage.getItem(STORAGE_KEYS.COMBOS);
+  if (initCombosRaw) {
+    const initCombos = JSON.parse(initCombosRaw);
+    if (Array.isArray(initCombos) && initCombos.length > 0) {
+      window._cloudCombosCache = initCombos;
+    }
+  }
+} catch (e) {}

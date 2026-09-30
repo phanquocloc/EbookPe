@@ -913,8 +913,8 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase.js?v=20260930_v12"></script>
-  <script src="js/data.js?v=20260930_v12"></script>
+  <script src="js/supabase.js?v=20260930_v13"></script>
+  <script src="js/data.js?v=20260930_v13"></script>
   <script>
     // Phím tắt Ctrl + Shift + L (hoặc Cmd + Shift + L, Ctrl + Shift + A) để mở trang Admin
     window.addEventListener('keydown', function(e) {
@@ -932,19 +932,9 @@
     let currentEbookPage = 1;
     const EBOOKS_PER_PAGE = 6;
 
-    // Tải dữ liệu Cloud ngay lập tức khi load trang
-    if (window.EbookSupabase) {
-      window.EbookSupabase.fetchBooks().then(() => {
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-          renderCategoryPills();
-          renderEbooks();
-          updateTotalStats();
-        }
-      }).catch(e => console.warn('Early cloud fetch:', e));
-    }
-
     // Initialize App on DOMContentLoaded
     document.addEventListener('DOMContentLoaded', () => {
+      // 1. Render ngay lập tức từ Local Cache đã tải sẵn trong bộ nhớ (0ms trễ, đúng 100% số lượng sách)
       renderCategoryPills();
       renderEbooks();
       renderCombos();
@@ -954,7 +944,7 @@
       updateTotalStats();
       initLiveTicker();
 
-      // Tự động tải dữ liệu mới nhất từ Supabase Cloud Database để mọi thiết bị/khách hàng đều thấy đồng bộ 100%
+      // 2. Chạy ngầm đồng bộ từ Supabase Cloud và cập nhật nếu có thay đổi từ máy khác
       if (window.EbookSupabase) {
         Promise.allSettled([
           window.EbookSupabase.fetchSettings(),
