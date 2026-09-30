@@ -193,7 +193,9 @@ window.showAdminToast = showAdminToast;
 window.showAdminConfirm = showAdminConfirm;
 window.showAdminAlert = showAdminAlert;
 
-document.addEventListener('DOMContentLoaded', () => {
+(function () {
+  'use strict';
+
   // Trạng thái Admin
   const adminState = {
     currentTab: 'dashboard',
@@ -207,28 +209,41 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // DOM Elements
-  const tabLinks = document.querySelectorAll('.sidebar-link[data-tab]');
-  const tabContents = document.querySelectorAll('.admin-tab-content');
-  const topbarTitle = document.getElementById('topbar-title');
-  const btnTopAddBook = document.getElementById('btn-top-add-book');
+  let tabLinks = [];
+  let tabContents = [];
+  let topbarTitle = null;
+  let btnTopAddBook = null;
 
   // Book Modal DOM
-  const bookModal = document.getElementById('admin-book-modal');
-  const bookForm = document.getElementById('admin-book-form');
-  const bookModalTitle = document.getElementById('admin-book-modal-title');
-  const coverPreview = document.getElementById('admin-cover-preview');
+  let bookModal = null;
+  let bookForm = null;
+  let bookModalTitle = null;
+  let coverPreview = null;
 
   // Combo Modal DOM
-  const comboModal = document.getElementById('admin-combo-modal');
-  const comboForm = document.getElementById('admin-combo-form');
-  const comboModalTitle = document.getElementById('admin-combo-modal-title');
-  const comboBooksCheckboxList = document.getElementById('combo-books-checkbox-list');
-  const comboSelectionSummary = document.getElementById('combo-selection-summary');
-
-  // Khởi tạo
-  initAdmin();
+  let comboModal = null;
+  let comboForm = null;
+  let comboModalTitle = null;
+  let comboBooksCheckboxList = null;
+  let comboSelectionSummary = null;
 
   function initAdmin() {
+    tabLinks = document.querySelectorAll('.sidebar-link[data-tab]');
+    tabContents = document.querySelectorAll('.admin-tab-content');
+    topbarTitle = document.getElementById('topbar-title');
+    btnTopAddBook = document.getElementById('btn-top-add-book');
+
+    bookModal = document.getElementById('admin-book-modal');
+    bookForm = document.getElementById('admin-book-form');
+    bookModalTitle = document.getElementById('admin-book-modal-title');
+    coverPreview = document.getElementById('admin-cover-preview');
+
+    comboModal = document.getElementById('admin-combo-modal');
+    comboForm = document.getElementById('admin-combo-form');
+    comboModalTitle = document.getElementById('admin-combo-modal-title');
+    comboBooksCheckboxList = document.getElementById('combo-books-checkbox-list');
+    comboSelectionSummary = document.getElementById('combo-selection-summary');
+
     bindNavigation();
     renderDashboard();
     renderBooksTable();
@@ -239,7 +254,8 @@ document.addEventListener('DOMContentLoaded', () => {
     bindComboFormEvents();
     bindSettingsEvents();
     bindSyncEvents();
-    initSecurityTab(); // [OWASP] Khởi tạo tab bảo mật
+    bindGlobalActionDelegation();
+    initSecurityTab();
     bindLogoutButtons();
 
     // Tự động đồng bộ dữ liệu mới nhất từ Supabase Cloud
@@ -586,16 +602,16 @@ document.addEventListener('DOMContentLoaded', () => {
           </td>
           <td>
             <div class="table-actions">
-              <button class="btn-action-icon" title="${isFeat ? 'Bỏ ghim nổi bật' : 'Ghim nổi bật lên đầu'}" onclick="window.adminToggleFeaturedBook('${book.id}')" style="${isFeat ? 'background:#fef3c7; color:#d97706;' : ''}">
+              <button class="btn-action-icon" data-action="toggle-featured" data-id="${book.id}" title="${isFeat ? 'Bỏ ghim nổi bật' : 'Ghim nổi bật lên đầu'}" onclick="window.adminToggleFeaturedBook('${book.id}')" style="${isFeat ? 'background:#fef3c7; color:#d97706;' : ''}">
                 ⭐
               </button>
-              <button class="btn-action-icon" title="Chỉnh sửa" onclick="window.adminEditBook('${book.id}')">
+              <button class="btn-action-icon" data-action="edit" data-id="${book.id}" title="Chỉnh sửa" onclick="window.adminEditBook('${book.id}')">
                 ✏️
               </button>
-              <button class="btn-action-icon" title="Bật/Tắt hiển thị" onclick="window.adminToggleBookStatus('${book.id}')">
+              <button class="btn-action-icon" data-action="toggle-status" data-id="${book.id}" title="Bật/Tắt hiển thị" onclick="window.adminToggleBookStatus('${book.id}')">
                 ${book.status === 'active' ? '👁️' : '🙈'}
               </button>
-              <button class="btn-action-icon delete" title="Xóa sách" onclick="window.adminDeleteBook('${book.id}')">
+              <button class="btn-action-icon delete" data-action="delete" data-id="${book.id}" title="Xóa sách" onclick="window.adminDeleteBook('${book.id}')">
                 🗑️
               </button>
             </div>
@@ -2013,6 +2029,30 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
       }
     }
+  // Lắng nghe sự kiện click ủy quyền toàn cục
+  function bindGlobalActionDelegation() {
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-action-icon');
+      if (!btn) return;
+      const action = btn.dataset.action;
+      const id = btn.dataset.id;
+      if (!action || !id) return;
+      if (action === 'toggle-featured') {
+        if (typeof window.adminToggleFeaturedBook === 'function') window.adminToggleFeaturedBook(id);
+      } else if (action === 'edit') {
+        if (typeof window.adminEditBook === 'function') window.adminEditBook(id);
+      } else if (action === 'toggle-status') {
+        if (typeof window.adminToggleBookStatus === 'function') window.adminToggleBookStatus(id);
+      } else if (action === 'delete') {
+        if (typeof window.adminDeleteBook === 'function') window.adminDeleteBook(id);
+      }
+    });
   }
 
-});
+  // Tự động khởi chạy
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAdmin);
+  } else {
+    initAdmin();
+  }
+})();
