@@ -562,6 +562,14 @@ window.showAdminAlert = showAdminAlert;
       return;
     }
 
+    // Sắp xếp: Đưa sách có ⭐ Ghim Nổi Bật lên đầu danh sách quản lý
+    books.sort((a, b) => {
+      const aFeat = (a.isFeatured || a.featured || (a.badge && (a.badge.includes('⭐') || a.badge.includes('NỔI BẬT') || a.badge.includes('HOT')))) ? 1 : 0;
+      const bFeat = (b.isFeatured || b.featured || (b.badge && (b.badge.includes('⭐') || b.badge.includes('NỔI BẬT') || b.badge.includes('HOT')))) ? 1 : 0;
+      if (bFeat !== aFeat) return bFeat - aFeat;
+      return 0;
+    });
+
     tableBody.innerHTML = books.map(book => {
       // Cover preview thumb
       let coverThumbStyle = '';
@@ -573,9 +581,10 @@ window.showAdminAlert = showAdminAlert;
       }
 
       const isFeat = !!(book.isFeatured || book.featured || (book.badge && (book.badge.includes('⭐') || book.badge.includes('NỔI BẬT') || book.badge.includes('HOT'))));
+      const isHidden = (book.status === 'hidden' || book.status === 'inactive');
 
       return `
-        <tr>
+        <tr style="${isHidden ? 'opacity: 0.65; background: #f8fafc;' : ''}">
           <td>
             <div class="table-cover-thumb ${book.coverStyle || 'cover-1'}" style="${coverThumbStyle}">
               <span>${book.coverImage ? '' : '📖'}</span>
@@ -584,7 +593,7 @@ window.showAdminAlert = showAdminAlert;
           <td>
             <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
               <span style="font-weight:700; color:var(--text-main); font-size:0.92rem; max-width:240px;">${book.title}</span>
-              ${isFeat ? '<span style="background:#fef3c7; color:#b45309; font-weight:800; font-size:0.7rem; padding:2px 6px; border-radius:4px; border:1px solid #fde68a;">⭐ Nổi Bật</span>' : ''}
+              ${isFeat ? '<span style="background:#fef3c7; color:#b45309; font-weight:800; font-size:0.7rem; padding:2px 6px; border-radius:4px; border:1px solid #fde68a;">⭐ Ghim Đầu Trang</span>' : ''}
             </div>
             <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">Tác giả: ${book.author || 'EbookPe'} · ${book.pages || 180} trang · ⭐ ${book.rating || 4.9}</div>
           </td>
@@ -601,20 +610,20 @@ window.showAdminAlert = showAdminAlert;
             <strong>${book.salesCount || 120}</strong> lượt mua
           </td>
           <td>
-            <span class="badge-status ${book.status || 'active'}">
-              ${book.status === 'active' ? 'Đang bán' : 'Tạm ẩn'}
+            <span class="badge-status ${isHidden ? 'hidden' : 'active'}" style="${isHidden ? 'background:#fee2e2; color:#dc2626;' : 'background:#d1fae5; color:#065f46;'}">
+              ${isHidden ? '🙈 Tạm ẩn (Ẩn trên Web)' : '✅ Đang bán'}
             </span>
           </td>
           <td>
             <div class="table-actions">
-              <button class="btn-action-icon" data-action="toggle-featured" data-id="${book.id}" title="${isFeat ? 'Bỏ ghim nổi bật' : 'Ghim nổi bật lên đầu'}" style="${isFeat ? 'background:#fef3c7; color:#d97706;' : ''}">
+              <button class="btn-action-icon" data-action="toggle-featured" data-id="${book.id}" title="${isFeat ? 'Bỏ ghim nổi bật' : 'Ghim nổi bật lên đầu trang web'}" style="${isFeat ? 'background:#fef3c7; color:#d97706; border-color:#f59e0b; box-shadow:0 0 0 2px rgba(245,158,11,0.25);' : ''}">
                 ⭐
               </button>
-              <button class="btn-action-icon" data-action="edit" data-id="${book.id}" title="Chỉnh sửa">
+              <button class="btn-action-icon" data-action="edit" data-id="${book.id}" title="Chỉnh sửa thông tin">
                 ✏️
               </button>
-              <button class="btn-action-icon" data-action="toggle-status" data-id="${book.id}" title="Bật/Tắt hiển thị">
-                ${book.status === 'active' ? '👁️' : '🙈'}
+              <button class="btn-action-icon" data-action="toggle-status" data-id="${book.id}" title="${isHidden ? 'Bật hiển thị lại trên web' : 'Tạm ẩn khỏi web'}" style="${isHidden ? 'background:#fee2e2; color:#dc2626; border-color:#fca5a5;' : ''}">
+                ${isHidden ? '🙈' : '👁️'}
               </button>
               <button class="btn-action-icon delete" data-action="delete" data-id="${book.id}" title="Xóa sách">
                 🗑️
