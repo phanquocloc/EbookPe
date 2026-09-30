@@ -896,6 +896,9 @@ class EbookDB {
       order.status = newStatus;
       localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
       this.notifyChange('ORDERS_UPDATED', { orders });
+      if (typeof window !== 'undefined' && window.EbookSupabase && typeof window.EbookSupabase.saveOrder === 'function') {
+        window.EbookSupabase.saveOrder(order).catch(e => console.warn('Supabase updateOrderStatus sync error:', e));
+      }
       return true;
     }
     return false;
@@ -956,6 +959,10 @@ class EbookDB {
     localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(DEFAULT_COMBOS));
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(DEFAULT_ORDERS));
     localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify([]));
+    if (typeof window !== 'undefined') {
+      window._cloudBooksCache = DEFAULT_BOOKS.slice();
+      window._cloudCombosCache = DEFAULT_COMBOS.slice();
+    }
     this.notifyChange('RESET_ALL');
   }
 
@@ -975,6 +982,7 @@ class EbookDB {
       const data = JSON.parse(jsonStr);
       if (data.books && Array.isArray(data.books)) {
         localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(data.books));
+        if (typeof window !== 'undefined') window._cloudBooksCache = data.books.slice();
       }
       if (data.orders && Array.isArray(data.orders)) {
         localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(data.orders));
@@ -984,6 +992,7 @@ class EbookDB {
       }
       if (data.combos && Array.isArray(data.combos)) {
         localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(data.combos));
+        if (typeof window !== 'undefined') window._cloudCombosCache = data.combos.slice();
       }
       this.notifyChange('IMPORT_SUCCESS');
       return { success: true };

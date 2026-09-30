@@ -1004,10 +1004,10 @@ window.showAdminAlert = showAdminAlert;
           </td>
           <td>${statusBadge}</td>
           <td style="text-align:right;">
-            <button class="btn-action-icon edit" onclick="window.editCombo('${combo.id}')" title="Sửa combo">
+            <button class="btn-action-icon edit" data-action="edit-combo" data-id="${combo.id}" onclick="window.editCombo('${combo.id}')" title="Sửa combo">
               ✏️
             </button>
-            <button class="btn-action-icon delete" onclick="window.deleteCombo('${combo.id}')" title="Xóa combo">
+            <button class="btn-action-icon delete" data-action="delete-combo" data-id="${combo.id}" onclick="window.deleteCombo('${combo.id}')" title="Xóa combo">
               🗑️
             </button>
           </td>
@@ -2052,6 +2052,10 @@ window.showAdminAlert = showAdminAlert;
         if (typeof window.adminToggleBookStatus === 'function') window.adminToggleBookStatus(id);
       } else if (action === 'delete') {
         if (typeof window.adminDeleteBook === 'function') window.adminDeleteBook(id);
+      } else if (action === 'edit-combo') {
+        if (typeof window.editCombo === 'function') window.editCombo(id);
+      } else if (action === 'delete-combo') {
+        if (typeof window.deleteCombo === 'function') window.deleteCombo(id);
       }
     });
   }
