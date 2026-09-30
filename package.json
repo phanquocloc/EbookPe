@@ -1,0 +1,25 @@
+{
+  "name": "ebook",
+  "version": "1.0.0",
+  "description": "Chào mừng bạn đến với mã nguồn hoàn chỉnh của **EbookPe**. Hệ thống đã được thiết kế tinh tế, hiện đại, tối ưu trải nghiệm khách hàng và tích hợp bảng điều khiển Quản trị viên (Admin) chuyên nghiệp.",
+  "main": "server.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phanquocloc/EbookPe.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/phanquocloc/EbookPe/issues"
+  },
+  "homepage": "https://github.com/phanquocloc/EbookPe#readme",
+  "devDependencies": {
+    "jest": "^30.5.2"
+  }
+}

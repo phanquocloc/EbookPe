@@ -34,46 +34,33 @@ const server = http.createServer((req, res) => {
 
   const parsedUrl = url.parse(req.url, true);
 
-  // PROXY SEPAY: Giải quyết triệt để lỗi CORS "Failed to fetch" khi gọi từ trình duyệt
-  if (parsedUrl.pathname === '/api/sepay-proxy') {
-    let authHeader = req.headers['authorization'] || (parsedUrl.query.token ? `Bearer ${parsedUrl.query.token}` : '');
-    if (authHeader && !authHeader.startsWith('Bearer ') && !authHeader.startsWith('Apikey ')) {
-      authHeader = `Bearer ${authHeader}`;
-    }
-    const limit = parsedUrl.query.limit || 30;
+  // Tích hợp API Check Payment cho Local Development
+  if (parsedUrl.pathname === '/api/check-payment') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      req.body = body; // Truyền nguyên string cho handler tự parse
 
-    if (!authHeader) {
-      res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Missing Authorization Token' }));
-      return;
-    }
+      // Polyfill các hàm của Express/Vercel
+      res.status = (code) => {
+        res.statusCode = code;
+        return res;
+      };
+      res.json = (data) => {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(data));
+      };
 
-    const options = {
-      hostname: 'my.sepay.vn',
-      path: `/userapi/transactions/list?limit=${limit}`,
-      method: 'GET',
-      headers: {
-        'Authorization': authHeader,
-        'Content-Type': 'application/json',
-        'User-Agent': 'EbookPe-Client/2.0'
+      try {
+        // Require lại mỗi lần gọi để dễ debug local
+        delete require.cache[require.resolve('./api/check-payment.js')];
+        const handler = require('./api/check-payment.js');
+        handler(req, res);
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Local server error: ' + err.message });
       }
-    };
-
-    const proxyReq = https.request(options, (proxyRes) => {
-      let data = '';
-      proxyRes.on('data', chunk => data += chunk);
-      proxyRes.on('end', () => {
-        res.writeHead(proxyRes.statusCode, { 'Content-Type': 'application/json' });
-        res.end(data);
-      });
     });
-
-    proxyReq.on('error', (err) => {
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'SePay Proxy Error: ' + err.message }));
-    });
-
-    proxyReq.end();
     return;
   }
 

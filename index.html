@@ -1727,78 +1727,48 @@
       document.getElementById('checkout-modal').classList.add('hidden');
     }
 
-    // Tự động quét giao dịch MBBank qua SePay API
+    // Tự động kiểm tra thanh toán qua Vercel Backend an toàn
     function startSePayPolling(orderId, expectedAmount) {
       stopSePayPolling();
-      const settings = window.EbookDB ? window.EbookDB.getSettings() : {};
       const statusBox = document.getElementById('qr-auto-banking-status');
 
-      if (!settings.sepayApiKey) {
-        if (statusBox) {
-          statusBox.innerHTML = '<span class="material-symbols-outlined text-[16px]">qr_code_scanner</span><span>Quét mã QR bằng App ngân hàng bất kỳ để chuyển khoản</span>';
-        }
-        return;
-      }
-
       if (statusBox) {
-        statusBox.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">sync</span><span>🟢 <strong>Auto-Banking:</strong> Đang tự động quét giao dịch từ MBBank...</span>';
+        statusBox.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">sync</span><span>🟢 <strong>Auto-Banking:</strong> Đang tự động kiểm tra giao dịch từ Ngân hàng...</span>';
       }
 
       sepayPollTimer = setInterval(async () => {
         try {
-          const rawToken = settings.sepayApiKey || '';
-          const cleanToken = rawToken.trim().replace(/^Bearer\s+/i, '').replace(/["']/g, '');
-          if (!cleanToken) return;
+          // Gọi lên Backend (Vercel API) thay vì gọi trực tiếp SePay
+          const response = await fetch('/api/check-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId, amount: expectedAmount })
+          });
 
-          // Fetch via local proxy, direct API or CORS proxy
-          let response = null;
-          try {
-            response = await fetch(`/api/sepay-proxy?token=${encodeURIComponent(cleanToken)}&limit=20`);
-          } catch (e) {}
-
-          if (!response || !response.ok) {
-            try {
-              response = await fetch(`https://my.sepay.vn/userapi/transactions/list?limit=20`, {
-                headers: { 'Authorization': `Bearer ${cleanToken}` }
-              });
-            } catch (e) {}
-          }
-
-          if (!response || !response.ok) {
-            try {
-              const targetUrl = encodeURIComponent(`https://my.sepay.vn/userapi/transactions/list?limit=20`);
-              response = await fetch(`https://corsproxy.io/?url=${targetUrl}`, {
-                headers: { 'Authorization': `Bearer ${cleanToken}` }
-              });
-            } catch (e) {}
-          }
-
-          if (response && response.ok) {
+          if (response.ok) {
             const data = await response.json();
-            if (data && data.transactions && Array.isArray(data.transactions)) {
-              const cleanOrder = orderId.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-              const matched = data.transactions.find(tx => {
-                const content = (tx.transaction_content || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-                const code = (tx.code || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-                const amountIn = parseFloat(tx.amount_in || 0);
-                return (content.includes(cleanOrder) || code.includes(cleanOrder)) && amountIn >= expectedAmount;
-              });
-
-              if (matched) {
-                stopSePayPolling();
-                if (statusBox) {
-                  statusBox.innerHTML = '<span>✅ <strong>MBBank đã nhận tiền thành công!</strong> Đang mở tài liệu...</span>';
-                }
-                setTimeout(() => {
-                  executeOrderCompletion(true);
-                }, 800);
+            
+            if (data.status === 'paid') {
+              stopSePayPolling();
+              if (statusBox) {
+                statusBox.innerHTML = '<span>✅ <strong>Đã nhận tiền thành công!</strong> Đang mở tài liệu...</span>';
               }
+              
+              // Cập nhật link tải sách an toàn từ backend trả về
+              if (data.links && window.EbookDB) {
+                 window.EbookDB.saveSecureLinks(data.links); 
+              }
+
+              setTimeout(() => {
+                executeOrderCompletion(true, data.links);
+              }, 800);
             }
           }
         } catch (err) {
-          // Keep polling
+          // Lỗi mạng hoặc lỗi server, tiếp tục thử lại
+          console.error("Lỗi khi kiểm tra thanh toán:", err);
         }
-      }, 3000);
+      }, 5000); // Polling mỗi 5 giây
     }
 
     function stopSePayPolling() {

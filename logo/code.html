@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Gradient -->
+    <radialGradient id="bgDark" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#0B1329" />
+      <stop offset="100%" stop-color="#030712" />
+    </radialGradient>
+
+    <!-- Luxury Gold & Growth Gradient (Business, Wealth, Growth) -->
+    <linearGradient id="goldGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="50%" stop-color="#FBBF24" />
+      <stop offset="100%" stop-color="#FEF08A" />
+    </linearGradient>
+
+    <!-- Tech & AI Gradient (Intelligence, Innovation) -->
+    <linearGradient id="aiCyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F2FE" />
+      <stop offset="60%" stop-color="#4FACFE" />
+      <stop offset="100%" stop-color="#6366F1" />
+    </linearGradient>
+
+    <!-- Glow & Shadow Effects -->
+    <filter id="neonGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="12" result="blur1" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="subtleGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background rounded card with subtle border -->
+  <rect width="512" height="512" rx="112" fill="url(#bgDark)" />
+  <rect width="508" height="508" x="2" y="2" rx="110" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2" />
+
+  <!-- Ambient Light Halo -->
+  <circle cx="256" cy="210" r="140" fill="#0284C7" opacity="0.15" filter="url(#neonGlow)" />
+  <circle cx="280" cy="180" r="90" fill="#F59E0B" opacity="0.12" filter="url(#neonGlow)" />
+
+  <!-- Central Symbolism: Open Knowledge Ebook + Rocket/Growth Arrow + AI Core Matrix -->
+  <g transform="translate(0, -15)">
+    <!-- Neural Tech & AI Circuit Grid lines in background -->
+    <g opacity="0.3" stroke="url(#aiCyanGrad)" stroke-width="1.5" stroke-linecap="round">
+      <line x1="256" y1="120" x2="256" y2="70" stroke-dasharray="3,3" />
+      <line x1="256" y1="70" x2="310" y2="46" />
+      <line x1="256" y1="70" x2="202" y2="46" />
+      <circle cx="310" cy="46" r="3" fill="#00F2FE" />
+      <circle cx="202" cy="46" r="3" fill="#6366F1" />
+      <circle cx="256" cy="70" r="3.5" fill="#FEF08A" />
+    </g>
+
+    <!-- LEFT PAGE: AI Tech & Knowledge (Cyan to Indigo digital pages with neural circuits) -->
+    <path d="M 256 142 
+             C 214 116 160 122 118 148 
+             C 108 154 102 165 102 177 
+             L 102 284 
+             C 102 296 114 305 125 300 
+             C 163 282 212 284 256 306 Z" 
+          fill="url(#aiCyanGrad)" />
+
+    <!-- Left Page Circuit / Data lines (Artificial Intelligence motif) -->
+    <path d="M 136 186 C 168 172 208 176 234 192" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.75" />
+    <path d="M 136 216 C 168 202 208 206 234 222" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.75" />
+    <path d="M 136 246 C 168 232 208 236 234 252" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.5" />
+    <!-- AI data nodes on left page -->
+    <circle cx="178" cy="177" r="3" fill="#FFFFFF" opacity="0.9" />
+    <circle cx="206" cy="207" r="3" fill="#FFFFFF" opacity="0.9" />
+
+    <!-- RIGHT PAGE: Business & Wealth Growth (Vibrant Gold / Amber Page - Rising Trend) -->
+    <path d="M 256 142 
+             C 298 116 352 122 394 148 
+             C 404 154 410 165 410 177 
+             L 410 284 
+             C 410 296 398 305 387 300 
+             C 349 282 300 284 256 306 Z" 
+          fill="url(#goldGrad)" />
+
+    <!-- Right Page Rising Growth / Wealth Bars (Financial growth motif) -->
+    <path d="M 278 192 C 304 176 344 172 376 186" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+    <path d="M 278 222 C 304 206 344 202 376 216" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+    <path d="M 278 252 C 304 236 344 232 376 246" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.5" />
+    <!-- Wealth & Success Spark dots -->
+    <circle cx="334" cy="177" r="3" fill="#FFFFFF" opacity="0.9" />
+    <circle cx="306" cy="207" r="3" fill="#FFFFFF" opacity="0.9" />
+
+    <!-- CENTER ELEMENT: The Ascending Growth Arrow & AI Core Star (Self-improvement & Business Scaling) -->
+    <!-- Spine vertical line -->
+    <line x1="256" y1="140" x2="256" y2="306" stroke="#0B1329" stroke-width="4" stroke-linecap="round" />
+
+    <!-- Ascending Diamond Star / Upward Apex (Khởi nghiệp, Bứt phá) -->
+    <g filter="url(#subtleGlow)">
+      <polygon points="256,76 268,102 294,114 268,126 256,152 244,126 218,114 244,102" fill="url(#goldGrad)" />
+      <!-- Inner brilliant spark -->
+      <circle cx="256" cy="114" r="4.5" fill="#FFFFFF" />
+    </g>
+
+    <!-- Upward Growth Impulse Path (Kiếm tiền & Đột phá) -->
+    <path d="M 230 148 L 256 122 L 282 148" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.95" />
+  </g>
+
+  <!-- Typography: High-End Business & Tech Brand -->
+  <!-- Brand Name -->
+  <text x="256" y="380" text-anchor="middle" font-family="system-ui, -apple-system, 'SF Pro Display', Roboto, sans-serif" font-size="32" font-weight="900" fill="#FFFFFF" letter-spacing="3.5">
+    BIZ<tspan fill="url(#aiCyanGrad)">AI</tspan><tspan fill="url(#goldGrad)">HUB</tspan>
+  </text>
+
+  <!-- Subtitle with the 4 Core Pillars in Vietnamese / English style -->
+  <text x="256" y="412" text-anchor="middle" font-family="system-ui, -apple-system, 'SF Pro Text', Roboto, sans-serif" font-size="11.5" font-weight="700" fill="#38BDF8" letter-spacing="3">
+    BUSINESS <tspan fill="#F59E0B">•</tspan> AI TECH <tspan fill="#F59E0B">•</tspan> WEALTH <tspan fill="#F59E0B">•</tspan> GROWTH
+  </text>
+
+  <!-- Premium Quality Indicator -->
+  <g transform="translate(196, 432)" opacity="0.8">
+    <rect width="120" height="20" rx="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)" stroke-width="1" />
+    <text x="60" y="14" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="600" fill="#94A3B8" letter-spacing="1.5">
+      PREMIUM EBOOKS
+    </text>
+  </g>
+</svg>
