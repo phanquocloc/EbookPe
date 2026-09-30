@@ -111,8 +111,8 @@
     static async fetchBooks() {
       try {
         const rows = await this.request('books?select=*&order=created_at.desc');
-        if (Array.isArray(rows)) {
-          const mapped = rows.map(r => ({
+        if (Array.isArray(rows) && rows.length > 0) {
+          const remoteBooks = rows.map(r => ({
             id: r.id,
             title: r.title,
             subTitle: r.sub_title || '',
@@ -138,9 +138,34 @@
             createdAt: r.created_at || new Date().toISOString(),
             isFeatured: !!(r.badge && (r.badge.includes('NỔI BẬT') || r.badge.includes('HOT') || r.badge.includes('⭐') || r.badge.toLowerCase().includes('featured')))
           }));
-          window._cloudBooksCache = mapped;
-          localStorage.setItem('ebookpe_books_v4', JSON.stringify(mapped));
-          return mapped;
+
+          let localBooks = [];
+          try {
+            const raw = localStorage.getItem('ebookpe_books_v4');
+            if (raw) localBooks = JSON.parse(raw) || [];
+          } catch (e) {}
+
+          const map = new Map();
+          remoteBooks.forEach(b => map.set(b.id, b));
+          localBooks.forEach(b => {
+            if (!map.has(b.id)) {
+              map.set(b.id, b);
+            } else {
+              const rem = map.get(b.id);
+              const lTime = new Date(b.updatedAt || b.createdAt || 0).getTime();
+              const rTime = new Date(rem.updatedAt || rem.createdAt || 0).getTime();
+              if (lTime > rTime) {
+                map.set(b.id, b);
+              }
+            }
+          });
+
+          const finalBooks = Array.from(map.values());
+          window._cloudBooksCache = finalBooks;
+          try {
+            localStorage.setItem('ebookpe_books_v4', JSON.stringify(finalBooks));
+          } catch (e) {}
+          return finalBooks;
         }
       } catch (e) {
         console.warn('[Supabase] Tải sách từ Cloud:', e.message);
@@ -154,8 +179,8 @@
     static async fetchCombos() {
       try {
         const rows = await this.request('combos?select=*&order=created_at.asc');
-        if (Array.isArray(rows)) {
-          const mapped = rows.map(r => ({
+        if (Array.isArray(rows) && rows.length > 0) {
+          const remoteCombos = rows.map(r => ({
             id: r.id,
             title: r.title,
             subTitle: r.sub_title || '',
@@ -169,9 +194,27 @@
             bonusList: r.bonus_list || [],
             downloadUrl: r.download_url || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing'
           }));
-          window._cloudCombosCache = mapped;
-          localStorage.setItem('ebookpe_combos_v4', JSON.stringify(mapped));
-          return mapped;
+
+          let localCombos = [];
+          try {
+            const raw = localStorage.getItem('ebookpe_combos_v4');
+            if (raw) localCombos = JSON.parse(raw) || [];
+          } catch (e) {}
+
+          const map = new Map();
+          remoteCombos.forEach(c => map.set(c.id, c));
+          localCombos.forEach(c => {
+            if (!map.has(c.id)) {
+              map.set(c.id, c);
+            }
+          });
+
+          const finalCombos = Array.from(map.values());
+          window._cloudCombosCache = finalCombos;
+          try {
+            localStorage.setItem('ebookpe_combos_v4', JSON.stringify(finalCombos));
+          } catch (e) {}
+          return finalCombos;
         }
       } catch (e) {
         console.warn('[Supabase] Tải combo từ Cloud:', e.message);
@@ -321,36 +364,36 @@
           sample_excerpt: b.sampleExcerpt || '',
           download_url: b.downloadUrl || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
           cover_style: b.coverStyle || 'cover-1',
-          cover_image: b.coverImage || '',
+          cover_image: (b.coverImage && b.coverImage.length > 500000) ? '' : (b.coverImage || ''),
           updated_at: new Date().toISOString()
         };
 
-        // 1. Thử PATCH cập nhật sách nếu đã tồn tại trong DB
+        // Thử POST UPSERT với resolution=merge-duplicates
         try {
-          const patchRes = await this.request(`books?id=eq.${encodeURIComponent(b.id)}`, {
-            method: 'PATCH',
-            body: payload
+          const upsertPayload = {
+            id: b.id,
+            ...payload,
+            created_at: b.createdAt || new Date().toISOString()
+          };
+          const postRes = await this.request('books', {
+            method: 'POST',
+            prefer: 'resolution=merge-duplicates,return=representation',
+            body: upsertPayload
           });
-          if (Array.isArray(patchRes) && patchRes.length > 0) {
-            console.log('[Supabase] Đã cập nhật sách trên Cloud:', b.id, badgeVal);
-            return patchRes[0];
+          console.log('[Supabase] Đã lưu sách lên Cloud (Upsert):', b.id);
+          return postRes;
+        } catch (upsertErr) {
+          console.warn('[Supabase] Thử upsert thất bại, thử PATCH:', upsertErr.message);
+          try {
+            const patchRes = await this.request(`books?id=eq.${encodeURIComponent(b.id)}`, {
+              method: 'PATCH',
+              body: payload
+            });
+            return patchRes;
+          } catch (patchErr) {
+            console.warn('[Supabase] PATCH cũng lỗi:', patchErr.message);
           }
-        } catch (patchErr) {
-          console.warn('[Supabase] Thử PATCH sách:', patchErr.message);
         }
-
-        // 2. Nếu sách chưa có trong DB (sách mới tạo), thực hiện POST INSERT
-        const insertPayload = {
-          id: b.id,
-          ...payload,
-          created_at: b.createdAt || new Date().toISOString()
-        };
-        const postRes = await this.request('books', {
-          method: 'POST',
-          body: insertPayload
-        });
-        console.log('[Supabase] Đã thêm mới sách lên Cloud:', b.id);
-        return postRes;
       } catch (e) {
         console.warn('[Supabase] Lưu sách lên Cloud:', e.message);
       }

@@ -1028,7 +1028,8 @@ class EbookDB {
 
   // Tiện ích format tiền VNĐ
   static formatVND(amount) {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount).replace('₫', 'đ');
+    const num = typeof amount === 'number' ? amount : (parseInt(String(amount || '').replace(/\D/g, ''), 10) || 0);
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num).replace('₫', 'đ');
   }
 }
 
