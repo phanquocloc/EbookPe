@@ -235,7 +235,6 @@
       if (!s || typeof s !== 'object') return;
       try {
         const payload = {
-          id: 'main_settings',
           store_name: s.storeName || 'EbookPe',
           store_slogan: s.storeSlogan || 'Nền tảng Ebook thực chiến #1 Việt Nam',
           bank_code: s.bankCode || 'MB',
@@ -260,12 +259,25 @@
           updated_at: new Date().toISOString()
         };
 
-        await this.request('settings?on_conflict=id', {
+        try {
+          const patchRes = await this.request('settings?id=eq.main_settings', {
+            method: 'PATCH',
+            body: payload
+          });
+          if (Array.isArray(patchRes) && patchRes.length > 0) {
+            console.log('[Supabase] Đã cập nhật Cài Đặt lên Cloud Database thành công');
+            return patchRes[0];
+          }
+        } catch (patchErr) {
+          console.warn('[Supabase] Thử PATCH settings:', patchErr.message);
+        }
+
+        const insertPayload = { id: 'main_settings', ...payload };
+        await this.request('settings', {
           method: 'POST',
-          prefer: 'resolution=merge-duplicates,return=representation',
-          body: payload
+          body: insertPayload
         });
-        console.log('[Supabase] Đã đồng bộ Cài Đặt lên Cloud Database thành công');
+        console.log('[Supabase] Đã tạo mới Cài Đặt trên Cloud Database');
       } catch (e) {
         console.warn('[Supabase] Lưu cài đặt lên Cloud:', e.message);
       }
@@ -281,24 +293,25 @@
         let badgeVal = b.badge || '';
         if (isFeat && !badgeVal.includes('NỔI BẬT') && !badgeVal.includes('⭐')) {
           badgeVal = badgeVal ? `⭐ ${badgeVal}` : '⭐ NỔI BẬT';
+        } else if (!isFeat && badgeVal) {
+          badgeVal = badgeVal.replace(/⭐\s*/g, '').replace(/NỔI BẬT/g, '').trim();
         }
 
         const payload = {
-          id: b.id,
-          title: b.title,
+          title: b.title || 'Chưa đặt tên',
           sub_title: b.subTitle || '',
           author: b.author || 'EbookPe',
           category: b.category || 'all',
           category_name: b.categoryName || 'Ebook',
-          price: b.price || 0,
-          original_price: b.originalPrice || 0,
+          price: parseFloat(b.price || 0),
+          original_price: parseFloat(b.originalPrice || 0),
           badge: badgeVal,
-          pages: b.pages || 180,
+          pages: parseInt(b.pages || 180),
           format: b.format || 'PDF + EPUB',
           status: b.status || 'active',
-          rating: b.rating || 5.0,
-          reviews_count: b.reviewsCount || 0,
-          sales_count: b.salesCount || 0,
+          rating: parseFloat(b.rating || 5.0),
+          reviews_count: parseInt(b.reviewsCount || 0),
+          sales_count: parseInt(b.salesCount || 0),
           short_desc: b.shortDesc || '',
           full_desc: b.fullDesc || '',
           toc: b.toc || [],
@@ -308,11 +321,33 @@
           cover_image: b.coverImage || '',
           updated_at: new Date().toISOString()
         };
-        await this.request('books?on_conflict=id', {
+
+        // 1. Thử PATCH cập nhật sách nếu đã tồn tại trong DB
+        try {
+          const patchRes = await this.request(`books?id=eq.${encodeURIComponent(b.id)}`, {
+            method: 'PATCH',
+            body: payload
+          });
+          if (Array.isArray(patchRes) && patchRes.length > 0) {
+            console.log('[Supabase] Đã cập nhật sách trên Cloud:', b.id, badgeVal);
+            return patchRes[0];
+          }
+        } catch (patchErr) {
+          console.warn('[Supabase] Thử PATCH sách:', patchErr.message);
+        }
+
+        // 2. Nếu sách chưa có trong DB (sách mới tạo), thực hiện POST INSERT
+        const insertPayload = {
+          id: b.id,
+          ...payload,
+          created_at: b.createdAt || new Date().toISOString()
+        };
+        const postRes = await this.request('books', {
           method: 'POST',
-          prefer: 'resolution=merge-duplicates,return=representation',
-          body: payload
+          body: insertPayload
         });
+        console.log('[Supabase] Đã thêm mới sách lên Cloud:', b.id);
+        return postRes;
       } catch (e) {
         console.warn('[Supabase] Lưu sách lên Cloud:', e.message);
       }
@@ -353,13 +388,12 @@
       if (!c || !c.id) return;
       try {
         const payload = {
-          id: c.id,
-          title: c.title,
+          title: c.title || 'Gói Combo',
           sub_title: c.subTitle || '',
           tag: c.tag || 'Ưu đãi',
           discount_badge: c.discountBadge || '',
-          price: c.price || 0,
-          original_price: c.originalPrice || 0,
+          price: parseFloat(c.price || 0),
+          original_price: parseFloat(c.originalPrice || 0),
           popular: !!c.popular,
           status: c.status || 'active',
           book_ids: c.bookIds || [],
@@ -367,11 +401,31 @@
           download_url: c.downloadUrl || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
           updated_at: new Date().toISOString()
         };
-        await this.request('combos?on_conflict=id', {
+
+        try {
+          const patchRes = await this.request(`combos?id=eq.${encodeURIComponent(c.id)}`, {
+            method: 'PATCH',
+            body: payload
+          });
+          if (Array.isArray(patchRes) && patchRes.length > 0) {
+            console.log('[Supabase] Đã cập nhật combo trên Cloud:', c.id);
+            return patchRes[0];
+          }
+        } catch (patchErr) {
+          console.warn('[Supabase] Thử PATCH combo:', patchErr.message);
+        }
+
+        const insertPayload = {
+          id: c.id,
+          ...payload,
+          created_at: c.createdAt || new Date().toISOString()
+        };
+        const postRes = await this.request('combos', {
           method: 'POST',
-          prefer: 'resolution=merge-duplicates,return=representation',
-          body: payload
+          body: insertPayload
         });
+        console.log('[Supabase] Đã thêm mới combo lên Cloud:', c.id);
+        return postRes;
       } catch (e) {
         console.warn('[Supabase] Lưu combo lên Cloud:', e.message);
       }

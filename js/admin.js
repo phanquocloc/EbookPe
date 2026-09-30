@@ -672,7 +672,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Toggle ghim nổi bật sách lên đầu
-  window.adminToggleFeaturedBook = function(bookId) {
+  window.adminToggleFeaturedBook = async function(bookId) {
     const book = EbookDB.getBookById(bookId);
     if (book) {
       const isCurrentlyFeatured = !!(book.isFeatured || book.featured || (book.badge && (book.badge.includes('⭐') || book.badge.includes('NỔI BẬT') || book.badge.includes('HOT'))));
@@ -684,20 +684,33 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         book.badge = (book.badge || '').replace(/⭐\s*/g, '').replace(/NỔI BẬT/g, '').trim();
       }
-      EbookDB.saveBook(book);
+      const updated = EbookDB.saveBook(book);
       renderBooksTable();
+      renderDashboard();
+      if (window.EbookSupabase && typeof window.EbookSupabase.saveBook === 'function') {
+        try {
+          await window.EbookSupabase.saveBook(updated);
+        } catch (e) {
+          console.warn('[Admin] Sync toggle featured error:', e);
+        }
+      }
       showAdminToast(nextFeatured ? `Đã ghim cuốn "${book.title}" lên đầu gian hàng!` : `Đã bỏ ghim nổi bật cuốn "${book.title}"`, 'success');
     }
   };
 
   // Toggle ẩn hiện sách
-  window.adminToggleBookStatus = function(bookId) {
+  window.adminToggleBookStatus = async function(bookId) {
     const book = EbookDB.getBookById(bookId);
     if (book) {
       book.status = book.status === 'active' ? 'hidden' : 'active';
-      EbookDB.saveBook(book);
+      const updated = EbookDB.saveBook(book);
       renderBooksTable();
       renderDashboard();
+      if (window.EbookSupabase && typeof window.EbookSupabase.saveBook === 'function') {
+        try {
+          await window.EbookSupabase.saveBook(updated);
+        } catch (e) {}
+      }
       showAdminToast(`Đã đổi trạng thái sang "${book.status === 'active' ? 'Đang bán' : 'Tạm ẩn'}"`, 'info');
     }
   };
@@ -803,7 +816,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const category = document.getElementById('book-category').value;
     const price = parseInt(document.getElementById('book-price').value) || 0;
     const originalPrice = parseInt(document.getElementById('book-price-old').value) || 0;
-    const badge = document.getElementById('book-badge').value.trim();
+    let badge = document.getElementById('book-badge').value.trim();
     const pages = parseInt(document.getElementById('book-pages').value) || 180;
     const format = document.getElementById('book-format').value;
     const status = document.getElementById('book-status').value;
@@ -830,8 +843,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const isEdit = !!adminState.editingBookId;
 
+    if (isFeatured) {
+      if (!badge.includes('⭐') && !badge.includes('NỔI BẬT')) {
+        badge = badge ? `⭐ ${badge}` : '⭐ NỔI BẬT';
+      }
+    } else {
+      badge = badge.replace(/⭐\s*/g, '').replace(/NỔI BẬT/g, '').trim();
+    }
+
+    const existingBook = isEdit ? EbookDB.getBookById(adminState.editingBookId) : null;
+
     const bookData = {
-      id: adminState.editingBookId || undefined,
+      id: adminState.editingBookId || ('ebk-' + Date.now().toString(36)),
       title,
       subTitle,
       author,
@@ -852,7 +875,7 @@ document.addEventListener('DOMContentLoaded', () => {
       sampleExcerpt,
       downloadUrl: downloadUrl || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
       coverStyle: adminState.selectedCoverStyle,
-      coverImage: adminState.uploadedCoverBase64
+      coverImage: adminState.uploadedCoverBase64 || (existingBook ? existingBook.coverImage : '')
     };
 
     const savedBook = EbookDB.saveBook(bookData);
@@ -865,7 +888,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await window.EbookSupabase.saveBook(savedBook);
         showAdminToast(isEdit ? 'Cập nhật Ebook & Đồng bộ Cloud thành công!' : 'Đã thêm Ebook mới và đồng bộ lên Cloud Database!', 'success');
       } catch (err) {
-        showAdminToast(`Đã lưu cục bộ nhưng lỗi Cloud: ${err.message}`, 'warning');
+        showAdminToast(`Đã lưu cục bộ: ${err.message}`, 'warning');
       }
     } else {
       showAdminToast(isEdit ? 'Cập nhật Ebook thành công!' : 'Đã thêm Ebook mới lên gian hàng!', 'success');

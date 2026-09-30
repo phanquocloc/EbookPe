@@ -661,13 +661,6 @@ class EbookDB {
       }
       let parsed = JSON.parse(data);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Tự động nâng cấp dữ liệu nếu thiết bị đang lưu bản cũ (ít hơn 12 cuốn hoặc chứa sách mẫu cũ)
-        const hasOldSeed = parsed.some(b => b.id === 'ebk-khoi-nghiep-0' || b.id === 'ebk-ai-automation');
-        if (hasOldSeed || parsed.length < DEFAULT_BOOKS.length) {
-          localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(DEFAULT_BOOKS));
-          return DEFAULT_BOOKS;
-        }
-
         let changed = false;
         parsed = parsed.map(b => {
           if (!b.downloadUrl || b.downloadUrl === '#' || b.downloadUrl.includes('example')) {
@@ -704,7 +697,7 @@ class EbookDB {
       const newBook = {
         ...book,
         id: book.id || 'ebk-' + Date.now().toString(36),
-        createdAt: new Date().toISOString(),
+        createdAt: book.createdAt || new Date().toISOString(),
         rating: book.rating || 5.0,
         reviewsCount: book.reviewsCount || 1,
         salesCount: book.salesCount || 0,
@@ -713,12 +706,13 @@ class EbookDB {
       books.unshift(newBook);
       updated = newBook;
     }
+    window._cloudBooksCache = books;
     localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(books));
     this.notifyChange('BOOKS_UPDATED', { books });
 
     // Tự động đẩy lên Supabase Cloud
     if (typeof window !== 'undefined' && window.EbookSupabase && typeof window.EbookSupabase.saveBook === 'function') {
-      window.EbookSupabase.saveBook(updated);
+      window.EbookSupabase.saveBook(updated).catch(e => console.warn('Supabase saveBook sync error:', e));
     }
 
     return updated;
@@ -727,29 +721,34 @@ class EbookDB {
   static deleteBook(id) {
     let books = this.getBooks();
     books = books.filter(b => b.id !== id);
+    window._cloudBooksCache = books;
     localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify(books));
     this.notifyChange('BOOKS_UPDATED', { books });
 
     // Tự động xóa trên Supabase Cloud
     if (typeof window !== 'undefined' && window.EbookSupabase && typeof window.EbookSupabase.deleteBook === 'function') {
-      window.EbookSupabase.deleteBook(id);
+      window.EbookSupabase.deleteBook(id).catch(e => console.warn('Supabase deleteBook sync error:', e));
     }
 
     return true;
   }
 
   static clearAllBooks() {
+    window._cloudBooksCache = [];
     localStorage.setItem(STORAGE_KEYS.BOOKS, JSON.stringify([]));
     this.notifyChange('BOOKS_UPDATED', { books: [] });
 
     // Tự động xóa sạch trên Supabase Cloud
     if (typeof window !== 'undefined' && window.EbookSupabase && typeof window.EbookSupabase.clearAllBooks === 'function') {
-      window.EbookSupabase.clearAllBooks();
+      window.EbookSupabase.clearAllBooks().catch(e => console.warn('Supabase clearAllBooks sync error:', e));
     }
   }
 
   // --- COMBOS ---
   static getCombos() {
+    if (window._cloudCombosCache && Array.isArray(window._cloudCombosCache) && window._cloudCombosCache.length > 0) {
+      return window._cloudCombosCache;
+    }
     const REAL_DRIVE_URL = 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing';
     try {
       const data = localStorage.getItem(STORAGE_KEYS.COMBOS);
@@ -794,18 +793,19 @@ class EbookDB {
       const newCombo = {
         ...combo,
         id: combo.id || 'combo-' + Date.now().toString(36),
-        createdAt: new Date().toISOString(),
+        createdAt: combo.createdAt || new Date().toISOString(),
         status: combo.status || 'active'
       };
       combos.unshift(newCombo);
       updated = newCombo;
     }
+    window._cloudCombosCache = combos;
     localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(combos));
     this.notifyChange('COMBOS_UPDATED', { combos });
 
     // Tự động đẩy lên Supabase Cloud
     if (typeof window !== 'undefined' && window.EbookSupabase && typeof window.EbookSupabase.saveCombo === 'function') {
-      window.EbookSupabase.saveCombo(updated);
+      window.EbookSupabase.saveCombo(updated).catch(e => console.warn('Supabase saveCombo sync error:', e));
     }
 
     return updated;
@@ -814,18 +814,20 @@ class EbookDB {
   static deleteCombo(id) {
     let combos = this.getCombos();
     combos = combos.filter(c => c.id !== id);
+    window._cloudCombosCache = combos;
     localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(combos));
     this.notifyChange('COMBOS_UPDATED', { combos });
 
     // Tự động xóa trên Supabase Cloud
     if (typeof window !== 'undefined' && window.EbookSupabase && typeof window.EbookSupabase.deleteCombo === 'function') {
-      window.EbookSupabase.deleteCombo(id);
+      window.EbookSupabase.deleteCombo(id).catch(e => console.warn('Supabase deleteCombo sync error:', e));
     }
 
     return true;
   }
 
   static clearAllCombos() {
+    window._cloudCombosCache = [];
     localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify([]));
     this.notifyChange('COMBOS_UPDATED', { combos: [] });
 
