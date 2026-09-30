@@ -193,8 +193,13 @@ window.showAdminToast = showAdminToast;
 window.showAdminConfirm = showAdminConfirm;
 window.showAdminAlert = showAdminAlert;
 
-(function () {
+(function (window) {
   'use strict';
+
+  const EbookDB = window.EbookDB;
+  const Security = window.Security;
+  const EbookSupabase = window.EbookSupabase;
+  const DEFAULT_CATEGORIES = window.DEFAULT_CATEGORIES || [];
 
   // Trạng thái Admin
   const adminState = {
@@ -2029,6 +2034,8 @@ window.showAdminAlert = showAdminAlert;
         `).join('');
       }
     }
+  }
+
   // Lắng nghe sự kiện click ủy quyền toàn cục
   function bindGlobalActionDelegation() {
     document.addEventListener('click', (e) => {
@@ -2055,4 +2062,4 @@ window.showAdminAlert = showAdminAlert;
   } else {
     initAdmin();
   }
-})();
+})(typeof window !== 'undefined' ? window : this);

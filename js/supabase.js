@@ -52,9 +52,7 @@
       }
 
       const cleanUrl = cfg.url.replace(/\/+$/, '');
-      const separator = endpoint.includes('?') ? '&' : '?';
-      const cacheBuster = (options.method === 'GET' || !options.method) ? `${separator}_t=${Date.now()}` : '';
-      const url = `${cleanUrl}/rest/v1/${endpoint.replace(/^\/+/, '')}${cacheBuster}`;
+      const url = `${cleanUrl}/rest/v1/${endpoint.replace(/^\/+/, '')}`;
 
       const headers = {
         'apikey': cfg.key,
