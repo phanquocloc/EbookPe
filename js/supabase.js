@@ -108,7 +108,7 @@
     static async fetchBooks() {
       try {
         const rows = await this.request('books?select=*&order=created_at.asc');
-        if (Array.isArray(rows) && rows.length > 0) {
+        if (Array.isArray(rows)) {
           const mapped = rows.map(r => ({
             id: r.id,
             title: r.title,
@@ -148,7 +148,7 @@
     static async fetchCombos() {
       try {
         const rows = await this.request('combos?select=*&order=created_at.asc');
-        if (Array.isArray(rows) && rows.length > 0) {
+        if (Array.isArray(rows)) {
           const mapped = rows.map(r => ({
             id: r.id,
             title: r.title,

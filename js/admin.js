@@ -241,6 +241,23 @@ document.addEventListener('DOMContentLoaded', () => {
     bindSyncEvents();
     initSecurityTab(); // [OWASP] Khởi tạo tab bảo mật
     bindLogoutButtons();
+
+    // Tự động đồng bộ dữ liệu mới nhất từ Supabase Cloud
+    if (window.EbookSupabase) {
+      Promise.all([
+        window.EbookSupabase.fetchBooks(),
+        window.EbookSupabase.fetchCombos(),
+        window.EbookSupabase.getOrders()
+      ]).then(([books, combos, orders]) => {
+        if (books !== null) renderBooksTable();
+        if (combos !== null) renderCombosTable();
+        if (orders !== null && orders.length > 0) {
+          localStorage.setItem('ebookpe_orders_v2', JSON.stringify(orders));
+          renderOrdersTable();
+        }
+        renderDashboard();
+      }).catch(err => console.warn('Admin Supabase init:', err));
+    }
   }
 
   // ==========================================
