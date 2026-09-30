@@ -107,7 +107,7 @@
      */
     static async fetchBooks() {
       try {
-        const rows = await this.request('books?select=*&order=created_at.asc');
+        const rows = await this.request('books?select=*&order=created_at.desc');
         if (Array.isArray(rows)) {
           const mapped = rows.map(r => ({
             id: r.id,
@@ -132,6 +132,7 @@
             downloadUrl: r.download_url || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
             coverStyle: r.cover_style || 'cover-1',
             coverImage: r.cover_image || '',
+            createdAt: r.created_at || new Date().toISOString(),
             isFeatured: !!(r.badge && (r.badge.includes('NỔI BẬT') || r.badge.includes('HOT') || r.badge.includes('⭐') || r.badge.toLowerCase().includes('featured')))
           }));
           localStorage.setItem('ebookpe_books_v2', JSON.stringify(mapped));

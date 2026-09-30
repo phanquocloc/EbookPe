@@ -1029,11 +1029,15 @@
 
       let books = window.EbookDB.getBooks().filter(b => !b.status || b.status === 'active');
 
-      // Sắp xếp: Ưu tiên Sản phẩm Nổi bật (isFeatured / featured / badge) lên đầu tiên
+      // Sắp xếp: 1. Ưu tiên Sản phẩm Nổi bật (⭐ NỔI BẬT) lên đầu tiên -> 2. Ưu tiên Sách mới nhất
       books.sort((a, b) => {
         const aFeat = (a.isFeatured || a.featured || (a.badge && (a.badge.includes('NỔI BẬT') || a.badge.includes('⭐') || a.badge.includes('HOT')))) ? 1 : 0;
         const bFeat = (b.isFeatured || b.featured || (b.badge && (b.badge.includes('NỔI BẬT') || b.badge.includes('⭐') || b.badge.includes('HOT')))) ? 1 : 0;
         if (bFeat !== aFeat) return bFeat - aFeat;
+
+        const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        if (bTime !== aTime) return bTime - aTime;
         return 0;
       });
 
