@@ -757,6 +757,18 @@ class EbookDB {
   // --- COMBOS ---
   static getCombos() {
     if (window._cloudCombosCache && Array.isArray(window._cloudCombosCache) && window._cloudCombosCache.length > 0) {
+      // Filter out any legacy ghost combos from cache if present
+      const cleanCache = window._cloudCombosCache.filter(c => 
+        c.id !== 'combo-khoi-nghiep-tinh-gon' && 
+        c.id !== 'combo-mindset-tai-chinh' &&
+        c.id !== 'combo-vip' &&
+        !(c.title === 'Combo Khởi Nghiệp Tinh Gọn' && c.price === 179000) &&
+        !(c.title === 'Combo Mindset & Đột Phá Tài Chính' && c.price === 159000)
+      );
+      if (cleanCache.length !== window._cloudCombosCache.length) {
+        window._cloudCombosCache = cleanCache.length > 0 ? cleanCache : DEFAULT_COMBOS.slice();
+        try { localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(window._cloudCombosCache)); } catch (e) {}
+      }
       return window._cloudCombosCache;
     }
     const REAL_DRIVE_URL = 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing';
@@ -769,6 +781,17 @@ class EbookDB {
       }
       let parsed = JSON.parse(data);
       if (Array.isArray(parsed) && parsed.length > 0) {
+        // Purge legacy ghost demo combos
+        parsed = parsed.filter(c => 
+          c.id !== 'combo-khoi-nghiep-tinh-gon' && 
+          c.id !== 'combo-mindset-tai-chinh' &&
+          c.id !== 'combo-vip' &&
+          !(c.title === 'Combo Khởi Nghiệp Tinh Gọn' && c.price === 179000) &&
+          !(c.title === 'Combo Mindset & Đột Phá Tài Chính' && c.price === 159000)
+        );
+        if (parsed.length === 0) {
+          parsed = DEFAULT_COMBOS.slice();
+        }
         let changed = false;
         parsed = parsed.map(c => {
           if (!c.downloadUrl || c.downloadUrl === '#' || c.downloadUrl.includes('example')) {
@@ -784,9 +807,7 @@ class EbookDB {
           }
           return c;
         });
-        if (changed) {
-          localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(parsed));
-        }
+        localStorage.setItem(STORAGE_KEYS.COMBOS, JSON.stringify(parsed));
         window._cloudCombosCache = parsed;
         return parsed;
       }
