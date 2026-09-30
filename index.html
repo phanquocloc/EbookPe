@@ -113,20 +113,20 @@
        ========================================== -->
   <header id="main-header" class="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-xl shadow-[0_2px_12px_rgba(0,0,0,0.05)] transition-transform duration-300 ease-in-out">
     <!-- Flash Sale Top Bar -->
-    <div class="bg-gradient-to-r from-secondary via-secondary-container to-secondary text-on-secondary text-center py-2 px-4 text-xs sm:text-sm font-semibold tracking-wide">
-      <div class="max-w-[1200px] mx-auto flex items-center justify-center gap-2">
-        <span class="material-symbols-outlined text-[18px] animate-bounce">bolt</span>
-        <span>Ưu đãi Flash Sale: Giảm đến 78% khi mua theo Combo - Nhận trọn bộ Ebook trong 60 giây!</span>
+    <div class="bg-gradient-to-r from-secondary via-secondary-container to-secondary text-on-secondary text-center py-1.5 sm:py-2 px-2 sm:px-4 text-[11px] sm:text-sm font-semibold tracking-wide">
+      <div class="max-w-[1200px] mx-auto flex items-center justify-center gap-1.5 sm:gap-2">
+        <span class="material-symbols-outlined text-[15px] sm:text-[18px] animate-bounce shrink-0">bolt</span>
+        <span class="truncate sm:whitespace-normal">Ưu đãi Flash Sale: Giảm đến 78% khi mua theo Combo - Nhận trọn bộ Ebook trong 60 giây!</span>
       </div>
     </div>
 
     <!-- Main Navigation Bar -->
-    <div class="h-20 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+    <div class="h-16 sm:h-20 max-w-[1360px] mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4">
       <!-- Logo -->
       <div class="flex items-center flex-shrink-0">
-        <a class="flex items-center gap-2.5 group" href="#">
-          <img alt="EbookPe Logo" class="h-9 w-auto object-contain transition-transform group-hover:scale-105" src="logo/screen.png"/>
-          <span class="text-2xl font-extrabold text-primary tracking-tight">Ebook<span class="text-secondary-container">Pe</span></span>
+        <a class="flex items-center gap-1.5 sm:gap-2.5 group" href="#">
+          <img alt="EbookPe Logo" class="h-7 sm:h-9 w-auto object-contain transition-transform group-hover:scale-105" src="logo/screen.png"/>
+          <span class="text-lg sm:text-2xl font-extrabold text-primary tracking-tight">Ebook<span class="text-secondary-container">Pe</span></span>
         </a>
       </div>
 
@@ -141,23 +141,23 @@
       </nav>
 
       <!-- Action Buttons -->
-      <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+      <div class="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
         <!-- Nút Tra Cứu Đơn -->
-        <button onclick="openLookupModal()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-bold text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-xl transition-all whitespace-nowrap" title="Tra cứu lại đơn hàng & link tải sách">
+        <button onclick="openLookupModal()" class="inline-flex items-center gap-1 p-2 sm:px-3 sm:py-2 text-xs sm:text-sm font-bold text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-xl transition-all whitespace-nowrap" title="Tra cứu lại đơn hàng & link tải sách">
           <span class="material-symbols-outlined text-[19px]">receipt_long</span>
           <span class="hidden sm:inline">Tra cứu đơn</span>
         </button>
 
         <!-- Giỏ Hàng -->
-        <button onclick="openCartModal()" class="relative p-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors flex-shrink-0" title="Xem giỏ hàng">
-          <span class="material-symbols-outlined text-[22px]">shopping_bag</span>
-          <span id="cart-count-badge" class="absolute -top-1 -right-1 bg-secondary text-white text-[11px] font-extrabold rounded-full h-5 min-w-[20px] px-1 flex items-center justify-center shadow-md">0</span>
+        <button onclick="openCartModal()" class="relative p-2 sm:p-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors flex-shrink-0" title="Xem giỏ hàng">
+          <span class="material-symbols-outlined text-[20px] sm:text-[22px]">shopping_bag</span>
+          <span id="cart-count-badge" class="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 bg-secondary text-white text-[10px] sm:text-[11px] font-extrabold rounded-full h-4 sm:h-5 min-w-[16px] sm:min-w-[20px] px-1 flex items-center justify-center shadow-md">0</span>
         </button>
 
-        <!-- CTA Nổi Bật: Nhận Combo -78% -->
-        <a href="#combo-section" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-secondary-container to-secondary text-white text-xs sm:text-sm font-bold shadow-[0_8px_18px_-4px_rgba(249,115,22,0.4)] hover:shadow-[0_12px_24px_-4px_rgba(249,115,22,0.5)] transition-all transform hover:-translate-y-0.5 whitespace-nowrap flex-shrink-0">
-          <span class="material-symbols-outlined text-[18px]">local_fire_department</span>
-          <span>Nhận Combo -78%</span>
+        <!-- CTA Nổi Bật: Nhận Combo -->
+        <a href="#combo-section" class="inline-flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-secondary-container to-secondary text-white text-xs sm:text-sm font-bold shadow-[0_4px_14px_-2px_rgba(249,115,22,0.4)] hover:shadow-[0_8px_20px_-2px_rgba(249,115,22,0.5)] transition-all transform hover:-translate-y-0.5 whitespace-nowrap flex-shrink-0">
+          <span class="material-symbols-outlined text-[16px] sm:text-[18px]">local_fire_department</span>
+          <span>Nhận Combo <span class="hidden xs:inline sm:inline">-78%</span></span>
         </a>
       </div>
     </div>
@@ -166,7 +166,7 @@
   <!-- ==========================================
        MAIN CONTENT
        ========================================== -->
-  <main class="w-full pt-28 bg-background">
+  <main class="w-full pt-24 sm:pt-28 bg-background">
     <div class="flex flex-col w-full">
 
       <!-- SECTION 1: HERO SECTION -->
