@@ -244,21 +244,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Tự động đồng bộ dữ liệu mới nhất từ Supabase Cloud
     if (window.EbookSupabase) {
-      Promise.all([
+      Promise.allSettled([
         window.EbookSupabase.fetchSettings(),
         window.EbookSupabase.fetchBooks(),
         window.EbookSupabase.fetchCombos(),
         window.EbookSupabase.getOrders()
-      ]).then(([settings, books, combos, orders]) => {
-        if (settings !== null) loadSettingsForm();
-        if (books !== null) renderBooksTable();
-        if (combos !== null) renderCombosTable();
-        if (orders !== null && orders.length > 0) {
-          localStorage.setItem('ebookpe_orders_v2', JSON.stringify(orders));
-          renderOrdersTable();
-        }
+      ]).then(() => {
+        loadSettingsForm();
+        renderBooksTable();
+        renderCombosTable();
+        renderOrdersTable();
         renderDashboard();
       }).catch(err => console.warn('Admin Supabase init:', err));
+
+      window.EbookSupabase.initRealtimeListener(() => {
+        loadSettingsForm();
+        renderBooksTable();
+        renderCombosTable();
+        renderOrdersTable();
+        renderDashboard();
+      });
     }
   }
 

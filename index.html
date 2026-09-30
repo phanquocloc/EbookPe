@@ -945,7 +945,7 @@
       updateTotalStats();
       initLiveTicker();
 
-      // Tự động tải dữ liệu mới nhất từ Supabase Cloud Database để mọi thiết bị/Vercel đều thấy đồng bộ 100%
+      // Tự động tải dữ liệu mới nhất từ Supabase Cloud Database để mọi thiết bị/khách hàng đều thấy đồng bộ 100%
       if (window.EbookSupabase) {
         Promise.allSettled([
           window.EbookSupabase.fetchSettings(),
@@ -957,6 +957,14 @@
           renderCombos();
           updateTotalStats();
         }).catch(err => console.warn('Supabase Cloud load:', err));
+
+        // Lắng nghe Realtime: Khi Admin thêm/sửa/ghim nổi bật ở bất kỳ máy tính nào, tất cả khách hàng trên web tự động cập nhật ngay lập tức!
+        window.EbookSupabase.initRealtimeListener(() => {
+          renderCategoryPills();
+          renderEbooks();
+          renderCombos();
+          updateTotalStats();
+        });
       }
     });
 

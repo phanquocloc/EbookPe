@@ -43,7 +43,7 @@
     }
 
     /**
-     * Gửi yêu cầu REST API trực tiếp tới Supabase
+     * Gửi yêu cầu REST API trực tiếp tới Supabase (Kèm chống cache dữ liệu)
      */
     static async request(endpoint, options = {}) {
       const cfg = this.getSettings();
@@ -52,12 +52,16 @@
       }
 
       const cleanUrl = cfg.url.replace(/\/+$/, '');
-      const url = `${cleanUrl}/rest/v1/${endpoint.replace(/^\/+/, '')}`;
+      const separator = endpoint.includes('?') ? '&' : '?';
+      const cacheBuster = (options.method === 'GET' || !options.method) ? `${separator}_t=${Date.now()}` : '';
+      const url = `${cleanUrl}/rest/v1/${endpoint.replace(/^\/+/, '')}${cacheBuster}`;
 
       const headers = {
         'apikey': cfg.key,
         'Authorization': `Bearer ${cfg.key}`,
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
         'Prefer': options.prefer || 'return=representation',
         ...(options.headers || {})
       };
@@ -65,6 +69,7 @@
       const res = await fetch(url, {
         method: options.method || 'GET',
         headers,
+        cache: 'no-store',
         body: options.body ? JSON.stringify(options.body) : undefined
       });
 
@@ -530,6 +535,40 @@
       }
 
       return results;
+    }
+
+    /**
+     * Kích hoạt lắng nghe Realtime thay đổi từ Supabase Cloud
+     * Tự động cập nhật giao diện ngay lập tức khi Admin thêm/sửa/xóa sách hoặc đổi cài đặt
+     */
+    static initRealtimeListener(onUpdateCallback) {
+      try {
+        const client = this.getClient();
+        if (!client) return;
+
+        client
+          .channel('public_ebookpe_realtime')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'books' }, async (payload) => {
+            console.log('[Supabase Realtime] Sách đã thay đổi:', payload.eventType);
+            await this.fetchBooks();
+            if (typeof onUpdateCallback === 'function') onUpdateCallback('BOOKS', payload);
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'combos' }, async (payload) => {
+            console.log('[Supabase Realtime] Combo đã thay đổi:', payload.eventType);
+            await this.fetchCombos();
+            if (typeof onUpdateCallback === 'function') onUpdateCallback('COMBOS', payload);
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, async (payload) => {
+            console.log('[Supabase Realtime] Cài đặt đã thay đổi:', payload.eventType);
+            await this.fetchSettings();
+            if (typeof onUpdateCallback === 'function') onUpdateCallback('SETTINGS', payload);
+          })
+          .subscribe((status) => {
+            console.log('[Supabase Realtime Status]:', status);
+          });
+      } catch (err) {
+        console.warn('[Supabase Realtime Error]:', err.message);
+      }
     }
 
     /**
