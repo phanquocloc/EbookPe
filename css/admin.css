@@ -416,26 +416,38 @@ table.admin-table tr:hover td {
   background: none;
   border: 1px solid var(--admin-border);
   border-radius: 6px;
-  width: 32px;
-  height: 32px;
-  display: flex;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   transition: var(--transition);
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.btn-action-icon * {
+  pointer-events: none;
 }
 
 .btn-action-icon:hover {
   background: #F3F4F6;
   border-color: var(--primary);
   color: var(--primary);
+  transform: scale(1.08);
+}
+
+.btn-action-icon:active {
+  transform: scale(0.95);
 }
 
 .btn-action-icon.delete:hover {
   background: #FEE2E2;
   border-color: var(--danger);
   color: var(--danger);
+  transform: scale(1.08);
 }
 
 /* ==========================================================================

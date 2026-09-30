@@ -607,16 +607,16 @@ window.showAdminAlert = showAdminAlert;
           </td>
           <td>
             <div class="table-actions">
-              <button class="btn-action-icon" data-action="toggle-featured" data-id="${book.id}" title="${isFeat ? 'Bỏ ghim nổi bật' : 'Ghim nổi bật lên đầu'}" onclick="window.adminToggleFeaturedBook('${book.id}')" style="${isFeat ? 'background:#fef3c7; color:#d97706;' : ''}">
+              <button class="btn-action-icon" data-action="toggle-featured" data-id="${book.id}" title="${isFeat ? 'Bỏ ghim nổi bật' : 'Ghim nổi bật lên đầu'}" style="${isFeat ? 'background:#fef3c7; color:#d97706;' : ''}">
                 ⭐
               </button>
-              <button class="btn-action-icon" data-action="edit" data-id="${book.id}" title="Chỉnh sửa" onclick="window.adminEditBook('${book.id}')">
+              <button class="btn-action-icon" data-action="edit" data-id="${book.id}" title="Chỉnh sửa">
                 ✏️
               </button>
-              <button class="btn-action-icon" data-action="toggle-status" data-id="${book.id}" title="Bật/Tắt hiển thị" onclick="window.adminToggleBookStatus('${book.id}')">
+              <button class="btn-action-icon" data-action="toggle-status" data-id="${book.id}" title="Bật/Tắt hiển thị">
                 ${book.status === 'active' ? '👁️' : '🙈'}
               </button>
-              <button class="btn-action-icon delete" data-action="delete" data-id="${book.id}" title="Xóa sách" onclick="window.adminDeleteBook('${book.id}')">
+              <button class="btn-action-icon delete" data-action="delete" data-id="${book.id}" title="Xóa sách">
                 🗑️
               </button>
             </div>
@@ -1004,10 +1004,10 @@ window.showAdminAlert = showAdminAlert;
           </td>
           <td>${statusBadge}</td>
           <td style="text-align:right;">
-            <button class="btn-action-icon edit" data-action="edit-combo" data-id="${combo.id}" onclick="window.editCombo('${combo.id}')" title="Sửa combo">
+            <button class="btn-action-icon edit" data-action="edit-combo" data-id="${combo.id}" title="Sửa combo">
               ✏️
             </button>
-            <button class="btn-action-icon delete" data-action="delete-combo" data-id="${combo.id}" onclick="window.deleteCombo('${combo.id}')" title="Xóa combo">
+            <button class="btn-action-icon delete" data-action="delete-combo" data-id="${combo.id}" title="Xóa combo">
               🗑️
             </button>
           </td>
@@ -2037,25 +2037,64 @@ window.showAdminAlert = showAdminAlert;
   }
 
   // Lắng nghe sự kiện click ủy quyền toàn cục
+  let isGlobalActionBusy = false;
   function bindGlobalActionDelegation() {
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', async (e) => {
       const btn = e.target.closest('.btn-action-icon');
       if (!btn) return;
       const action = btn.dataset.action;
       const id = btn.dataset.id;
       if (!action || !id) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (isGlobalActionBusy) return;
+
       if (action === 'toggle-featured') {
-        if (typeof window.adminToggleFeaturedBook === 'function') window.adminToggleFeaturedBook(id);
+        if (typeof window.adminToggleFeaturedBook === 'function') {
+          isGlobalActionBusy = true;
+          try {
+            await window.adminToggleFeaturedBook(id);
+          } finally {
+            setTimeout(() => { isGlobalActionBusy = false; }, 200);
+          }
+        }
       } else if (action === 'edit') {
-        if (typeof window.adminEditBook === 'function') window.adminEditBook(id);
+        if (typeof window.adminEditBook === 'function') {
+          window.adminEditBook(id);
+        }
       } else if (action === 'toggle-status') {
-        if (typeof window.adminToggleBookStatus === 'function') window.adminToggleBookStatus(id);
+        if (typeof window.adminToggleBookStatus === 'function') {
+          isGlobalActionBusy = true;
+          try {
+            await window.adminToggleBookStatus(id);
+          } finally {
+            setTimeout(() => { isGlobalActionBusy = false; }, 200);
+          }
+        }
       } else if (action === 'delete') {
-        if (typeof window.adminDeleteBook === 'function') window.adminDeleteBook(id);
+        if (typeof window.adminDeleteBook === 'function') {
+          isGlobalActionBusy = true;
+          try {
+            await window.adminDeleteBook(id);
+          } finally {
+            setTimeout(() => { isGlobalActionBusy = false; }, 200);
+          }
+        }
       } else if (action === 'edit-combo') {
-        if (typeof window.editCombo === 'function') window.editCombo(id);
+        if (typeof window.editCombo === 'function') {
+          window.editCombo(id);
+        }
       } else if (action === 'delete-combo') {
-        if (typeof window.deleteCombo === 'function') window.deleteCombo(id);
+        if (typeof window.deleteCombo === 'function') {
+          isGlobalActionBusy = true;
+          try {
+            await window.deleteCombo(id);
+          } finally {
+            setTimeout(() => { isGlobalActionBusy = false; }, 200);
+          }
+        }
       }
     });
   }
