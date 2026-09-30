@@ -4,14 +4,14 @@
  */
 
 const STORAGE_KEYS = {
-  BOOKS: 'ebookpe_books_v2',
-  ORDERS: 'ebookpe_orders_v2',
-  SETTINGS: 'ebookpe_settings_v2',
-  COMBOS: 'ebookpe_combos_v2',
-  CART: 'ebookpe_cart_v2'
+  BOOKS: 'ebookpe_books_v4',
+  ORDERS: 'ebookpe_orders_v4',
+  SETTINGS: 'ebookpe_settings_v4',
+  COMBOS: 'ebookpe_combos_v4',
+  CART: 'ebookpe_cart_v4'
 };
 
-// Dữ liệu cài đặt mặc định (Thông tin thanh toán VietQR)
+// Dữ liệu cài đặt mặc định (Thông tin thanh toán VietQR & Cloud API)
 const DEFAULT_SETTINGS = {
   storeName: 'EbookPe',
   storeSlogan: 'Nền tảng Ebook thực chiến #1 Việt Nam',
@@ -26,11 +26,11 @@ const DEFAULT_SETTINGS = {
   zaloLink: 'https://zalo.me/0333399956',
   guaranteeDays: 30,
   // Cấu hình Tự động hóa: Bắt tiền vào MBBank (SePay.vn) & Gửi Gmail (EmailJS)
-  sepayApiKey: '',
-  emailjsServiceId: '',
-  emailjsTemplateId: '',
-  emailjsPublicKey: '',
-  autoEmailEnabled: false,
+  sepayApiKey: 'ZFGWNMXUDYZ25I0IHKLJXT6TXDPGSKFI37ECLEBICDUGUL6FB74RJZU59RF4AHQH',
+  emailjsServiceId: 'service_racum3e',
+  emailjsTemplateId: 'template_mhsamhr',
+  emailjsPublicKey: 'R18LWRUtrw_HOrXoI',
+  autoEmailEnabled: true,
   // Cấu hình Cơ sở dữ liệu Cloud Supabase
   supabaseUrl: 'https://jymkfplrxrbtmskinvre.supabase.co',
   supabaseKey: 'sb_publishable_uozNN_5s8HXEca1_IAU3lw_h5br3rfd',

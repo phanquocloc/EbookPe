@@ -141,7 +141,7 @@
             isFeatured: !!(r.badge && (r.badge.includes('NỔI BẬT') || r.badge.includes('HOT') || r.badge.includes('⭐') || r.badge.toLowerCase().includes('featured')))
           }));
           window._cloudBooksCache = mapped;
-          localStorage.setItem('ebookpe_books_v2', JSON.stringify(mapped));
+          localStorage.setItem('ebookpe_books_v4', JSON.stringify(mapped));
           return mapped;
         }
       } catch (e) {
@@ -172,7 +172,7 @@
             downloadUrl: r.download_url || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing'
           }));
           window._cloudCombosCache = mapped;
-          localStorage.setItem('ebookpe_combos_v2', JSON.stringify(mapped));
+          localStorage.setItem('ebookpe_combos_v4', JSON.stringify(mapped));
           return mapped;
         }
       } catch (e) {
@@ -216,7 +216,7 @@
             supabaseKey: r.supabase_key ?? raw.supabaseKey ?? current.supabaseKey,
             supabaseEnabled: r.supabase_enabled ?? raw.supabaseEnabled ?? current.supabaseEnabled
           };
-          localStorage.setItem('ebookpe_settings_v2', JSON.stringify(mapped));
+          localStorage.setItem('ebookpe_settings_v4', JSON.stringify(mapped));
           if (window.EbookDB && typeof window.EbookDB.notifyChange === 'function') {
             window.EbookDB.notifyChange('SETTINGS_UPDATED', mapped);
           }
