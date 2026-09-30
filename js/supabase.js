@@ -132,7 +132,7 @@
             downloadUrl: r.download_url || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
             coverStyle: r.cover_style || 'cover-1',
             coverImage: r.cover_image || '',
-            isFeatured: !!r.is_featured
+            isFeatured: !!(r.badge && (r.badge.includes('NỔI BẬT') || r.badge.includes('HOT') || r.badge.includes('⭐') || r.badge.toLowerCase().includes('featured')))
           }));
           localStorage.setItem('ebookpe_books_v2', JSON.stringify(mapped));
           return mapped;
@@ -269,6 +269,12 @@
     static async saveBook(b) {
       if (!b || !b.id) return;
       try {
+        const isFeat = !!(b.isFeatured || b.featured || (b.badge && (b.badge.includes('NỔI BẬT') || b.badge.includes('⭐') || b.badge.includes('HOT'))));
+        let badgeVal = b.badge || '';
+        if (isFeat && !badgeVal.includes('NỔI BẬT') && !badgeVal.includes('⭐')) {
+          badgeVal = badgeVal ? `⭐ ${badgeVal}` : '⭐ NỔI BẬT';
+        }
+
         const payload = {
           id: b.id,
           title: b.title,
@@ -278,7 +284,7 @@
           category_name: b.categoryName || 'Ebook',
           price: b.price || 0,
           original_price: b.originalPrice || 0,
-          badge: b.badge || '',
+          badge: badgeVal,
           pages: b.pages || 180,
           format: b.format || 'PDF + EPUB',
           status: b.status || 'active',
@@ -292,7 +298,6 @@
           download_url: b.downloadUrl || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing',
           cover_style: b.coverStyle || 'cover-1',
           cover_image: b.coverImage || '',
-          is_featured: !!(b.isFeatured || b.featured),
           updated_at: new Date().toISOString()
         };
         await this.request('books?on_conflict=id', {

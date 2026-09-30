@@ -1029,10 +1029,10 @@
 
       let books = window.EbookDB.getBooks().filter(b => !b.status || b.status === 'active');
 
-      // Sắp xếp: Ưu tiên Sản phẩm Nổi bật (isFeatured / featured) lên đầu tiên
+      // Sắp xếp: Ưu tiên Sản phẩm Nổi bật (isFeatured / featured / badge) lên đầu tiên
       books.sort((a, b) => {
-        const aFeat = (a.isFeatured || a.featured) ? 1 : 0;
-        const bFeat = (b.isFeatured || b.featured) ? 1 : 0;
+        const aFeat = (a.isFeatured || a.featured || (a.badge && (a.badge.includes('NỔI BẬT') || a.badge.includes('⭐') || a.badge.includes('HOT')))) ? 1 : 0;
+        const bFeat = (b.isFeatured || b.featured || (b.badge && (b.badge.includes('NỔI BẬT') || b.badge.includes('⭐') || b.badge.includes('HOT')))) ? 1 : 0;
         if (bFeat !== aFeat) return bFeat - aFeat;
         return 0;
       });
@@ -1075,7 +1075,7 @@
       const pagedBooks = books.slice(startIndex, startIndex + EBOOKS_PER_PAGE);
 
       container.innerHTML = pagedBooks.map(book => {
-        const isFeatured = !!(book.isFeatured || book.featured);
+        const isFeatured = !!(book.isFeatured || book.featured || (book.badge && (book.badge.includes('NỔI BẬT') || book.badge.includes('⭐') || book.badge.includes('HOT'))));
 
         // Tính toán lượt mua chân thật và đa dạng nếu chưa có hoặc mặc định
         let displaySales = book.salesCount;

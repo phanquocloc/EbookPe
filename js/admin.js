@@ -541,6 +541,8 @@ document.addEventListener('DOMContentLoaded', () => {
         coverThumbStyle = `background: var(--${coverCls}, #2D6A4F);`;
       }
 
+      const isFeat = !!(book.isFeatured || book.featured || (book.badge && (book.badge.includes('⭐') || book.badge.includes('NỔI BẬT') || book.badge.includes('HOT'))));
+
       return `
         <tr>
           <td>
@@ -551,7 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>
             <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
               <span style="font-weight:700; color:var(--text-main); font-size:0.92rem; max-width:240px;">${book.title}</span>
-              ${book.isFeatured || book.featured ? '<span style="background:#fef3c7; color:#b45309; font-weight:800; font-size:0.7rem; padding:2px 6px; border-radius:4px; border:1px solid #fde68a;">⭐ Nổi Bật</span>' : ''}
+              ${isFeat ? '<span style="background:#fef3c7; color:#b45309; font-weight:800; font-size:0.7rem; padding:2px 6px; border-radius:4px; border:1px solid #fde68a;">⭐ Nổi Bật</span>' : ''}
             </div>
             <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">Tác giả: ${book.author || 'EbookPe'} · ${book.pages || 180} trang · ⭐ ${book.rating || 4.9}</div>
           </td>
@@ -574,7 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </td>
           <td>
             <div class="table-actions">
-              <button class="btn-action-icon" title="${book.isFeatured || book.featured ? 'Bỏ ghim nổi bật' : 'Ghim nổi bật lên đầu'}" onclick="window.adminToggleFeaturedBook('${book.id}')" style="${book.isFeatured || book.featured ? 'background:#fef3c7; color:#d97706;' : ''}">
+              <button class="btn-action-icon" title="${isFeat ? 'Bỏ ghim nổi bật' : 'Ghim nổi bật lên đầu'}" onclick="window.adminToggleFeaturedBook('${book.id}')" style="${isFeat ? 'background:#fef3c7; color:#d97706;' : ''}">
                 ⭐
               </button>
               <button class="btn-action-icon" title="Chỉnh sửa" onclick="window.adminEditBook('${book.id}')">
@@ -636,8 +638,9 @@ document.addEventListener('DOMContentLoaded', () => {
     adminState.editingBookId = book.id;
     adminState.selectedCoverStyle = book.coverStyle || 'cover-1';
     adminState.uploadedCoverBase64 = book.coverImage || '';
-
     if (bookModalTitle) bookModalTitle.textContent = `Chỉnh Sửa Ebook: ${book.title}`;
+
+    const isFeat = !!(book.isFeatured || book.featured || (book.badge && (book.badge.includes('⭐') || book.badge.includes('NỔI BẬT') || book.badge.includes('HOT'))));
 
     document.getElementById('book-title').value = book.title || '';
     document.getElementById('book-subtitle').value = book.subTitle || '';
@@ -651,7 +654,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('book-status').value = book.status || 'active';
     document.getElementById('book-sales-count').value = book.salesCount || 120;
     document.getElementById('book-rating').value = book.rating || 4.9;
-    document.getElementById('book-is-featured').checked = !!(book.isFeatured || book.featured);
+    document.getElementById('book-is-featured').checked = isFeat;
     document.getElementById('book-short-desc').value = book.shortDesc || '';
     document.getElementById('book-full-desc').value = book.fullDesc || '';
     document.getElementById('book-toc').value = book.toc ? book.toc.join('\n') : '';
@@ -667,11 +670,18 @@ document.addEventListener('DOMContentLoaded', () => {
   window.adminToggleFeaturedBook = function(bookId) {
     const book = EbookDB.getBookById(bookId);
     if (book) {
-      book.isFeatured = !(book.isFeatured || book.featured);
-      book.featured = book.isFeatured;
+      const isCurrentlyFeatured = !!(book.isFeatured || book.featured || (book.badge && (book.badge.includes('⭐') || book.badge.includes('NỔI BẬT') || book.badge.includes('HOT'))));
+      const nextFeatured = !isCurrentlyFeatured;
+      book.isFeatured = nextFeatured;
+      book.featured = nextFeatured;
+      if (nextFeatured) {
+        book.badge = book.badge ? (book.badge.includes('⭐') ? book.badge : `⭐ ${book.badge}`) : '⭐ NỔI BẬT';
+      } else {
+        book.badge = (book.badge || '').replace(/⭐\s*/g, '').replace(/NỔI BẬT/g, '').trim();
+      }
       EbookDB.saveBook(book);
       renderBooksTable();
-      showAdminToast(book.isFeatured ? `Đã ghim cuốn "${book.title}" lên đầu trang chủ!` : `Đã bỏ ghim nổi bật cuốn "${book.title}"`, 'success');
+      showAdminToast(nextFeatured ? `Đã ghim cuốn "${book.title}" lên đầu gian hàng!` : `Đã bỏ ghim nổi bật cuốn "${book.title}"`, 'success');
     }
   };
 
