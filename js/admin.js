@@ -624,6 +624,25 @@ window.showAdminAlert = showAdminAlert;
         </tr>
       `;
     }).join('');
+
+    // Gán sự kiện click trực tiếp từng nút để đảm bảo phản hồi 100%
+    tableBody.querySelectorAll('.btn-action-icon').forEach(btn => {
+      btn.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const action = this.getAttribute('data-action');
+        const id = this.getAttribute('data-id');
+        if (action === 'toggle-featured') {
+          window.adminToggleFeaturedBook(id);
+        } else if (action === 'edit') {
+          window.adminEditBook(id);
+        } else if (action === 'toggle-status') {
+          window.adminToggleBookStatus(id);
+        } else if (action === 'delete') {
+          window.adminDeleteBook(id);
+        }
+      };
+    });
   }
 
   // Tìm kiếm Ebook trong bảng
@@ -1010,6 +1029,21 @@ window.showAdminAlert = showAdminAlert;
         </tr>
       `;
     }).join('');
+
+    // Gán sự kiện click trực tiếp từng nút combo
+    tableBody.querySelectorAll('.btn-action-icon').forEach(btn => {
+      btn.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const action = this.getAttribute('data-action');
+        const id = this.getAttribute('data-id');
+        if (action === 'edit-combo') {
+          window.editCombo(id);
+        } else if (action === 'delete-combo') {
+          window.deleteCombo(id);
+        }
+      };
+    });
   }
 
   function renderComboBooksSelector(selectedIds = []) {
