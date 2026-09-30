@@ -796,7 +796,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function handleSaveBook() {
+  async function handleSaveBook() {
     const title = document.getElementById('book-title').value.trim();
     const subTitle = document.getElementById('book-subtitle').value.trim();
     const author = document.getElementById('book-author').value.trim();
@@ -828,6 +828,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Parse mục lục từ textarea (mỗi dòng 1 chương)
     const toc = tocRaw ? tocRaw.split('\n').map(s => s.trim()).filter(s => s.length > 0) : [];
 
+    const isEdit = !!adminState.editingBookId;
+
     const bookData = {
       id: adminState.editingBookId || undefined,
       title,
@@ -853,11 +855,21 @@ document.addEventListener('DOMContentLoaded', () => {
       coverImage: adminState.uploadedCoverBase64
     };
 
-    EbookDB.saveBook(bookData);
+    const savedBook = EbookDB.saveBook(bookData);
     closeBookModal();
     renderBooksTable();
     renderDashboard();
-    showAdminToast(adminState.editingBookId ? 'Cập nhật Ebook thành công!' : 'Đã thêm Ebook mới lên gian hàng!', 'success');
+
+    if (window.EbookSupabase && typeof window.EbookSupabase.saveBook === 'function') {
+      try {
+        await window.EbookSupabase.saveBook(savedBook);
+        showAdminToast(isEdit ? 'Cập nhật Ebook & Đồng bộ Cloud thành công!' : 'Đã thêm Ebook mới và đồng bộ lên Cloud Database!', 'success');
+      } catch (err) {
+        showAdminToast(`Đã lưu cục bộ nhưng lỗi Cloud: ${err.message}`, 'warning');
+      }
+    } else {
+      showAdminToast(isEdit ? 'Cập nhật Ebook thành công!' : 'Đã thêm Ebook mới lên gian hàng!', 'success');
+    }
   }
 
   // ==========================================

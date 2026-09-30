@@ -140,6 +140,7 @@
             createdAt: r.created_at || new Date().toISOString(),
             isFeatured: !!(r.badge && (r.badge.includes('NỔI BẬT') || r.badge.includes('HOT') || r.badge.includes('⭐') || r.badge.toLowerCase().includes('featured')))
           }));
+          window._cloudBooksCache = mapped;
           localStorage.setItem('ebookpe_books_v2', JSON.stringify(mapped));
           return mapped;
         }
@@ -170,6 +171,7 @@
             bonusList: r.bonus_list || [],
             downloadUrl: r.download_url || 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing'
           }));
+          window._cloudCombosCache = mapped;
           localStorage.setItem('ebookpe_combos_v2', JSON.stringify(mapped));
           return mapped;
         }

@@ -649,6 +649,9 @@ class EbookDB {
 
   // --- EBOOK ---
   static getBooks() {
+    if (window._cloudBooksCache && Array.isArray(window._cloudBooksCache) && window._cloudBooksCache.length > 0) {
+      return window._cloudBooksCache;
+    }
     const REAL_DRIVE_URL = 'https://drive.google.com/file/d/1vf8ANZPxHaDJJ00r3KH29Y6M4f1R4JIK/view?usp=sharing';
     try {
       const data = localStorage.getItem(STORAGE_KEYS.BOOKS);

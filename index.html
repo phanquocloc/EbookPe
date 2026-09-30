@@ -934,6 +934,17 @@
     let currentEbookPage = 1;
     const EBOOKS_PER_PAGE = 6;
 
+    // Tải dữ liệu Cloud ngay lập tức khi load trang
+    if (window.EbookSupabase) {
+      window.EbookSupabase.fetchBooks().then(() => {
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+          renderCategoryPills();
+          renderEbooks();
+          updateTotalStats();
+        }
+      }).catch(e => console.warn('Early cloud fetch:', e));
+    }
+
     // Initialize App on DOMContentLoaded
     document.addEventListener('DOMContentLoaded', () => {
       renderCategoryPills();
